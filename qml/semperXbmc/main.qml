@@ -6,7 +6,7 @@ import "js/playlist.js" as Playlist
 import "js/json.js" as Json
 
 Rectangle {
-    id: rectangle2
+    id: main
     width: 360
     height: 640
 
@@ -40,15 +40,34 @@ Rectangle {
 
     }
 
+    Settings {
+        id: settings
+        x: 50
+        y: 170
+
+        onSettingsChanged: {
+            main.setup();
+        }
+    }
+
     function $() {
         return Xbmc.xbmc;
     }
 
     function setup() {
+        var server = settings.server;
+        console.debug(server);
+        if (server == "Unspecified") {
+            settings.state = "shown";
+            return
+        }
+        initialize();
+    }
+
+    function initialize() {
         var xbmc = Xbmc.setup();
-        xbmc.port = _port;
-        xbmc.server = _server;
-        console.log(_server);
+        xbmc.port = settings.jsonPort;
+        xbmc.server = settings.server;
 
         xbmc.library = new Library.Library();
         xbmc.playlist = new Playlist.Playlist();
@@ -56,6 +75,4 @@ Rectangle {
 
         xbmc.init();
     }
-
-    Component.onCompleted: setup();
 }
