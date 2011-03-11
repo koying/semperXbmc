@@ -8,25 +8,28 @@ Item{
     property alias jsonPort: inpJsonPort.text
     property alias eventPort: inpEventPort.text
 
+    property alias state:  background.state
+
     signal settingsChanged();
 
     width: 300
     height: 300
-    opacity: 0
 
     Rectangle {
         id: background
+
+        opacity: 0
         radius: 15
         anchors.fill: parent
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#cccccc"
+                color: "#999999"
             }
 
             GradientStop {
                 position: 1
-                color: "#777777"
+                color: "#555555"
             }
         }
 
@@ -84,11 +87,10 @@ Item{
 
         TextInput {
             id: inpServer
-            x: 110
+            x: 136
             y: 68
-            width: 90
+            width: 150
             height: 20
-            text: "192.168.1.1"
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
@@ -97,11 +99,10 @@ Item{
 
         TextInput {
             id: inpJsonPort
-            x: 137
+            x: 135
             y: 98
-            width: 40
+            width: 150
             height: 20
-            text: "6780"
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
@@ -112,9 +113,8 @@ Item{
             id: inpEventPort
             x: 144
             y: 128
-            width: 40
+            width: 150
             height: 20
-            text: "9777"
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
@@ -157,47 +157,47 @@ Item{
 
                 onClicked: {
                     saveSettings();
-                    state = "";
+                    background.state = "";
                     container.settingsChanged();
                 }
             }
         }
+
+        states: [
+            State {
+                name: "shown";
+                PropertyChanges {
+                    target: background;
+                    opacity: 0.95;
+                }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "";
+                to: "shown";
+                SequentialAnimation {
+                    NumberAnimation {
+                        properties: "opacity";
+                        easing.type: "OutCubic";
+                        duration: 100;
+                    }
+                }
+            },
+            Transition {
+                from: "shown";
+                to: "";
+                SequentialAnimation {
+                    NumberAnimation {
+                        properties: "opacity";
+                        easing.type: "OutCubic";
+                        duration: 100;
+                    }
+                }
+            }
+        ]
     }
-
-    states: [
-        State {
-            name: "shown";
-            PropertyChanges {
-                target: background;
-                opacity: 0.7;
-            }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "";
-            to: "shown";
-            SequentialAnimation {
-                NumberAnimation {
-                    properties: "opacity";
-                    easing.type: "OutCubic";
-                    duration: 100;
-                }
-            }
-        },
-        Transition {
-            from: "shown";
-            to: "";
-            SequentialAnimation {
-                NumberAnimation {
-                    properties: "opacity";
-                    easing.type: "OutCubic";
-                    duration: 100;
-                }
-            }
-        }
-    ]
 
     function setup() {
         DbSettings.initialize();
@@ -209,6 +209,12 @@ Item{
         inpServer.text = host;
         inpJsonPort.text = jsonPort;
         inpEventPort.text = eventPort;
+
+        if (host == "Unspecified") {
+            background.state = "shown";
+            return;
+        }
+
 
         container.settingsChanged();
     }

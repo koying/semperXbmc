@@ -5,30 +5,20 @@ import "js/library.js" as Library
 import "js/playlist.js" as Playlist
 import "js/json.js" as Json
 
+import "bar" as Bar
+
 Rectangle {
     id: main
     width: 360
     height: 640
 
-    Rectangle {
-        id: bar
-        width: 40
-        height: 640
-        color: "#000000"
-        radius: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
-    }
-
     RemoteNavigation {
         id: remotenavigation1
         anchors.right: parent.right
         anchors.rightMargin: 0
-        anchors.left: bar.right
+        anchors.left: parent.left
         anchors.leftMargin: 0
-        anchors.top: parent.top
+        anchors.top: titlebar.bottom
         anchors.topMargin: 0
 
         onBLClicked: {
@@ -40,28 +30,41 @@ Rectangle {
 
     }
 
+    Bar.TitleBar {
+        id: titlebar
+
+        height : 52
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right:  parent.right
+
+        onPrefClicked: {
+            settings.state = "shown";
+        }
+        onQuitClicked:  Qt.quit()
+    }
+
+    Bar.ToolBar {
+        id: toolbar
+
+        height : 40
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right:  parent.right
+    }
+
     Settings {
         id: settings
-        x: 50
+        x: 30
         y: 170
 
         onSettingsChanged: {
-            main.setup();
+            main.initialize();
         }
     }
 
     function $() {
         return Xbmc.xbmc;
-    }
-
-    function setup() {
-        var server = settings.server;
-        console.debug(server);
-        if (server == "Unspecified") {
-            settings.state = "shown";
-            return
-        }
-        initialize();
     }
 
     function initialize() {
