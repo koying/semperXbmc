@@ -1,4 +1,5 @@
 import QtQuick 1.0
+import XbmcEvents 1.0
 
 Item {
     id: container
@@ -271,5 +272,9 @@ Item {
             anchors.fill: parent
             onClicked: container.BRClicked()
         }
+    }
+
+    XbmcClient {
+        id: xbmcEventClient
     }
 }

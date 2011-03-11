@@ -102,12 +102,12 @@ public:
   CAddress(const char *Address, int Port = STD_PORT)
   {
     m_Addr.sin_port = htons(Port);
-    
+
     struct hostent *h;
     if (Address == NULL || (h=gethostbyname(Address)) == NULL)
     {
         if (Address != NULL)
-			printf("Error: Get host by name\n");
+            printf("Error: Get host by name\n");
 
         m_Addr.sin_addr.s_addr  = INADDR_ANY;
         m_Addr.sin_family       = AF_INET;
@@ -328,7 +328,7 @@ public:
 
     unsigned int len = strlen(DevName);
     for (unsigned int i = 0; i < len; i++)
-      m_DeviceName.push_back(DevName[i]);    
+      m_DeviceName.push_back(DevName[i]);
 
     m_IconType = IconType;
 
@@ -646,7 +646,7 @@ public:
     m_Payload.push_back(((m_Y & 0xff00) >> 8));
     m_Payload.push_back( (m_Y & 0x00ff));
   }
-  
+
   virtual ~CPacketMOUSE()
   { }
 };
@@ -691,7 +691,7 @@ public:
 
     m_Payload.push_back('\0');
   }
-  
+
   virtual ~CPacketLOG()
   { }
 };
@@ -727,7 +727,7 @@ public:
 
     m_Payload.push_back('\0');
   }
-  
+
   virtual ~CPacketACTION()
   { }
 };
@@ -738,8 +738,10 @@ private:
   CAddress      m_Addr;
   int           m_Socket;
   unsigned int  m_UID;
+  bool          m_isConnected;
 public:
   CXBMCClient(const char *IP = "127.0.0.1", int Port = 9777, int Socket = -1, unsigned int UID = 0)
+      : m_isConnected(false)
   {
     m_Addr = CAddress(IP, Port);
     if (Socket == -1)
@@ -751,6 +753,14 @@ public:
       m_UID = UID;
     else
       m_UID = XBMCClientUtils::GetUniqueIdentifier();
+
+    if (m_Socket != -1)
+        m_isConnected = true;
+  }
+
+  bool isConnected()
+  {
+      return m_isConnected;
   }
 
   void SendNOTIFICATION(const char *Title, const char *Message, unsigned short IconType, const char *IconFile = NULL)
@@ -823,6 +833,15 @@ public:
 
     CPacketACTION action(ActionMessage, ActionType);
     action.Send(m_Socket, m_Addr, m_UID);
+  }
+
+  void SendPING()
+  {
+    if (m_Socket < 0)
+      return;
+
+    CPacketPING pingPck;
+    pingPck.Send(m_Socket, m_Addr, m_UID);
   }
 };
 
