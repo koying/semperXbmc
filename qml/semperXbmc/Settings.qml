@@ -204,17 +204,20 @@ Item{
 
         var host = DbSettings.getSetting("server", "Unspecified");
         var jsonPort = DbSettings.getSetting("jsonPort", "8080");
-        var eventPort = DbSettings.getSetting("jsonPort", "9777");
+        var eventPort = DbSettings.getSetting("eventPort", "9777");
 
         inpServer.text = host;
         inpJsonPort.text = jsonPort;
         inpEventPort.text = eventPort;
 
+        globals.server = inpServer.text;
+        globals.jsonPort = inpJsonPort.text;
+        globals.eventPort = inpEventPort.text;
+
         if (host == "Unspecified") {
             background.state = "shown";
             return;
         }
-
 
         container.settingsChanged();
     }
@@ -223,6 +226,10 @@ Item{
         DbSettings.setSetting("server", inpServer.text);
         DbSettings.setSetting("jsonPort", inpJsonPort.text);
         DbSettings.setSetting("eventPort", inpEventPort.text);
+
+        globals.server = inpServer.text;
+        globals.jsonPort = inpJsonPort.text;
+        globals.eventPort = inpEventPort.text;
     }
 
     Component.onCompleted: setup();

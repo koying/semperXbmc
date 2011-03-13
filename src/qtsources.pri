@@ -1,3 +1,5 @@
+QT += network
+
 DEPENDPATH += src
 INCLUDEPATH += src
 
@@ -8,5 +10,5 @@ HEADERS += \
     XbmcEventClient.h
 
 !symbian {
-    LIBS += "-lws2_32"
+    LIBS += -lws2_32
 }

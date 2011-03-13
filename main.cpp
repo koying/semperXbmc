@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<XbmcEventClient>("XbmcEvents", 1, 0, "XbmcClient");
 
     QmlApplicationViewer viewer;
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockPortrait);
     viewer.setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
     viewer.showExpanded();
 

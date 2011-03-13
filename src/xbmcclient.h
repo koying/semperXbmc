@@ -735,6 +735,7 @@ public:
 class CXBMCClient
 {
 private:
+  CAddress      m_Host;
   CAddress      m_Addr;
   int           m_Socket;
   unsigned int  m_UID;
@@ -749,13 +750,16 @@ public:
     else
       m_Socket = Socket;
 
+    if (m_Socket != -1) {
+        m_Host = CAddress(0);
+        m_Host.Bind(m_Socket);
+        m_isConnected = true;
+    }
+
     if (UID)
       m_UID = UID;
     else
       m_UID = XBMCClientUtils::GetUniqueIdentifier();
-
-    if (m_Socket != -1)
-        m_isConnected = true;
   }
 
   bool isConnected()

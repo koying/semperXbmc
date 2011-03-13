@@ -26,6 +26,9 @@ public:
     Q_INVOKABLE void log(int LogLevel, const QString &Message, bool AutoPrintf = true);
     Q_INVOKABLE void action(const QString &ActionMessage, int ActionType = ACTION_EXECBUILTIN);
 
+    Q_INVOKABLE void actionButton(const QString &ActionMessage);
+    Q_INVOKABLE void actionBuiltin(const QString &ActionMessage);
+    Q_INVOKABLE void keypress(const QString &keycode);
 signals:
 
 public slots:

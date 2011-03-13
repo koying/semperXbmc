@@ -1,5 +1,7 @@
 #include "XbmcEventClient.h"
 
+#include <errno.h>
+
 XbmcEventClient::XbmcEventClient(QObject *parent)
     : QObject(parent)
     , m_xbmcClient(0)
@@ -8,23 +10,35 @@ XbmcEventClient::XbmcEventClient(QObject *parent)
     m_PingTimer = new QTimer(this);
     m_PingTimer->setInterval(45000);
     connect(m_PingTimer, SIGNAL(timeout()), SLOT(ping()));
+
+    XBMCClientUtils::Initialize();
 }
 
 XbmcEventClient::~XbmcEventClient()
 {
     if (m_xbmcClient)
         delete m_xbmcClient;
+    XBMCClientUtils::Clean();
 }
 
 void XbmcEventClient::initialize(const QString &ip, const QString &port)
 {
+    if (m_xbmcClient) {
+        delete m_xbmcClient;
+        m_xbmcClient = NULL;
+    }
+
     m_xbmcClient = new CXBMCClient(ip.toAscii().data(), port.toInt());
     if (m_xbmcClient->isConnected()) {
         m_xbmcClient->SendHELO("QML device", ICON_NONE);
         m_PingTimer->start();
+        notify("semperXbmc", "Now connected", ICON_NONE);
     } else {
         delete m_xbmcClient;
         m_xbmcClient = NULL;
+#ifdef Q_OS_WIN
+        qDebug() << "Socket creation failed" << WSAGetLastError();
+#endif
     }
 }
 
@@ -94,5 +108,32 @@ void XbmcEventClient::action(const QString& ActionMessage, int ActionType)
         return;
 
     m_xbmcClient->SendACTION(ActionMessage.toLatin1().data(), ActionType);
+}
+
+void XbmcEventClient::actionButton(const QString& ActionMessage)
+{
+    if (!m_xbmcClient)
+        return;
+
+    m_xbmcClient->SendACTION(ActionMessage.toLatin1().data(), ACTION_BUTTON);
+}
+
+void XbmcEventClient::actionBuiltin(const QString& ActionMessage)
+{
+    if (!m_xbmcClient)
+        return;
+
+    m_xbmcClient->SendACTION(ActionMessage.toLatin1().data(), ACTION_EXECBUILTIN);
+}
+
+void XbmcEventClient::keypress(const QString& keycode)
+{
+    if (!m_xbmcClient)
+        return;
+
+    if (!keycode.isEmpty()) {
+        m_xbmcClient->SendButton(keycode.toLatin1().data(), "KB", BTN_USE_NAME | BTN_DOWN | BTN_QUEUE);
+        m_xbmcClient->SendButton(keycode.toLatin1().data(), "KB", BTN_USE_NAME | BTN_UP | BTN_QUEUE);
+    }
 }
 

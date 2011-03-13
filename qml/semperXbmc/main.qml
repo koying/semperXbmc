@@ -12,22 +12,16 @@ Rectangle {
     width: 360
     height: 640
 
-    RemoteNavigation {
-        id: remotenavigation1
+    Globals {
+        id: globals
+    }
+
+    RemoteView {
+        id: remoteView
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.top: titlebar.bottom
-        anchors.topMargin: 0
-
-        onBLClicked: {
-            $().player.playPause();
-        }
-        onBRClicked: {
-            $().player.stop();
-        }
-
+        anchors.bottom: toolbar.top
     }
 
     Bar.TitleBar {
@@ -47,7 +41,7 @@ Rectangle {
     Bar.ToolBar {
         id: toolbar
 
-        height : 40
+        height : 55
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right:  parent.right
@@ -59,6 +53,7 @@ Rectangle {
         y: 170
 
         onSettingsChanged: {
+            remoteView.settingsChanged();
             main.initialize();
         }
     }
@@ -69,8 +64,8 @@ Rectangle {
 
     function initialize() {
         var xbmc = Xbmc.setup();
-        xbmc.port = settings.jsonPort;
-        xbmc.server = settings.server;
+        xbmc.port = globals.jsonPort;
+        xbmc.server = globals.server;
 
         xbmc.library = new Library.Library();
         xbmc.playlist = new Playlist.Playlist();
