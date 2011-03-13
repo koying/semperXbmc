@@ -206,8 +206,15 @@ function secToHours(secs)
     if (hours) {
         ret += hours + "h ";
     }
-    return ret + sprintf("%02d", minutes) + "m"
+    return ret + sprintf("%02d", minutes) + "min"
 }
+
+function secToMinutes(secs)
+{
+    var minutes = Math.floor(secs / 60);
+    return sprintf("%d", minutes) + " min"
+}
+
 
 function fixedDecimals(val, num) {
     var div = Math.pow(10, num);

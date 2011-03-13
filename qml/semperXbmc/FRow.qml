@@ -7,6 +7,7 @@ Rectangle {
     property alias source: rowImage.source
     property bool selected: false;
     property bool portrait: false;
+    property bool watched: false;
     width: parent.width;
     height: 80
     id: content
@@ -37,8 +38,28 @@ Rectangle {
             height: parent.height
             fillMode:Image.PreserveAspectFit
             visible: rowImage.source != ""
+            onStatusChanged: {
+                if (rowImage.status == Image.Ready) {
+                    if (rowImage.sourceSize.width > rowImage.sourceSize.height*2) {   // banner
+                        details.visible = false;
+                        rowImage.width = parent.width
+//                        parent.height = rowImage.sourceSize.height;
+                        rowImage.fillMode = Image.Stretch;
+                    }
+                }
+            }
+
+            Image {
+                source: "img/checkmark_48.png"
+                smooth: true
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                visible: content.watched
+            }
         }
         Column {
+            id: details
             Text {
                 id: rowTitle
                 height: subtitle ? row.height * 0.4 : row.height

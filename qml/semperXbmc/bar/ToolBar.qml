@@ -3,6 +3,12 @@ import Qt 4.7
 Item {
     id: toolbar
 
+    signal tvshowsRequested()
+    signal moviesRequested()
+    signal picturesRequested()
+    signal playlistRequested()
+    signal musicRequested()
+
     Rectangle {
         anchors.fill: parent; color: "#343434";
         border.color: "black"
@@ -30,7 +36,7 @@ Item {
                 width: parent.height-4
                 height: parent.height-4
                 anchors.verticalCenter: parent.verticalCenter
-                onClicked: toolbar.prefClicked()
+                onClicked: toolbar.tvshowsRequested()
                 imageSource: "img/TvShows.png"
             }
 
@@ -38,7 +44,7 @@ Item {
                 id: movieButton
                 width: parent.height-4
                 height: parent.height-4
-                onClicked: toolbar.prefClicked()
+                onClicked: toolbar.moviesRequested()
                 imageSource: "img/Movies.png"
             }
 
@@ -46,7 +52,7 @@ Item {
                 id: videoButton
                 width: parent.height-4
                 height: parent.height-4
-                onClicked: toolbar.prefClicked()
+                onClicked: toolbar.playlistRequested()
                 imageSource: "img/Library.png"
             }
 
@@ -54,7 +60,7 @@ Item {
                 id: musicButton
                 width: parent.height-4
                 height: parent.height-4
-                onClicked: toolbar.prefClicked()
+                onClicked: toolbar.musicRequested()
                 imageSource: "img/Music.png"
             }
 
@@ -62,7 +68,7 @@ Item {
                 id: photoButton
                 width: parent.height-4
                 height: parent.height-4
-                onClicked: toolbar.prefClicked()
+                onClicked: toolbar.picturesRequested()
                 imageSource: "img/Pictures.png"
             }
         }

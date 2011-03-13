@@ -4,10 +4,12 @@ DEPENDPATH += src
 INCLUDEPATH += src
 
 SOURCES += \
-    XbmcEventClient.cpp
+    XbmcEventClient.cpp \
+    src/NetworkAccessManagerFactory.cpp
 
 HEADERS += \
-    XbmcEventClient.h
+    XbmcEventClient.h \
+    src/NetworkAccessManagerFactory.h
 
 !symbian {
     LIBS += -lws2_32

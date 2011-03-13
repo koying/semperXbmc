@@ -1,17 +1,17 @@
 import Qt 4.7
 import "js/Utils.js" as Utils
 
-Item {
-    width: videoComponent.width
-    height: videoComponent.height
-    //id: videoComponent
+Rectangle {
+    color:  "black"
+    width: root.width
+    height: root.height
 
     Row {
         id: container
         Item {
             id: tvshow
-            height: videoComponent.height
-            width: videoComponent.width
+            height: root.height
+            width: root.width
             ListView {
                 id: tvshowView
                 z: 1
@@ -23,8 +23,8 @@ Item {
         }
         Item {
             id: season
-            height: videoComponent.height
-            width: videoComponent.width
+            height: root.height
+            width: root.width
             ListView {
                 id: seasonView
                 z: 1
@@ -37,8 +37,8 @@ Item {
 
         Item {
             id: episode
-            height: videoComponent.height
-            width: videoComponent.width
+            height: root.height
+            width: root.width
             ListView {
                 id: episodeView
                 z: 1
@@ -85,8 +85,10 @@ Item {
             source: thumb
             selected: selected
             portrait: true
+            watched: playcount > 0
             function clicked(id) {
                 console.log("show clicked" + id);
+                seasonModel.clear();
                 $().library.loadSeasons(id);
                 container.state = "season";
             }
@@ -99,12 +101,14 @@ Item {
         FRow {
             id: content
             text: name
-            subtitle: genre /* + "\n" + duration*/
+            subtitle: episodes + " episodes"
             source: thumb
             selected: selected
             portrait: true
+            watched: playcount > 0
             function clicked(id) {
                 console.log("season clicked" + id);
+                episodeModel.clear();
                 $().library.loadEpisodes(id);
                 container.state = "episode";
             }
@@ -116,14 +120,17 @@ Item {
 
         FRow {
             id: content
-            text: name
-            subtitle: Utils.secToHours(duration)
+            text: (number > 0 ? number + ". " : "") + name
+            subtitle: Utils.secToMinutes(duration)
             source: thumb
             selected: selected
             portrait: true
+            watched: playcount > 0
             function clicked(id) {
                 console.log("episode clicked" + id);
+                $().playlist.videoClear();
                 $().playlist.addEpisode(id);
+                main.state = ""
             }
         }
     }

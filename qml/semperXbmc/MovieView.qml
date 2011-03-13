@@ -1,34 +1,36 @@
 import Qt 4.7
+import "js/Utils.js" as Utils
 
-Item {
-	width: videoComponent.width
-	height: videoComponent.height
-	//id: videoComponent
+Rectangle {
+    color:  "black"
+    width: root.width
+    height: root.height
 
-	ListView {
-		id: movieView
-		z: 1
-		width: parent.width
-		height: parent.height
-		model: movieModel
-		delegate: movieDelegate
-	}
+    ListView {
+        id: movieView
+        z: 1
+        width: parent.width
+        height: parent.height
+        model: movieModel
+        delegate: movieDelegate
+    }
 
-	Component {
-		id: movieDelegate
+    Component {
+        id: movieDelegate
 
-		FRow {
-			id: content
-			text: name
-			subtitle: genre + "\n" + duration
-			source: thumb
-			selected: selected
-			portrait: true
-			function clicked(id) {
-				console.log("artist clicked" + id);
-				$().playlist.addMovie(id);
-
-			}
-		}
-	}
+        FRow {
+            id: content
+            text: name
+            subtitle: genre + "\n" + (duration > 0 ? Utils.secToHours(duration) : runtime)
+            source: thumb
+            selected: selected
+            portrait: true
+            watched: playcount > 0
+            function clicked(id) {
+                $().playlist.videoClear();
+                $().playlist.addMovie(id);
+                main.state = ""
+            }
+        }
+    }
 }
