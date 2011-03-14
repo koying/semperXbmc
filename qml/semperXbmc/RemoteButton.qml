@@ -42,7 +42,7 @@ Item {
         color: "#aaaaaa"
         anchors.centerIn: buttonImage; font.bold: true
         text: container.text; /*style: Text.Raised; styleColor: "black"*/
-        font.pixelSize: 24
+        font.pointSize: 10
         visible: (container.iconSource=="")
     }
     states: [

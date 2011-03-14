@@ -37,52 +37,52 @@ Item{
             id: text1
             x: 89
             width: 80
-            height: 20
+            height: 25
             color: "#ffffff"
             text: "<b>SETTINGS</b>"
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.top: parent.top
             anchors.topMargin: 15
-            font.pixelSize: 24
+            font.pointSize: 11
         }
 
         Text {
             id: text2
             y: 71
             width: 80
-            height: 20
+            height: 25
             color: "#ffffff"
             text: "Server:"
             anchors.left: parent.left
             anchors.leftMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         Text {
             id: text3
             width: 80
-            height: 20
+            height: 25
             color: "#ffffff"
             text: "JSON port"
             anchors.top: text2.bottom
             anchors.topMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         Text {
             id: text4
             width: 80
-            height: 20
+            height: 25
             color: "#ffffff"
             text: "Event port"
             anchors.top: text3.bottom
             anchors.topMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         TextInput {
@@ -90,11 +90,11 @@ Item{
             x: 136
             y: 68
             width: 150
-            height: 20
+            height: 25
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         TextInput {
@@ -102,11 +102,11 @@ Item{
             x: 135
             y: 98
             width: 150
-            height: 20
+            height: 25
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         TextInput {
@@ -114,11 +114,11 @@ Item{
             x: 144
             y: 128
             width: 150
-            height: 20
+            height: 25
             horizontalAlignment: TextInput.AlignRight
             anchors.right: parent.right
             anchors.rightMargin: 20
-            font.pixelSize: 14
+            font.pointSize: 8
         }
 
         Rectangle {
@@ -144,7 +144,7 @@ Item{
                 text: "DONE"
                 anchors.centerIn: parent
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 18
+                font.pointSize: 11
             }
 
             MouseArea {
