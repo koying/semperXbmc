@@ -19,7 +19,6 @@ Xbmc.prototype.init = function() {
 }
 
 Xbmc.prototype.volumeUp = function() {
-    console.log("up");
     this.volume += 10;
     if (this.volume > 100) {
         this.volume = 100;
@@ -28,7 +27,6 @@ Xbmc.prototype.volumeUp = function() {
 }
 
 Xbmc.prototype.volumeDown = function() {
-    console.log("down");
     this.volume -= 10;
     if (this.volume < 0) {
         this.volume = 0;
@@ -40,7 +38,7 @@ Xbmc.prototype.setVolume = function(i) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+//            console.log(doc.responseText);
             $().volume = JSON.parse(doc.responseText).result;
         }
     }
@@ -48,7 +46,6 @@ Xbmc.prototype.setVolume = function(i) {
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "fields": ["title", "album", "artist", "duration"] }, "id": 1}';
     var str = '{"jsonrpc": "2.0", "method": "XBMC.SetVolume", "params": ' + i + ', "id": 1}';
     doc.send(str);
-    console.log(str);
     this.volume = i;
     return;
 }
@@ -59,7 +56,7 @@ Xbmc.prototype.getVolume = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+//            console.log(doc.responseText);
             $().volume = JSON.parse(doc.responseText).result;
         }
     }

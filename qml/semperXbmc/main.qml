@@ -55,7 +55,7 @@ Rectangle {
         onQuitClicked: Qt.quit()
         onHomeClicked: main.state = ""
         onBackClicked: {
-            console.debug("back");
+//            console.debug("back");
             switch(main.state) {
             case "tvshows":
                 if (tvshowView.back())
@@ -162,7 +162,7 @@ Rectangle {
     }
 
     function initialize() {
-        console.log("xbmc initialization");
+//        console.log("xbmc initialization");
 
         var xbmc = Xbmc.setup();
         xbmc.port = globals.jsonPort;

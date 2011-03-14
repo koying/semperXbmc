@@ -87,7 +87,7 @@ Rectangle {
             portrait: true
             watched: playcount > 0
             function clicked(id) {
-                console.log("show clicked" + id);
+//                console.log("show clicked" + id);
                 seasonModel.clear();
                 $().library.loadSeasons(id);
                 container.state = "season";
@@ -107,7 +107,7 @@ Rectangle {
             portrait: true
             watched: playcount > 0
             function clicked(id) {
-                console.log("season clicked" + id);
+//                console.log("season clicked" + id);
                 episodeModel.clear();
                 $().library.loadEpisodes(id);
                 container.state = "episode";
@@ -127,7 +127,7 @@ Rectangle {
             portrait: true
             watched: playcount > 0
             function clicked(id) {
-                console.log("episode clicked" + id);
+//                console.log("episode clicked" + id);
                 $().playlist.videoClear();
                 $().playlist.addEpisode(id);
                 main.state = ""

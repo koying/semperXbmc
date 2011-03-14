@@ -147,7 +147,7 @@ Item {
     }
 
     function settingsChanged() {
-        console.debug("settings changed");
+//        console.debug("settings changed");
         xbmcEventClient.initialize(globals.server, globals.eventPort);
     }
 }

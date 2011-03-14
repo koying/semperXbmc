@@ -34,7 +34,7 @@ Library.prototype.loadMovies = function () {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+//            console.log(doc.responseText);
 
             var result = JSON.parse(doc.responseText).result;
             var movies = result.movies;
@@ -88,7 +88,7 @@ Library.prototype.loadSeasons = function (id) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+//            console.log(doc.responseText);
 
             var result = JSON.parse(doc.responseText).result;
             var seasons = result.seasons;
@@ -133,7 +133,6 @@ Library.prototype.loadEpisodes = function (id) {
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "start": 0, "tvshowid":'+ this.idtvshow +', "season":'+ id +', "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "episode", "year", "playcount", "rating"] }, "id": 1}';
-    console.log(str);
     doc.send(str);
 
     return;
@@ -200,7 +199,7 @@ Library.prototype.loadArtists = function() {
             for (var i = 0; i < artists.length; i++){
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].label, "thumb": "http://"+$().server+":" + $().port + "vfs/" + artists[i].fanart, "selected": false});
             }
-            console.log("loading artists done")
+//            console.log("loading artists done")
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

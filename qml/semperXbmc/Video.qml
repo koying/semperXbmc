@@ -22,7 +22,7 @@ Item {
                     width: 120
                     height: 120
                     function clicked() {
-                        console.log("content");
+//                        console.log("content");
                         container.state = 'content';
                         movieView.visible = true;
                         tvshowView.visible = false;
