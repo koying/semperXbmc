@@ -31,9 +31,9 @@ Playlist.prototype.addMovie = function(idmovie){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            console.log(doc.responseText);
             if (!$().playlist.playing) {
-//                console.log("play");
+                console.log("play");
                 $().playlist.cmd("Play", "Video");
             }
         }
@@ -46,7 +46,7 @@ Playlist.prototype.addMovie = function(idmovie){
 
 Playlist.prototype.addEpisode = function(idepisode){
     console.log("add episode");
-//    var doc = new XMLHttpRequest();
+    var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             //console.log(doc.responseText);
@@ -59,6 +59,7 @@ Playlist.prototype.addEpisode = function(idepisode){
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "episodeid": '+idepisode+' }, "id": 1}';
     console.log(str);
+    doc.send(str);
     return;
 }
 
@@ -119,7 +120,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-//            console.log(doc.responseText);
+            console.log(doc.responseText);
         }
     }
 
@@ -130,6 +131,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     }
     str += '"id": 1}';
     console.log(str);
+    doc.send(str);
     return;
 }
 
