@@ -1,13 +1,13 @@
 import QtQuick 1.0
+import com.nokia.symbian 1.0
+
 import "js/xbmc.js" as Xbmc
 import "js/player.js" as Player
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
 import "js/json.js" as Json
 
-import "bar" as Bar
-
-Rectangle {
+Window {
     id: main
     width: 360
     height: 640
@@ -16,71 +16,154 @@ Rectangle {
         id: globals
     }
 
-    Item {
+    StatusBar {
+        id: statusBar
+        property alias text: txTitle.text
+
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+
+        Behavior on opacity {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        Text {
+            id: txTitle
+            anchors { left: parent.left; leftMargin: 10 }
+
+            color: "#2cb729"
+            font {
+                family: "Helvetica";
+                pixelSize: parent.height -5
+            }
+
+            text: "REMOTE"
+        }
+
+        MouseArea {
+            id: statusArea
+            anchors.fill: parent
+        }
+    }
+
+    TabGroup {
         id: root
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.top: titlebar.bottom
-        anchors.bottom: toolbar.top
+        anchors.top: statusBar.bottom
+        anchors.bottom: toolBar.top
 
 
         RemoteView {
             id: remoteView
-            anchors.fill: parent
         }
 
-        TvshowView {
+        PageStack {
             id: tvshowView
-            z: 1
-            opacity:  0
-        }
+            toolBar: toolBar
 
-        MovieView {
-            id: movieView
-            z: 1
-            opacity:  0
-        }
-    }
-
-    Bar.TitleBar {
-        id: titlebar
-
-        height : 52
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right:  parent.right
-        text: "REMOTE"
-
-        onPrefClicked: settings.state = "shown";
-        onQuitClicked: Qt.quit()
-        onHomeClicked: main.state = ""
-        onBackClicked: {
-//            console.debug("back");
-            switch(main.state) {
-            case "tvshows":
-                if (tvshowView.back())
-                    main.state = ""
-                break;
-            case "movies":
-                if (movieView.back())
-                    main.state = ""
-                break;
+            Component.onCompleted: {
+                tvshowView.push(Qt.resolvedUrl("TvshowView.qml"))
             }
         }
 
+        PageStack {
+            id: movieView
+
+            toolBar: toolBar
+
+            Component.onCompleted: {
+                movieView.push(Qt.resolvedUrl("MovieView.qml"))
+            }
+        }
     }
 
-    Bar.ToolBar {
-        id: toolbar
 
-        height : 55
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right:  parent.right
+    ToolBarLayout {
+        id: pgTools
 
-        onTvshowsRequested: main.state = "tvshows"
-        onMoviesRequested: main.state = "movies"
+        ToolButton {
+            visible: false
+        }
+
+        ButtonRow {
+            TabButton {
+                iconSource: "img/home.png"
+                tab: remoteView
+                onClicked: main.state = ""
+            }
+
+            TabButton {
+                iconSource: "img/filmstrip.png"
+                tab: movieView
+                onClicked: main.state = "movies"
+            }
+
+            TabButton {
+                iconSource: "img/tv.png"
+                tab: tvshowView
+                onClicked: main.state = "tvshows"
+            }
+
+            TabButton {
+                iconSource: "img/music.png"
+                onClicked: main.state = "music"
+            }
+
+            TabButton {
+                iconSource: "img/playlist.png"
+                onClicked: main.state = "playlist"
+            }
+        }
+
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
     }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+            MenuItem {
+                text: "Quit"
+                onClicked: Qt.quit()
+            }
+        }
+    }
+
+    ToolBar {
+        id: toolBar
+        property string backState
+
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+        tools: pgTools
+
+        Behavior on opacity {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+            }
+        }
+    }
+
+    states: [
+        State {
+            name: "tvshows"
+            PropertyChanges {
+                target: statusBar
+                text: "TV SHOWS"
+            }
+        },
+        State {
+            name: "movies"
+            PropertyChanges {
+                target: statusBar
+                text: "MOVIES"
+            }
+        }
+    ]
 
     Settings {
         id: settings
@@ -90,43 +173,6 @@ Rectangle {
         onSettingsChanged: {
             remoteView.settingsChanged();
             main.initialize();
-        }
-    }
-
-    states: [
-        State {
-            name: "tvshows"
-            PropertyChanges {
-                target: tvshowView
-                opacity: 1
-                x: 0;
-            }
-            PropertyChanges {
-                target: titlebar
-                text: "TV SHOWS"
-                state: "content"
-            }
-        },
-        State {
-            name: "movies"
-            PropertyChanges {
-                target: movieView
-                opacity: 1
-                x: 0;
-            }
-            PropertyChanges {
-                target: titlebar
-                text: "MOVIES"
-                state: "content"
-            }
-        }
-    ]
-
-    transitions: Transition {
-        PropertyAnimation {
-            properties: "opacity";
-            easing.type: Easing.InOutCubic
-            duration: 500
         }
     }
 

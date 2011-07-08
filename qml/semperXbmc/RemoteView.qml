@@ -1,7 +1,8 @@
 import QtQuick 1.0
+import com.nokia.symbian 1.0
 import XbmcEvents 1.0
 
-Item {
+Rectangle {
     BorderImage {
         id: globalKeys
         border.left: 30; border.top: 30
