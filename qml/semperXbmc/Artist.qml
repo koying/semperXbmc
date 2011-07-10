@@ -6,14 +6,14 @@ Component {
 
     Cp.Row {
         id: content
+        width: ListView.view.width;
+        height: 80
+
         text: name
-        source: "img/user.svg"
+        source: thumb
         selected: selected
         function clicked(id) {
-            console.log("artist clicked" + id);
-            //artistComponent.clicked(id);
-            container.state = 'album';
-            $().library.loadAlbums(id);
+            musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: id})
         }
     }
 }

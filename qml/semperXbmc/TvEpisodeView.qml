@@ -5,7 +5,7 @@ import "components" as Cp;
 import "js/Utils.js" as Utils
 
 Page {
-    property int serieId
+    property int seasonId: -99
 
     tools:  tvshowStack.depth > 1 ? pgTools : null
 
@@ -20,35 +20,37 @@ Page {
     }
 
     ListView {
-        id: tvSeasonList
+        id: tvEpisodeList
         anchors.fill: parent
         clip: true
 
-        model: seasonModel
-        delegate: seasonDelegate
+        model: episodeModel
+        delegate: episodeDelegate
     }
 
     Component {
-        id: seasonDelegate
+        id: episodeDelegate
 
         Cp.Row {
             id: content
-            width: parent.width;
-            height: 200
+            width: ListView.view.width;
+            height: 80
 
-            text: model.name
-            subtitle: model.episodes + " episodes"
+            text: (model.number > 0 ? model.number + ". " : "") + model.name
+            subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
             source: model.thumb
             watched: model.playcount > 0
 
             onSelected: {
-                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
+//                console.log("episode clicked" + id);
+                $().playlist.videoClear();
+                $().playlist.addEpisode(id);
             }
         }
     }
 
-    onSerieIdChanged: {
-        seasonModel.clear();
-        $().library.loadSeasons(serieId);
+    onSeasonIdChanged: {
+        episodeModel.clear();
+        $().library.loadEpisodes(seasonId);
     }
 }

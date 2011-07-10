@@ -16,34 +16,83 @@ Window {
         id: globals
     }
 
-    StatusBar {
-        id: statusBar
-        property alias text: txTitle.text
+//    StatusBar {
+//        id: statusBar
+//        property alias text: txTitle.text
 
-        anchors { top: parent.top; left: parent.left; right: parent.right }
+//        anchors { top: parent.top; left: parent.left; right: parent.right }
 
-        Behavior on opacity {
-            NumberAnimation {
-                easing.type: Easing.InOutQuad
+//        Behavior on opacity {
+//            NumberAnimation {
+//                easing.type: Easing.InOutQuad
+//            }
+//        }
+
+//        Text {
+//            id: txTitle
+//            anchors { left: parent.left; leftMargin: 10 }
+
+//            color: "#2cb729"
+//            font {
+//                family: "Helvetica";
+//                pixelSize: parent.height -5
+//            }
+
+//            text: root.currentTab.title
+//        }
+
+//        MouseArea {
+//            id: statusArea
+//            anchors.fill: parent
+//        }
+//    }
+
+    ToolBar {
+        id: toolBar
+        anchors { left: parent.left; right: parent.right; top: parent.top }
+
+        tools: ToolBarLayout {
+
+            ToolButton {
+                iconSource: "img/settings.svg"
+                onClicked: settings.open()
             }
-        }
 
-        Text {
-            id: txTitle
-            anchors { left: parent.left; leftMargin: 10 }
+            ButtonRow {
+                TabButton {
+                    iconSource: "img/home.png"
+                    tab: remoteTab
+                    onClicked: main.state = ""
+                }
 
-            color: "#2cb729"
-            font {
-                family: "Helvetica";
-                pixelSize: parent.height -5
+                TabButton {
+                    iconSource: "img/filmstrip.png"
+                    tab: movieTab
+                    onClicked: main.state = "movies"
+                }
+
+                TabButton {
+                    iconSource: "img/tv.png"
+                    tab: tvTab
+                    onClicked: main.state = "tvshows"
+                }
+
+                TabButton {
+                    iconSource: "img/music.png"
+                    tab: musicTab
+                    onClicked: main.state = "music"
+                }
+
+                TabButton {
+                    iconSource: "img/playlist.png"
+                    onClicked: main.state = "playlist"
+                }
             }
 
-            text: "REMOTE"
-        }
-
-        MouseArea {
-            id: statusArea
-            anchors.fill: parent
+            ToolButton {
+                iconSource: "img/close_stop.svg"
+                onClicked: Qt.quit()
+            }
         }
     }
 
@@ -51,127 +100,105 @@ Window {
         id: root
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.top: statusBar.bottom
-        anchors.bottom: toolBar.top
+        anchors.top: toolBar.bottom
+        anchors.bottom: parent.bottom
 
 
         RemoteView {
-            id: remoteView
+            id: remoteTab
+            property string title: "REMOTE"
         }
 
-        PageStack {
-            id: tvshowView
-            toolBar: toolBar
+        Item {
+            id: tvTab
+            PageStack {
+                property string title: "TV"
 
-            Component.onCompleted: {
-                tvshowView.push(Qt.resolvedUrl("TvshowView.qml"))
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: tvToolbar.top }
+
+                id: tvshowStack
+                toolBar: tvToolbar
+
+                Component.onCompleted: {
+                    tvshowStack.push(Qt.resolvedUrl("TvshowView.qml"))
+                }
+            }
+            ToolBar {
+                id: tvToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+
+        }
+
+        Item {
+            id: movieTab
+
+            PageStack {
+                property string title: "MOVIES"
+
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: movieToolbar.top }
+
+                id: movieStack
+                toolBar: movieToolbar
+
+                Component.onCompleted: {
+                    movieStack.push(Qt.resolvedUrl("MovieView.qml"))
+                }
+            }
+
+            ToolBar {
+                id: movieToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
             }
         }
 
-        PageStack {
-            id: movieView
+        Item {
+            id: musicTab
 
-            toolBar: toolBar
+            PageStack {
+                property string title: "MUSIC"
 
-            Component.onCompleted: {
-                movieView.push(Qt.resolvedUrl("MovieView.qml"))
-            }
-        }
-    }
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: musicToolbar.top }
 
+                id: musicStack
+                toolBar: musicToolbar
 
-    ToolBarLayout {
-        id: pgTools
-
-        ToolButton {
-            visible: false
-        }
-
-        ButtonRow {
-            TabButton {
-                iconSource: "img/home.png"
-                tab: remoteView
-                onClicked: main.state = ""
+                Component.onCompleted: {
+                    musicStack.push(Qt.resolvedUrl("MusicArtistView.qml"))
+                }
             }
 
-            TabButton {
-                iconSource: "img/filmstrip.png"
-                tab: movieView
-                onClicked: main.state = "movies"
-            }
+            ToolBar {
+                id: musicToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
-            TabButton {
-                iconSource: "img/tv.png"
-                tab: tvshowView
-                onClicked: main.state = "tvshows"
-            }
-
-            TabButton {
-                iconSource: "img/music.png"
-                onClicked: main.state = "music"
-            }
-
-            TabButton {
-                iconSource: "img/playlist.png"
-                onClicked: main.state = "playlist"
-            }
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
-    }
-
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-            MenuItem {
-                text: "Quit"
-                onClicked: Qt.quit()
-            }
-        }
-    }
-
-    ToolBar {
-        id: toolBar
-        property string backState
-
-        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-
-        tools: pgTools
-
-        Behavior on opacity {
-            NumberAnimation {
-                easing.type: Easing.InOutQuad
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
             }
         }
     }
-
-    states: [
-        State {
-            name: "tvshows"
-            PropertyChanges {
-                target: statusBar
-                text: "TV SHOWS"
-            }
-        },
-        State {
-            name: "movies"
-            PropertyChanges {
-                target: statusBar
-                text: "MOVIES"
-            }
-        }
-    ]
 
     Settings {
         id: settings
-        x: 30
-        y: 170
+        titleText: "SETTINGS"
 
         onSettingsChanged: {
-            remoteView.settingsChanged();
+            remoteTab.settingsChanged();
             main.initialize();
         }
     }

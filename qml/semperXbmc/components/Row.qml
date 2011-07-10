@@ -1,113 +1,107 @@
-import Qt 4.7
+import QtQuick 1.0
+import com.nokia.symbian 1.0
 
-
-Rectangle {
-    property alias text: rowTitle.text
-    property alias subtitle: rowSubtitle.text
-    property alias source: rowImage.source
-    property bool selected: false;
-    property bool portrait: false;
-    width: parent.width;
-    height: 80
+ListItem {
     id: content
-    gradient: selected ? highlight : normal
-    Gradient {
-        id: normal
-        GradientStop { position: 0.7; color: "#000" }
-        GradientStop { position: 1.0; color: "#222" }
-    }
-    Gradient {
-        id: pressed
-        GradientStop { position: 0.0; color: "#336" }
-        GradientStop { position: 1.0; color: "#003" }
-    }
-    Gradient {
-        id: highlight
-        GradientStop { position: 0.0; color: "#669" }
-        GradientStop { position: 1.0; color: "#336" }
-    }
+
+    property string text
+    property string subtitle
+    property string duration
+    property alias source: rowImage.source
+    property bool watched: false
+    property bool banner:  false
+    property bool filtered: false
+
+    signal selected(string id)
+
+    height: filtered ? 0 : 80
+
     Row {
-        id: row
-        width: parent.width
-        height: parent.height
+        id: grid
         spacing: 20
-        Image {
-            id: rowImage
-            width: parent.height;
-            height: parent.height
-            fillMode:Image.PreserveAspectFit
-            visible: rowImage.source != ""
-        }
-        Column {
-            Text {
-                id: rowTitle
-                height: subtitle ? row.height * 0.4 : row.height
-                color: "#ffffff"
-                wrapMode: Text.Wrap
-                font.pointSize: 12
-                verticalAlignment :Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-            Text {
-                id: rowSubtitle
-                height: row.height - rowTitle.height
-                y: rowTitle.height
-                color: "#ffffff"
-                wrapMode: Text.Wrap
-                font.pointSize: rowTitle.font.pointSize  * 0.6
-                verticalAlignment :Text.AlignVCenter
-                elide: Text.ElideRight
-                visible: rowSubtitle.text != ""
-            }
-        }
+        anchors.fill: content.paddingItem
+        visible: !content.filtered
 
+        Item {
+            id: itImage
+            width: grid.height
+            height: grid.height
+
+            Image {
+                id: rowImage
+                anchors {fill: parent; horizontalCenter: parent.horizontalCenter }
+                fillMode: Image.PreserveAspectFit
+                visible: source != ""
+                onStatusChanged: {
+                    if (rowImage.status == Image.Ready) {
+                        if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && content.banner) {   // banner
+                            details.visible = false;
+                            grid.anchors.fill = content
+                            itImage.width = content.width
+                            rowImage.fillMode = Image.Stretch;
+                        }
+                    }
+                }
+
+                Image {
+                    source: "../img/checkmark_48.png"
+                    smooth: true
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    visible: content.watched
+                }
+            }
+        }
+        Item {
+            id: details
+            height: content.height
+            width: content.width  - itImage.width
+            Column {
+                Item {
+                    id: rowTitle
+                    height: content.subtitle ? details.height * 0.4 : details.height
+                    width:  details.width
+
+                    ListItemText {
+                        id: txItemTitle
+
+                        mode: content.mode
+                        role: "Title"
+                        text: content.text
+                    }
+                }
+
+                Item {
+                    id: rowSubtitle
+                    height: details.height - rowTitle.height
+                    width:  details.width
+                    y: rowTitle.height
+                    visible: content.subtitle != "" || content.duration != ""
+
+                    ListItemText {
+                        id: txItemSubTitle
+                        anchors { left: parent.left }
+                        width: parent.width - 100
+
+                        mode: content.mode
+                        role: "SubTitle"
+                        text: content.subtitle
+                    }
+                    ListItemText {
+                        id: txItemDuration
+                        anchors { right: parent.right }
+
+                        mode: content.mode
+                        role: "SubTitle"
+                        text: content.duration
+                    }
+                }
+            }
+        }
     }
-    Rectangle {
-        width: parent.width
-        height: 2
-        color: "#444"
-        z: 2
-        anchors.bottom: parent.bottom;
-    }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent;
-        onClicked: {
-            timer.start()
-            content.state = "pressed"
-            content.clicked(id);
-        }
-    }
-    states: [
-        State {
-            name: "normal"
-            PropertyChanges {
-                target: content
-                gradient: normal
-            }
-        },
-        State {
-            name: "highlight"
-            PropertyChanges {
-                target: content
-                gradient: highlight
-            }
-        },
-        State {
-            name: "pressed"
-            PropertyChanges {
-                target: content
-                gradient: pressed
-            }
-        }
-
-    ]
-    Timer {
-        id: timer
-        interval: 500; running: false; repeat: false
-        onTriggered: content.state = selected ? "highlight" : "normal"
-
+    onClicked: {
+        content.selected(id);
     }
 }
-

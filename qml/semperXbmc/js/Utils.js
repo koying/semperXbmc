@@ -192,6 +192,13 @@ function decToDMS(num) {
     return sign + hh + "\u00B0 " + parseInt(mm) + "' " + parseInt(ss*100)/100 + "\"";
 }
 
+function secToMMSS(num) {
+    var mm = parseInt(num/60);
+    var ss = (num-(mm*60));
+
+    return parseInt(mm) + ":" + sprintf("%02d", ss);
+}
+
 function secToHours(secs)
 {
     var hours = Math.floor(secs / (60 * 60));
@@ -206,13 +213,13 @@ function secToHours(secs)
     if (hours) {
         ret += hours + "h ";
     }
-    return ret + sprintf("%02d", minutes) + "min"
+    return ret + sprintf("%02d", minutes) + "min";
 }
 
 function secToMinutes(secs)
 {
-    var minutes = Math.floor(secs / 60);
-    return sprintf("%d", minutes) + " min"
+    var minutes = parseInt(secs / 60);
+    return sprintf("%d", minutes) + " min";
 }
 
 

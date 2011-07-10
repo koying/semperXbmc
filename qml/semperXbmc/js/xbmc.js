@@ -12,8 +12,8 @@ Xbmc.prototype.init = function() {
 //	else {
 //		this.library.loadArtists();
 //	}
-    this.library.loadMovies();
-    this.library.loadTVShows();
+//    this.library.loadMovies();
+//    this.library.loadTVShows();
 
     this.getVolume();
 }

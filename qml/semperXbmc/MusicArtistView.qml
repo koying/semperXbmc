@@ -1,16 +1,18 @@
-import Qt 4.7
+import QtQuick 1.0
 import com.nokia.symbian 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
 
 Page {
+    id: page
+
     tools:  ToolBarLayout {
 
         ToolButton {
             iconSource: "toolbar-back"
-            onClicked: tvshowStack.pop()
-            visible: tvshowStack.depth > 1
+            onClicked: musicStack.pop()
+            visible: musicStack.depth > 1
         }
 
         ToolButton {
@@ -22,32 +24,34 @@ Page {
         ToolButton {
             visible: false
         }
+
     }
 
     ListView {
-        id: movieList
+        id: musicArtistList
         anchors.fill: parent
         clip: true
+        highlightMoveDuration: 300
 
-        model: movieModel
-        delegate: movieDelegate
+        model: artistModel
+        delegate: artistDelegate
+    }
+
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: musicArtistList
     }
 
     Component {
-        id: movieDelegate
+        id: artistDelegate
 
         Cp.Row {
             filtered: btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true
-
             text: model.name
-            subtitle: (model.genre != undefined ? model.genre : "")
-            duration:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             source: model.thumb
-            watched: model.playcount > 0
 
-            onSelected:  {
-                $().playlist.videoClear();
-                $().playlist.addMovie(id);
+            onSelected: {
+                musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})
             }
         }
     }
@@ -58,6 +62,7 @@ Page {
     }
 
     Component.onCompleted: {
-        $().library.loadMovies();
+        $().library.loadArtists();
     }
+
 }

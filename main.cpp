@@ -5,12 +5,14 @@
 #include "networkaccessmanagerfactory.h"
 
 #include "XbmcEventClient.h"
+#include "SortFilterModel.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    qmlRegisterType<XbmcEventClient>("XbmcEvents", 1, 0, "XbmcClient");
+    qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcClient");
+    qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
 
     NetworkAccessManagerFactory factory;
 

@@ -1,7 +1,6 @@
 import Qt 4.7
 import "components" as Cp;
 
-
 Rectangle {
     property string detailState: "detail"
 
@@ -21,9 +20,10 @@ Rectangle {
         source: thumb
         text: name
         button: true;
-        fancy: touch ? "false" : ""
+        fancy: "false"
+
         function clicked() {
-            console.log("album clicked" + idalbum);
+            console.log("album clicked " + idalbum);
             $().library.loadTracks(idalbum);
             itemDetail.state = itemDetail.state == detailState ? "list" : detailState;
         }
@@ -101,7 +101,7 @@ Rectangle {
             visible: false
             id: trackView
             model: trackModel
-            delegate: FRow {
+            delegate: Cp.Row {
                 text: name
                 //color: "white"
                 height: 40

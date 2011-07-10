@@ -1,6 +1,6 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
-import XbmcEvents 1.0
+import com.semperpax.qmlcomponents 1.0
 
 Rectangle {
     BorderImage {
@@ -142,13 +142,12 @@ Rectangle {
         }
     }
 
-
     XbmcClient {
         id: xbmcEventClient
     }
 
     function settingsChanged() {
-//        console.debug("settings changed");
+    //        console.debug("settings changed");
         xbmcEventClient.initialize(globals.server, globals.eventPort);
     }
 }

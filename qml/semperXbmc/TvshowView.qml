@@ -1,66 +1,31 @@
 import Qt 4.7
 import com.nokia.symbian 1.0
+import "components" as Cp;
 
 import "js/Utils.js" as Utils
 
 Page {
-    tools:  pgTools
+    tools:  ToolBarLayout {
 
-    ToolBarLayout {
-        id: pgTools
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: tvshowStack.pop()
+            visible: tvshowStack.depth > 1
+        }
+
+        ToolButton {
+            id: btFilter
+            checkable: true
+            iconSource: "img/filter.svg"
+        }
 
         ToolButton {
             visible: false
         }
-
-        ButtonRow {
-            TabButton {
-                iconSource: "img/home.png"
-                tab: remoteView
-                onClicked: main.state = ""
-            }
-
-            TabButton {
-                iconSource: "img/filmstrip.png"
-                tab: movieView
-                onClicked: main.state = "movies"
-            }
-
-            TabButton {
-                iconSource: "img/tv.png"
-                tab: tvshowView
-                onClicked: main.state = "tvshows"
-            }
-
-            TabButton {
-                iconSource: "img/music.png"
-                onClicked: main.state = "music"
-            }
-
-            TabButton {
-                iconSource: "img/playlist.png"
-                onClicked: main.state = "playlist"
-            }
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
-    }
-
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-            MenuItem {
-                text: "Quit"
-                onClicked: Qt.quit()
-            }
-        }
     }
 
     ListView {
-        id: tvshowView
+        id: tvshowList
         anchors.fill: parent
         clip: true
 
@@ -71,20 +36,27 @@ Page {
     Component {
         id: tvshowDelegate
 
-        FRow {
-            id: content
-            text: name
-            subtitle: genre /*+ "\n" + rating*/
-            source: thumb
-            selected: selected
-            portrait: true
-            watched: playcount > 0
-            function clicked(id) {
-//                console.log("show clicked" + id);
-                seasonModel.clear();
-                $().library.loadSeasons(id);
-                container.state = "season";
+        Cp.Row {
+            filtered: btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true
+
+            text: model.name
+            subtitle: (model.genre != undefined ? model.genre : "")
+            source: model.thumb
+            watched: model.playcount > 0
+            banner: true
+
+            onSelected:  {
+                tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: id})
             }
         }
+    }
+
+    Cp.SearchDialog {
+        id: searchDlg
+        visible: btFilter.checked
+    }
+
+    Component.onCompleted: {
+        $().library.loadTVShows();
     }
 }

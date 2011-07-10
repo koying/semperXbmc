@@ -1,7 +1,8 @@
 import QtQuick 1.0
+import com.nokia.symbian 1.0
 import "js/settings.js" as DbSettings
 
-Item{
+CommonDialog {
     id: container;
 
     property alias server: inpServer.text
@@ -11,9 +12,6 @@ Item{
     property alias state:  background.state
 
     signal settingsChanged();
-
-    width: 300
-    height: 300
 
     Rectangle {
         id: background

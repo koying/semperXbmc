@@ -8,9 +8,11 @@ Rectangle {
     property bool selected: false;
     property bool portrait: false;
     property bool watched: false;
+
     width: parent.width;
-    height: 80
+    height: 200
     id: content
+
     gradient: selected ? highlight : normal
     Gradient {
         id: normal
@@ -27,7 +29,7 @@ Rectangle {
         GradientStop { position: 0.0; color: "#669" }
         GradientStop { position: 1.0; color: "#336" }
     }
-    Row {
+    Column {
         id: row
         width: parent.width
         height: parent.height
@@ -50,7 +52,7 @@ Rectangle {
             }
 
             Image {
-                source: "img/checkmark_48.png"
+                source: "../img/checkmark_48.png"
                 smooth: true
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
@@ -123,4 +125,3 @@ Rectangle {
 
     }
 }
-
