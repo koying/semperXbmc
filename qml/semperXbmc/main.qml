@@ -85,6 +85,7 @@ Window {
 
                 TabButton {
                     iconSource: "img/playlist.png"
+                    tab:  playlistTab
                     onClicked: main.state = "playlist"
                 }
             }
@@ -182,6 +183,34 @@ Window {
 
             ToolBar {
                 id: musicToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+        }
+
+        Item {
+            id: playlistTab
+
+            PageStack {
+                property string title: "PLAYLIST"
+
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playListToolbar.top }
+
+                id: playListStack
+                toolBar: playListToolbar
+
+                Component.onCompleted: {
+                    playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
+                }
+            }
+
+            ToolBar {
+                id: playListToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
                 Behavior on opacity {

@@ -28,7 +28,7 @@ Player.prototype.cmd = function(cmd, param) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            console.log(doc.responseText);
         }
     }
 

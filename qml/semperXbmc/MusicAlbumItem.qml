@@ -6,6 +6,9 @@ import "js/Utils.js" as Utils
 Rectangle {
     id: content
 
+    signal tracksExpanded(int id)
+    signal tracksCollapsed()
+
     gradient: normal
     Gradient {
         id: normal
@@ -40,10 +43,10 @@ Rectangle {
                 fillMode:Image.PreserveAspectFit
                 visible: source != ""
                 source: model.thumb
-                onStatusChanged: {
-                    if (rowImage.status == Image.Ready) {
-                    }
-                }
+//                onStatusChanged: {
+//                    if (rowImage.status == Image.Ready) {
+//                    }
+//                }
             }
         }
         Item {
@@ -89,8 +92,11 @@ Rectangle {
                 if (content.state == "") {
                     content.state = "detail";
                     $().library.loadTracks(model.idalbum);
-                } else
+                    content.tracksExpanded(model.idalbum);
+                } else {
                     content.state = "";
+                    content.tracksCollapsed();
+                }
             }
         }
     }

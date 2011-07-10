@@ -7,6 +7,7 @@ import "js/Utils.js" as Utils
 Page {
     id: page
     property int artistId
+    property int albumId
 
     tools:  musicStack.depth > 1 ? pgTools : null
 
@@ -17,6 +18,27 @@ Page {
             iconSource: "toolbar-back"
             onClicked: musicStack.pop()
             visible: musicStack.depth > 1
+        }
+
+        ToolButton {
+            id: tbAdd
+            iconSource: "img/add.svg"
+            visible: false
+            onClicked: $().playlist.addAlbum(page.albumId)
+        }
+
+        ToolButton {
+            id: tbReplace
+            iconSource: "img/switch_windows.svg"
+            visible: false
+            onClicked: {
+                $().playlist.audioClear();
+                $().playlist.addAlbum(page.albumId)
+            }
+        }
+
+        ToolButton {
+            visible: false
         }
     }
 
@@ -35,9 +57,21 @@ Page {
         id: albumDelegate
 
         MusicAlbumItem {
-            id: content
+            id: albumItem
             width: page.width;
             height: 200
+
+            onTracksExpanded: {
+                tbAdd.visible = true
+                tbReplace.visible = true
+                page.albumId = id
+            }
+
+            onTracksCollapsed: {
+                tbAdd.visible = false
+                tbReplace.visible = false
+            }
+
         }
     }
 

@@ -2,6 +2,16 @@
  * Playlist
  *
  */
+
+
+function debugObject(object) {
+    var output = '';
+    for (var prop in object) {
+        output += prop + ': ' + object[prop]+'; ';
+    }
+    console.debug(output);
+}
+
 function Playlist() {
     var playing = false;
     var items;
@@ -83,13 +93,14 @@ Playlist.prototype.update = function(playlistModel){
                 if (!$().playlist.items || !isEqual($().playlist.items,items)) {
                     console.log("new playlist");
                     $().playlist.items = items;
-//                    playlistModel.clear();
+                    playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
+//                        debugObject(items[i]);
                         var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                         if (items[i].thumbnail && items[i].thumbnail != "DefaultAlbumCover.png") {
                             thumb = "http://"+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
-                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album});
+                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
                     }
                 }
             }
@@ -110,7 +121,7 @@ Playlist.prototype.update = function(playlistModel){
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "fields": ["title", "album", "artist", "duration"] }, "id": 1}';
-    //console.log(str);
+//    console.log(str);
     doc.send(str);
     return;
 
