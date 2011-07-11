@@ -9,6 +9,7 @@ Rectangle {
         border.right: 30; border.bottom: 30
         source: "img/remote/remote_background.png"
         height: 300
+
         anchors {
             left: parent.left
             right: parent.right
@@ -77,6 +78,8 @@ Rectangle {
     }
 
     BorderImage {
+        id: playerKeys
+
         border.left: 30; border.top: 30
         border.right: 30; border.bottom: 30
         source: "img/remote/remote_background.png"
@@ -141,6 +144,28 @@ Rectangle {
             onClicked: xbmcEventClient.actionButton("VolumeDown");
         }
     }
+
+    states: [
+        State {
+            name: "inLandscape"
+            when: !main.inPortrait
+            PropertyChanges {
+                target: globalKeys
+                height: undefined
+                width: 360
+            }
+            AnchorChanges {
+                target: globalKeys
+                anchors.left: undefined
+                anchors.top: parent.top
+            }
+            AnchorChanges {
+                target: playerKeys
+                anchors.right: globalKeys.left
+                anchors.bottom: parent.bottom
+            }
+        }
+    ]
 
     XbmcClient {
         id: xbmcEventClient

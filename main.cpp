@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     viewer.engine()->setNetworkAccessManagerFactory(&factory);
 
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockPortrait);
     viewer.setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
     viewer.showExpanded();
 
