@@ -28,6 +28,11 @@ Page {
         delegate: episodeDelegate
     }
 
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: tvEpisodeList
+    }
+
     Component {
         id: episodeDelegate
 

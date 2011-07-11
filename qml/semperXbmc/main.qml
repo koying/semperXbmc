@@ -121,7 +121,7 @@ Window {
                 toolBar: tvToolbar
 
                 Component.onCompleted: {
-                    tvshowStack.push(Qt.resolvedUrl("TvshowView.qml"))
+                    tvshowStack.push(Qt.resolvedUrl("TvShowView.qml"))
                 }
             }
             ToolBar {

@@ -28,12 +28,12 @@ Page {
             ToolButton {
                 iconSource: "toolbar-mediacontrol-pause"
                 onClicked: $().player.playPause()
-                visible: $().playlist.playing
+//                visible: $().playlist.playing &&
             }
             ToolButton {
                 iconSource: "toolbar-mediacontrol-play"
                 onClicked: $().playlist.cmd("Play", "Audio");
-                visible: !$().playlist.playing
+//                visible: !$().playlist.playing
             }
             ToolButton {
                 iconSource: "img/skip.svg"
@@ -42,7 +42,14 @@ Page {
         }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-delete"
+            onClicked: {
+                if ($().playlist.playing)
+                    $().player.stop()
+                $().playlist.audioClear();
+                playlistModel.clear();
+            }
+            visible: playlistModel.count > 0
         }
     }
 

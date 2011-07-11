@@ -13,9 +13,66 @@ function debugObject(object) {
 }
 
 function Playlist() {
-    var playing = false;
-    var items;
+    this.playing = false;
+    this.paused = false;
+    this.items = null;
 }
+
+Playlist.prototype.insertTrack = function(idTrack){
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            //console.log(doc.responseText);
+            if (!Playlist.prototype.playing) {
+//                console.log("play");
+                Playlist.prototype.cmd("Play", "Audio");
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "songid": '+idTrack+', "index": 0 }, "id": 1}';
+//    console.log(str);
+    doc.send(str);
+    return;
+}
+
+Playlist.prototype.addTrack = function(idTrack){
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            //console.log(doc.responseText);
+            if (!Playlist.prototype.playing) {
+//                console.log("play");
+                Playlist.prototype.cmd("Play", "Audio");
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "songid": '+idTrack+' }, "id": 1}';
+//    console.log(str);
+    doc.send(str);
+    return;
+}
+
+Playlist.prototype.insertAlbum = function(idalbum){
+//    console.log("add");
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            //console.log(doc.responseText);
+            if (!Playlist.prototype.playing) {
+//                console.log("play");
+                Playlist.prototype.cmd("Play", "Audio");
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "albumid": '+idalbum+', "index": 0 }, "id": 1}';
+//    console.log(str);
+    doc.send(str);
+    return;
+}
+
 
 Playlist.prototype.addAlbum = function(idalbum){
 //    console.log("add");
@@ -23,9 +80,9 @@ Playlist.prototype.addAlbum = function(idalbum){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             //console.log(doc.responseText);
-            if (!$().playlist.playing) {
+            if (!Playlist.prototype.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Audio");
+                Playlist.prototype.cmd("Play", "Audio");
             }
         }
     }
@@ -42,9 +99,9 @@ Playlist.prototype.addMovie = function(idmovie){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             console.log(doc.responseText);
-            if (!$().playlist.playing) {
+            if (!Playlist.prototype.playing) {
                 console.log("play");
-                $().playlist.cmd("Play", "Video");
+                Playlist.prototype.cmd("Play", "Video");
             }
         }
     }
@@ -60,9 +117,9 @@ Playlist.prototype.addEpisode = function(idepisode){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             //console.log(doc.responseText);
-            if (!$().playlist.playing) {
+            if (!Playlist.prototype.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Video");
+                Playlist.prototype.cmd("Play", "Video");
             }
         }
     }
@@ -74,25 +131,25 @@ Playlist.prototype.addEpisode = function(idepisode){
 }
 
 Playlist.prototype.videoClear = function(){
-    this.cmd("Clear", "Video");
+    Playlist.prototype.cmd("Clear", "Video");
 }
 
 Playlist.prototype.audioClear = function(){
-    this.cmd("Clear", "Audio");
+    Playlist.prototype.cmd("Clear", "Audio");
 }
 
 Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            console.log(doc.responseText);
             var result = JSON.parse(doc.responseText).result;
             if ( result && result.items) {
                 var items = result.items;
                 // TODO Checken ob sich was geändert hat
-                if (!$().playlist.items || !isEqual($().playlist.items,items)) {
+                if (!Playlist.prototype.items || !isEqual(Playlist.prototype.items,items)) {
                     console.log("new playlist");
-                    $().playlist.items = items;
+                    Playlist.prototype.items = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 //                        debugObject(items[i]);
@@ -109,18 +166,20 @@ Playlist.prototype.update = function(playlistModel){
                     playlistModel.setProperty(i, "select", false);
                 }
                 //console.log(result.current);
-                playlistModel.setProperty(result.current, "select", true);
+                if (result.current >= 0)
+                    playlistModel.setProperty(result.current, "select", true);
                 //$().playlist.current = result.current
                 //playlistModel.get(result.current).focus = true;
                 //console.log(playlistModel.getProperty(result.current, "selected"));
-                $().playlist.playing = result.playing;
+                Playlist.prototype.playing = result.playing;
+                Playlist.prototype.paused = result.paused;
                 //result.current);
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "fields": ["title", "album", "artist", "duration"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"playlist", "order":"ascending"}, "fields": ["title", "album", "artist", "duration"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;

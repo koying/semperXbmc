@@ -33,6 +33,11 @@ Page {
         delegate: tvshowDelegate
     }
 
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: tvshowList
+    }
+
     Component {
         id: tvshowDelegate
 

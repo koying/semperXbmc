@@ -6,8 +6,8 @@ import "js/Utils.js" as Utils
 Rectangle {
     id: content
 
-    signal tracksExpanded(int id)
-    signal tracksCollapsed()
+    signal addAlbumToplaylist(int albumId)
+    signal replacePlaylistWithAlbum(int albumId)
 
     gradient: normal
     Gradient {
@@ -33,7 +33,7 @@ Rectangle {
 
         Item {
             id: itImage
-            anchors.margins: 10
+            anchors.margins: 5
             anchors { top: parent.top; left: parent.left; right:  parent.right }
             height: parent.height - details.height
 
@@ -51,37 +51,30 @@ Rectangle {
         }
         Item {
             id: details
-            anchors.margins: 10
+            anchors.margins: 5
             anchors { top: itImage.bottom; left: parent.left; right:  parent.right }
             width: parent.width
             height: content.height * 0.2
             Column {
                 anchors.horizontalCenter: parent.horizontalCenter
-                Text {
+
+                ListItemText {
                     id: rowTitle
                     height: rowSubtitle.text ? details.height * 0.4 : details.height
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#ffffff"
-                    wrapMode: Text.Wrap
-                    font.pointSize: 12
-                    verticalAlignment :Text.AlignVCenter
-                    elide: Text.ElideRight
 
+                    role: "Title"
                     text: model.name
                 }
-                Text {
+
+                ListItemText {
                     id: rowSubtitle
                     height: details.height - rowTitle.height
                     anchors.horizontalCenter: parent.horizontalCenter
-                    y: rowTitle.height
-                    color: "#ffffff"
-                    wrapMode: Text.Wrap
-                    font.pointSize: rowTitle.font.pointSize  * 0.6
-                    verticalAlignment :Text.AlignVCenter
-                    elide: Text.ElideRight
-                    visible: rowSubtitle.text != ""
+                    y: rowTitle.height + platformStyle.paddingSmall
 
-                    text: model.genre
+                    role: "SubTitle"
+                    text: model.artist
                 }
             }
         }
@@ -92,34 +85,73 @@ Rectangle {
                 if (content.state == "") {
                     content.state = "detail";
                     $().library.loadTracks(model.idalbum);
-                    content.tracksExpanded(model.idalbum);
                 } else {
                     content.state = "";
-                    content.tracksCollapsed();
                 }
             }
         }
     }
 
-    Rectangle {
+    Item {
         id: trackList
-
-        color: "black"
-        border { color: "white"; width:  2 }
-        radius: 10
-
-//        visible: false
-        opacity: 0
         anchors { top: grid.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
         anchors.topMargin: 10
 
-        ListView {
-            anchors.fill: parent
-            anchors.margins: 10
-            clip: true
+        //        visible: false
+        opacity: 0
 
-            model: trackModel
-            delegate: trackDelegate
+        ToolBar {
+            id: buttons
+            anchors { top: parent.top; left: parent.left; right: parent.right; }
+
+            tools: Row {
+                anchors.centerIn: parent
+                spacing: platformStyle.paddingMedium
+
+                ToolButton {
+                    id: tbAdd
+//                    iconSource: "img/add.svg"
+                    text: "Append"
+//                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                    onClicked: $().playlist.addAlbum(model.idalbum)
+                }
+
+                ToolButton {
+                    id: tbInsert
+//                    iconSource: "img/add.svg"
+                    text: "Insert"
+//                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                    onClicked: $().playlist.insertAlbum(model.idalbum)
+                }
+
+                ToolButton {
+                    id: tbReplace
+//                    iconSource: "img/switch_windows.svg"
+                    text: "Replace"
+//                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                    onClicked: {
+                        $().playlist.audioClear();
+                        $().playlist.addAlbum(model.idalbum)
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom}
+
+            color: "black"
+            border { color: "white"; width:  2 }
+            radius: 10
+
+            ListView {
+                anchors.fill: parent
+                anchors.margins: 10
+                clip: true
+
+                model: trackModel
+                delegate: trackDelegate
+            }
         }
     }
 
@@ -128,6 +160,7 @@ Rectangle {
 
         ListItem {
             id: liTrack
+            subItemIndicator: true
 
             Item {
                 anchors.fill: liTrack.paddingItem
@@ -141,6 +174,7 @@ Rectangle {
                     role: "Title"
                     text: model.number + ". " + model.name
                 }
+
                 ListItemText {
                     id: txItemDuration
                     anchors { right: parent.right }
@@ -150,45 +184,27 @@ Rectangle {
                     text: Utils.secToMMSS(model.duration)
                 }
             }
+
+            onClicked: trackMenu.open()
+
+            ContextMenu {
+                id: trackMenu
+                MenuLayout {
+                    MenuItem {
+                        text: "Append"
+                        onClicked: $().playlist.addTrack(model.idtrack)
+                    }
+                    MenuItem {
+                        text: "Insert"
+                        onClicked: $().playlist.insertTrack(model.idtrack)
+                    }
+                }
+            }
+
         }
 
-//        Item {
-//            id: itemWrapper
-//            width: trackList.width;
-//            height: 50
-
-//            Item {
-//                anchors.fill: parent
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.margins: 5
-
-//                Text {
-//                    id: txItemTitle
-
-//                    anchors { left: parent.left }
-//                    width: parent.width - 50
-//                    color: "white"
-//                    wrapMode: Text.Wrap
-//                    font.pixelSize: itemWrapper - 4
-//                    verticalAlignment: Text.AlignVCenter
-//                    elide: Text.ElideRight
-
-//                    text: model.number + ". " + model.name
-//                }
-//                Text {
-//                    id: txItemDuration
-//                    anchors { left: txItemTitle.right; right: parent.right }
-//                    color: "white"
-//                    wrapMode: Text.Wrap
-//                    font.pixelSize: itemWrapper - 4
-//                    verticalAlignment: Text.AlignVCenter
-//                    elide: Text.ElideRight
-
-//                    text: Utils.secToMMSS(model.duration)
-//                }
-//            }
-//        }
     }
+
 
     states: [
         State {
@@ -218,15 +234,15 @@ Rectangle {
             }
             PropertyChanges {
                 target: itImage
-                width: 150; height: 150
+                width: platformStyle.graphicSizeLarge; height: platformStyle.graphicSizeLarge
             }
             PropertyChanges {
                 target: details
-                width: content.width - 150; height: 150
+                width: content.width - platformStyle.graphicSizeLarge; height: platformStyle.graphicSizeLarge
             }
             PropertyChanges {
                 target: grid
-                height: 150
+                height: platformStyle.graphicSizeLarge
             }
             AnchorChanges {
                 target: itImage

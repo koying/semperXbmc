@@ -3,199 +3,97 @@ import com.nokia.symbian 1.0
 import "js/settings.js" as DbSettings
 
 CommonDialog {
-    id: container;
+    id: dialog
 
     property alias server: inpServer.text
     property alias jsonPort: inpJsonPort.text
     property alias eventPort: inpEventPort.text
 
-    property alias state:  background.state
-
     signal settingsChanged();
 
-    Rectangle {
-        id: background
 
-        opacity: 0
-        radius: 15
-        anchors.fill: parent
-        gradient: Gradient {
-            GradientStop {
-                position: 0
-                color: "#999999"
-            }
+    content: Item {
+        anchors { left: parent.left; right: parent.right; top: parent.top; }
+        anchors.margins: platformStyle.paddingMedium
+        height: 175
 
-            GradientStop {
-                position: 1
-                color: "#555555"
-            }
-        }
-
-        Text {
-            id: text1
-            x: 89
-            width: 80
-            height: 25
-            color: "#ffffff"
-            text: "<b>SETTINGS</b>"
+        Grid {
+            id: grid
             anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            anchors.top: parent.top
-            anchors.topMargin: 15
-            font.pointSize: 11
-        }
 
-        Text {
-            id: text2
-            y: 71
-            width: 80
-            height: 25
-            color: "#ffffff"
-            text: "Server:"
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            font.pointSize: 8
-        }
-
-        Text {
-            id: text3
-            width: 80
-            height: 25
-            color: "#ffffff"
-            text: "JSON port"
-            anchors.top: text2.bottom
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            font.pointSize: 8
-        }
-
-        Text {
-            id: text4
-            width: 80
-            height: 25
-            color: "#ffffff"
-            text: "Event port"
-            anchors.top: text3.bottom
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            font.pointSize: 8
-        }
-
-        TextInput {
-            id: inpServer
-            x: 136
-            y: 68
-            width: 150
-            height: 25
-            horizontalAlignment: TextInput.AlignRight
-            anchors.right: parent.right
-            anchors.rightMargin: 20
-            font.pointSize: 8
-        }
-
-        TextInput {
-            id: inpJsonPort
-            x: 135
-            y: 98
-            width: 150
-            height: 25
-            horizontalAlignment: TextInput.AlignRight
-            anchors.right: parent.right
-            anchors.rightMargin: 20
-            font.pointSize: 8
-        }
-
-        TextInput {
-            id: inpEventPort
-            x: 144
-            y: 128
-            width: 150
-            height: 25
-            horizontalAlignment: TextInput.AlignRight
-            anchors.right: parent.right
-            anchors.rightMargin: 20
-            font.pointSize: 8
-        }
-
-        Rectangle {
-            id: rectangle2
-            x: 50
-            y: 169
-            width: 100
-            height: 48
-            color: "#00000000"
-            radius: 10
-            anchors.horizontalCenterOffset: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            border.width: 2
-            border.color: "#ffffff"
-            anchors.horizontalCenter: parent.horizontalCenter
+            columns: 2
+            spacing: platformStyle.paddingMedium
 
             Text {
-                id: text5
-                x: 39
-                y: 26
-                color: "#ffffff"
-                text: "DONE"
-                anchors.centerIn: parent
-                horizontalAlignment: Text.AlignHCenter
-                font.pointSize: 11
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpServer.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Server:"
             }
 
-            MouseArea {
-                id: backArea
-                anchors.fill: parent
-                drag.minimumY: -1000
-                drag.minimumX: -1000
-                drag.maximumY: 1000
-                drag.maximumX: 1000
-
-                onClicked: {
-                    saveSettings();
-                    background.state = "";
-                    container.settingsChanged();
-                }
+            TextField {
+                id: inpServer
+                width: 200
             }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "JSON port:"
+            }
+
+            TextField {
+                id: inpJsonPort
+                width: 200
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpEventPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Event port:"
+            }
+
+            TextField {
+                id: inpEventPort
+                width: 200
+            }
+
         }
-
-        states: [
-            State {
-                name: "shown";
-                PropertyChanges {
-                    target: background;
-                    opacity: 0.95;
-                }
-            }
-        ]
-
-        transitions: [
-            Transition {
-                from: "";
-                to: "shown";
-                SequentialAnimation {
-                    NumberAnimation {
-                        properties: "opacity";
-                        easing.type: "OutCubic";
-                        duration: 100;
-                    }
-                }
-            },
-            Transition {
-                from: "shown";
-                to: "";
-                SequentialAnimation {
-                    NumberAnimation {
-                        properties: "opacity";
-                        easing.type: "OutCubic";
-                        duration: 100;
-                    }
-                }
-            }
-        ]
     }
+
+    buttons: ToolBar {
+         id: buttons
+         width: parent.width
+         height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
+
+         tools: Row {
+             anchors.centerIn: parent
+             spacing: platformStyle.paddingMedium
+
+             ToolButton {
+                 text: "Ok"
+                 width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                 onClicked: dialog.accept()
+             }
+
+             ToolButton {
+                 text: "Cancel"
+                 width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                 onClicked: dialog.reject()
+             }
+         }
+     }
 
     function setup() {
         DbSettings.initialize();
@@ -213,11 +111,11 @@ CommonDialog {
         globals.eventPort = inpEventPort.text;
 
         if (host == "Unspecified") {
-            background.state = "shown";
+            container.open();
             return;
         }
 
-        container.settingsChanged();
+        dialog.settingsChanged();
     }
 
     function saveSettings() {
@@ -228,6 +126,10 @@ CommonDialog {
         globals.server = inpServer.text;
         globals.jsonPort = inpJsonPort.text;
         globals.eventPort = inpEventPort.text;
+    }
+
+    onAccepted: {
+        saveSettings();
     }
 
     Component.onCompleted: setup();

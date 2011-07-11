@@ -16,7 +16,7 @@ Library.prototype.loadMovies = function () {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //            console.log(doc.responseText);
+//            console.log(doc.responseText);
 
             var result = JSON.parse(doc.responseText).result;
             var movies = result.movies;
@@ -87,7 +87,7 @@ Library.prototype.loadSeasons = function (id) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "start": 0, "tvshowid":'+ id +', "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "season", "episode", "runtime", "year", "playcount", "rating", "watchedepisodes"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "start": 0, "tvshowid":'+ id +', "sort": {"method":"label", "order":"ascending"}, "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "season", "episode", "runtime", "year", "playcount", "rating", "watchedepisodes"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -115,7 +115,7 @@ Library.prototype.loadEpisodes = function (id) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "start": 0, "tvshowid":'+ this.idtvshow +', "season":'+ id +', "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "episode", "year", "playcount", "rating"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "start": 0, "tvshowid":'+ this.idtvshow +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "episode", "year", "playcount", "rating"] }, "id": 1}';
     doc.send(str);
     console.log(str);
 
@@ -138,7 +138,7 @@ Library.prototype.loadTracks = function (idalbum) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "fields": ["title", "artist", "genre", "tracknumber", "discnumber", "duration", "year"], "albumid" : '+idalbum+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "genre", "tracknumber", "discnumber", "duration", "year"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
 
     return;
@@ -153,19 +153,19 @@ Library.prototype.loadAlbums = function (idartist) {
             var albums = result.albums;
             for (var i = 0; i < albums.length; i++){
 //                console.debug(idartist);
-//                debugObject(albums[i]);
+                debugObject(albums[i]);
                 var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (albums[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "thumb": thumb});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "fields": ["album_label", "album_artist", "album_genre", "album_rating", "track", "duration", "year"], "artistid": '+idartist+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "sort": {"method":"album", "order":"ascending"}, "fields": ["album_label", "album_artist", "album_genre", "album_rating", "track", "duration", "year"], "artistid": '+idartist+' }, "id": 1}';
     doc.send(str);
 
     return;
@@ -189,7 +189,7 @@ Library.prototype.loadAllAlbums = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "fields": ["album_description", "album_theme", "album_mood", "album_style", "album_type", "album_label", "album_artist", "album_genre", "album_rating", "album_title"]}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "sort": {"method":"album", "order":"ascending"}, "fields": ["album_description", "album_theme", "album_mood", "album_style", "album_type", "album_label", "album_artist", "album_genre", "album_rating", "album_title"]}, "id": 1}';
     doc.send(str);
 
     return;
@@ -199,6 +199,7 @@ Library.prototype.loadArtists = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+//            console.debug(doc.responseText);
             var result = JSON.parse(doc.responseText).result;
             var artists = result.artists;
             artists.sort(sort);
@@ -214,7 +215,7 @@ Library.prototype.loadArtists = function() {
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "params": { "start": 0, "sort": {"method":"artist", "order":"ascending"} }, "id": 1}';
     doc.send(str);
 }
 

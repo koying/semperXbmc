@@ -33,6 +33,11 @@ Page {
         delegate: movieDelegate
     }
 
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: movieList
+    }
+
     Component {
         id: movieDelegate
 
