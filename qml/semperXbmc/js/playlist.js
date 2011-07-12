@@ -142,7 +142,7 @@ Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+//            console.log(doc.responseText);
             var result = JSON.parse(doc.responseText).result;
             if ( result && result.items) {
                 var items = result.items;
@@ -165,15 +165,10 @@ Playlist.prototype.update = function(playlistModel){
                 for (var i = 0; i < playlistModel.count; i++) {
                     playlistModel.setProperty(i, "select", false);
                 }
-                //console.log(result.current);
                 if (result.current >= 0)
                     playlistModel.setProperty(result.current, "select", true);
-                //$().playlist.current = result.current
-                //playlistModel.get(result.current).focus = true;
-                //console.log(playlistModel.getProperty(result.current, "selected"));
-                Playlist.prototype.playing = result.playing;
-                Playlist.prototype.paused = result.paused;
-                //result.current);
+                $().playlist.playing = result.playing == true ? true : false;
+                $().playlist.paused = result.paused == true ? true : false;
             }
         }
     }

@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
+import com.semperpax.qmlcomponents 1.0
 
 import "js/xbmc.js" as Xbmc
 import "js/player.js" as Player
@@ -257,6 +258,10 @@ Window {
     }
     ListModel {
         id: episodeModel
+    }
+
+    XbmcClient {
+        id: xbmcEventClient
     }
 
     function $() {

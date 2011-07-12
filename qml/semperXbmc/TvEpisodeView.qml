@@ -49,6 +49,7 @@ Page {
             onSelected: {
 //                console.log("episode clicked" + id);
                 $().playlist.videoClear();
+                xbmcEventClient.actionButton("Stop");
                 $().playlist.addEpisode(id);
             }
         }

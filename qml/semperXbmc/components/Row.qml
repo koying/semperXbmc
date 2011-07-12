@@ -11,10 +11,17 @@ ListItem {
     property bool watched: false
     property bool banner:  false
     property bool filtered: false
+    property bool current:  false
 
     signal selected(string id)
 
     height: filtered ? 0 : 80
+
+    Rectangle {
+        anchors.fill: parent
+        color: "lightsteelblue"
+        visible:  content.current
+    }
 
     Row {
         id: grid

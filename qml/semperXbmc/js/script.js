@@ -15,3 +15,4 @@ function playerCmd(cmd, param) {
     doc.send(str);
     return;
 }
+

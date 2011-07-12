@@ -167,10 +167,6 @@ Rectangle {
         }
     ]
 
-    XbmcClient {
-        id: xbmcEventClient
-    }
-
     function settingsChanged() {
     //        console.debug("settings changed");
         xbmcEventClient.initialize(globals.server, globals.eventPort);

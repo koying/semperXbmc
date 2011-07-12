@@ -1,5 +1,6 @@
 import Qt 4.7
 import com.nokia.symbian 1.0
+import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
@@ -52,6 +53,7 @@ Page {
 
             onSelected:  {
                 $().playlist.videoClear();
+                xbmcEventClient.actionButton("Stop");
                 $().playlist.addMovie(id);
             }
         }

@@ -4,6 +4,7 @@ function Xbmc() {
     this.server = "192.168.0.11";
     this.port = "8080";
     this.myvolume = 100;
+    this.jsonRPCVer = ""
 }
 
 Xbmc.prototype.init = function() {
@@ -16,6 +17,7 @@ Xbmc.prototype.init = function() {
 //    this.library.loadMovies();
 //    this.library.loadTVShows();
 
+    this.getVersion();
     this.getVolume();
 }
 
@@ -63,10 +65,25 @@ Xbmc.prototype.getVolume = function() {
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "XBMC.GetVolume","id": 1}';
     doc.send(str);
-    console.debug(str);
+//    console.debug(str);
     return;
 }
 
+Xbmc.prototype.getVersion = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            console.log(doc.responseText);
+            Xbmc.prototype.jsonRPCVer = JSON.parse(doc.responseText).result.version;
+            console.debug(Xbmc.prototype.jsonRPCVer);
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Version","id": 1}';
+    doc.send(str);
+//    console.debug(str);
+    return;
+}
 
 
 function setup() {
