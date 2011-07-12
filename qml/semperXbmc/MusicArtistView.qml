@@ -61,7 +61,7 @@ Page {
         visible: btFilter.checked
     }
 
-    Component.onCompleted: {
+    function init() {
         $().library.loadArtists();
     }
 

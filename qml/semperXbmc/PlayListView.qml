@@ -97,7 +97,7 @@ Page {
 
     }
 
-    Component.onCompleted: {
+    function init() {
         $().playlist.update(playlistModel);
         timer.running = true
     }

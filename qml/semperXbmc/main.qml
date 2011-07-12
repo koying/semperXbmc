@@ -3,11 +3,14 @@ import com.nokia.symbian 1.0
 import com.semperpax.qmlcomponents 1.0
 
 import "js/xbmc.js" as Xbmc
+import "js/json.js" as Json
+
 import "js/general.js" as General
 import "js/player.js" as Player
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
-import "js/json.js" as Json
+
+import "js/library3.js" as Library3
 
 Window {
     id: main
@@ -115,11 +118,12 @@ Window {
         Item {
             id: tvTab
             PageStack {
+                id: tvshowStack
+
                 property string title: "TV"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: tvToolbar.top }
 
-                id: tvshowStack
                 toolBar: tvToolbar
 
                 Component.onCompleted: {
@@ -143,11 +147,12 @@ Window {
             id: movieTab
 
             PageStack {
+                id: movieStack
+
                 property string title: "MOVIES"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: movieToolbar.top }
 
-                id: movieStack
                 toolBar: movieToolbar
 
                 Component.onCompleted: {
@@ -171,11 +176,12 @@ Window {
             id: musicTab
 
             PageStack {
+                id: musicStack
+
                 property string title: "MUSIC"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: musicToolbar.top }
 
-                id: musicStack
                 toolBar: musicToolbar
 
                 Component.onCompleted: {
@@ -199,11 +205,12 @@ Window {
             id: playlistTab
 
             PageStack {
+                id: playListStack
+
                 property string title: "PLAYLIST"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playListToolbar.top }
 
-                id: playListStack
                 toolBar: playListToolbar
 
                 Component.onCompleted: {
@@ -275,12 +282,8 @@ Window {
         Xbmc.xbmc = new Xbmc.Xbmc();
         Xbmc.xbmc.port = globals.jsonPort;
         Xbmc.xbmc.server = globals.server;
+//        Xbmc.xbmc.introspect();
         Xbmc.xbmc.init();
-
-        Xbmc.xbmc.general = new General.General();
-        Xbmc.xbmc.library = new Library.Library();
-        Xbmc.xbmc.playlist = new Playlist.Playlist();
-        Xbmc.xbmc.player = new Player.Player();
 
     }
 }
