@@ -21,6 +21,8 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += mobility
 # MOBILITY +=
 
+ICON = semperXbmc_Anna_converted.svg
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 include (src/qtsources.pri)
