@@ -9,7 +9,6 @@ function debugObject(object) {
 
 
 function Library() {
-
 }
 
 Library.prototype.loadMovies = function () {
@@ -203,7 +202,6 @@ Library.prototype.loadArtists = function() {
             var result = JSON.parse(doc.responseText).result;
             var artists = result.artists;
             artists.sort(sort);
-            $().library.artists = artists;
             for (var i = 0; i < artists.length; i++){
                 var thumb = "img/user.svg";
                 if (artists[i].thumbnail) {

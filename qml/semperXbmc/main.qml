@@ -3,6 +3,7 @@ import com.nokia.symbian 1.0
 import com.semperpax.qmlcomponents 1.0
 
 import "js/xbmc.js" as Xbmc
+import "js/general.js" as General
 import "js/player.js" as Player
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
@@ -271,14 +272,15 @@ Window {
     function initialize() {
 //        console.log("xbmc initialization");
 
-        var xbmc = Xbmc.setup();
-        xbmc.port = globals.jsonPort;
-        xbmc.server = globals.server;
+        Xbmc.xbmc = new Xbmc.Xbmc();
+        Xbmc.xbmc.port = globals.jsonPort;
+        Xbmc.xbmc.server = globals.server;
+        Xbmc.xbmc.init();
 
-        xbmc.library = new Library.Library();
-        xbmc.playlist = new Playlist.Playlist();
-        xbmc.player = new Player.Player();
+        Xbmc.xbmc.general = new General.General();
+        Xbmc.xbmc.library = new Library.Library();
+        Xbmc.xbmc.playlist = new Playlist.Playlist();
+        Xbmc.xbmc.player = new Player.Player();
 
-        xbmc.init();
     }
 }

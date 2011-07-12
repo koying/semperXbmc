@@ -13,10 +13,10 @@ function debugObject(object) {
 }
 
 function Playlist() {
-    this.playing = false;
-    this.paused = false;
-    this.items = null;
 }
+
+Playlist.prototype.playing = false;
+Playlist.prototype.paused = false;
 
 Playlist.prototype.insertTrack = function(idTrack){
     var doc = new XMLHttpRequest();
@@ -149,7 +149,6 @@ Playlist.prototype.update = function(playlistModel){
                 // TODO Checken ob sich was geändert hat
                 if (!Playlist.prototype.items || !isEqual(Playlist.prototype.items,items)) {
                     console.log("new playlist");
-                    Playlist.prototype.items = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 //                        debugObject(items[i]);
@@ -167,8 +166,8 @@ Playlist.prototype.update = function(playlistModel){
                 }
                 if (result.current >= 0)
                     playlistModel.setProperty(result.current, "select", true);
-                $().playlist.playing = result.playing == true ? true : false;
-                $().playlist.paused = result.paused == true ? true : false;
+                Playlist.prototype.playing = result.playing == true ? true : false;
+                Playlist.prototype.paused = result.paused == true ? true : false;
             }
         }
     }
