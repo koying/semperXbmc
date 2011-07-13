@@ -21,7 +21,21 @@ Page {
         }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            CheckBox {
+                text:  "Show viewed items"
+                checked: globals.showViewed
+                onClicked: globals.showViewed = checked
+            }
+
         }
     }
 
@@ -43,10 +57,10 @@ Page {
         id: movieDelegate
 
         Cp.Row {
-            filtered: function() {
+            filtered: {
                           var ret = false;
                           ret = (btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true);
-                          ret = ret | (globals.showViewed && model.playcount > 0 );
+                          ret = ret | (!globals.showViewed && model.playcount > 0 );
                           return ret;
                       }
 

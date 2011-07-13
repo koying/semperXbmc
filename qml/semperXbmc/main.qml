@@ -286,4 +286,10 @@ Window {
         Xbmc.xbmc.init();
 
     }
+
+    Component.onCompleted: {
+        globals.load();
+        settings.setup();
+        initialize();
+    }
 }

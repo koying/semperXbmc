@@ -108,8 +108,6 @@ CommonDialog {
             dialog.open();
             return;
         }
-
-        dialog.settingsChanged();
     }
 
     onAccepted: {
@@ -121,5 +119,4 @@ CommonDialog {
         dialog.settingsChanged();
     }
 
-    Component.onCompleted: setup();
 }

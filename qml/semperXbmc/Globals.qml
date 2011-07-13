@@ -9,14 +9,15 @@ QtObject {
 
     Component.onCompleted: {
         DbSettings.initialize();
-        load();
     }
 
     function load() {
         server = DbSettings.getSetting("server", "Unspecified");
         jsonPort = DbSettings.getSetting("jsonPort", "8080");
         eventPort = DbSettings.getSetting("eventPort", "9777");
-        showViewed = DbSettings.getSetting("showViewed", "true");
+        showViewed = DbSettings.getSetting("showViewed", true);
+
+        console.debug(showViewed);
     }
 
     function save() {
