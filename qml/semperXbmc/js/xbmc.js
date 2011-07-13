@@ -49,6 +49,11 @@ Xbmc.prototype.init = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            if (doc.status != 200) {
+                console.log("Error connecting to XBMC");
+                return;
+            }
+
             Xbmc.prototype.jsonRPCVer = JSON.parse(doc.responseText).result.version;
             console.debug("JSON ver: " + Xbmc.prototype.jsonRPCVer);
 

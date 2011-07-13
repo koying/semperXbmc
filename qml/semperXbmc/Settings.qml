@@ -1,6 +1,5 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
-import "js/settings.js" as DbSettings
 
 CommonDialog {
     id: dialog
@@ -12,124 +11,114 @@ CommonDialog {
     signal settingsChanged();
 
 
-    content: Item {
+    content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
         anchors.margins: platformStyle.paddingMedium
-        height: 175
+        height: 250
 
-        Grid {
-            id: grid
-            anchors.horizontalCenter: parent.horizontalCenter
+        Column {
+            spacing: 10
 
-            columns: 2
-            spacing: platformStyle.paddingMedium
+            Grid {
+                id: grid
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            Text {
-                font.family: platformStyle.fontFamilyRegular
-                font.pixelSize: platformStyle.fontSizeLarge
-                color: platformStyle.colorNormalLight
-                height: inpServer.height
-                verticalAlignment: Text.AlignVCenter
+                columns: 2
+                spacing: platformStyle.paddingMedium
 
-                text: "Server:"
+                Text {
+                    font.family: platformStyle.fontFamilyRegular
+                    font.pixelSize: platformStyle.fontSizeLarge
+                    color: platformStyle.colorNormalLight
+                    height: inpServer.height
+                    verticalAlignment: Text.AlignVCenter
+
+                    text: "Server:"
+                }
+
+                TextField {
+                    id: inpServer
+                    width: 200
+                }
+
+                Text {
+                    font.family: platformStyle.fontFamilyRegular
+                    font.pixelSize: platformStyle.fontSizeLarge
+                    color: platformStyle.colorNormalLight
+                    height: inpJsonPort.height
+                    verticalAlignment: Text.AlignVCenter
+
+                    text: "JSON port:"
+                }
+
+                TextField {
+                    id: inpJsonPort
+                    width: 200
+                }
+
+                Text {
+                    font.family: platformStyle.fontFamilyRegular
+                    font.pixelSize: platformStyle.fontSizeLarge
+                    color: platformStyle.colorNormalLight
+                    height: inpEventPort.height
+                    verticalAlignment: Text.AlignVCenter
+
+                    text: "Event port:"
+                }
+
+                TextField {
+                    id: inpEventPort
+                    width: 200
+                }
+
             }
-
-            TextField {
-                id: inpServer
-                width: 200
-            }
-
-            Text {
-                font.family: platformStyle.fontFamilyRegular
-                font.pixelSize: platformStyle.fontSizeLarge
-                color: platformStyle.colorNormalLight
-                height: inpJsonPort.height
-                verticalAlignment: Text.AlignVCenter
-
-                text: "JSON port:"
-            }
-
-            TextField {
-                id: inpJsonPort
-                width: 200
-            }
-
-            Text {
-                font.family: platformStyle.fontFamilyRegular
-                font.pixelSize: platformStyle.fontSizeLarge
-                color: platformStyle.colorNormalLight
-                height: inpEventPort.height
-                verticalAlignment: Text.AlignVCenter
-
-                text: "Event port:"
-            }
-
-            TextField {
-                id: inpEventPort
-                width: 200
-            }
-
         }
+
     }
 
     buttons: ToolBar {
-         id: buttons
-         width: parent.width
-         height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
+        id: buttons
+        width: parent.width
+        height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
 
-         tools: Row {
-             anchors.centerIn: parent
-             spacing: platformStyle.paddingMedium
+        tools: Row {
+            anchors.centerIn: parent
+            spacing: platformStyle.paddingMedium
 
-             ToolButton {
-                 text: "Ok"
-                 width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                 onClicked: dialog.accept()
-             }
+            ToolButton {
+                text: "Ok"
+                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                onClicked: dialog.accept()
+            }
 
-             ToolButton {
-                 text: "Cancel"
-                 width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                 onClicked: dialog.reject()
-             }
-         }
-     }
+            ToolButton {
+                text: "Cancel"
+                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                onClicked: dialog.reject()
+            }
+        }
+    }
 
     function setup() {
-        DbSettings.initialize();
+        inpServer.text = globals.server;
+        inpJsonPort.text = globals.jsonPort;
+        inpEventPort.text = globals.eventPort;
 
-        var host = DbSettings.getSetting("server", "Unspecified");
-        var jsonPort = DbSettings.getSetting("jsonPort", "8080");
-        var eventPort = DbSettings.getSetting("eventPort", "9777");
-
-        inpServer.text = host;
-        inpJsonPort.text = jsonPort;
-        inpEventPort.text = eventPort;
-
-        globals.server = inpServer.text;
-        globals.jsonPort = inpJsonPort.text;
-        globals.eventPort = inpEventPort.text;
-
-        if (host == "Unspecified") {
-            container.open();
+        if (inpServer.text == "Unspecified") {
+            dialog.open();
             return;
         }
 
         dialog.settingsChanged();
     }
 
-    function saveSettings() {
-        DbSettings.setSetting("server", inpServer.text);
-        DbSettings.setSetting("jsonPort", inpJsonPort.text);
-        DbSettings.setSetting("eventPort", inpEventPort.text);
-
+    onAccepted: {
         globals.server = inpServer.text;
         globals.jsonPort = inpJsonPort.text;
         globals.eventPort = inpEventPort.text;
-    }
 
-    onAccepted: {
-        saveSettings();
+        globals.save();
+        dialog.settingsChanged();
     }
 
     Component.onCompleted: setup();

@@ -43,7 +43,12 @@ Page {
         id: movieDelegate
 
         Cp.Row {
-            filtered: btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true
+            filtered: function() {
+                          var ret = false;
+                          ret = (btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true);
+                          ret = ret | (globals.showViewed && model.playcount > 0 );
+                          return ret;
+                      }
 
             text: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
