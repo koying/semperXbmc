@@ -7,6 +7,7 @@
 function Playlist() {
 }
 
+Playlist.prototype.previousItems = {}
 Playlist.prototype.playing = false;
 Playlist.prototype.paused = false;
 
@@ -29,7 +30,7 @@ Playlist.prototype.insertTrack = function(idTrack){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { songid": '+idTrack+'}, "index": 0 }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { "songid": '+idTrack+'}, "index": 0 }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -54,7 +55,7 @@ Playlist.prototype.addTrack = function(idTrack){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { songid": '+idTrack+'} }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { "songid": '+idTrack+'} }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -80,7 +81,7 @@ Playlist.prototype.insertAlbum = function(idalbum){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { albumid": '+idalbum+'}, "index": 0 }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { "albumid": '+idalbum+'}, "index": 0 }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -107,7 +108,7 @@ Playlist.prototype.addAlbum = function(idalbum){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { albumid": '+idalbum+'} }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { "albumid": '+idalbum+'} }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -133,7 +134,7 @@ Playlist.prototype.addMovie = function(idmovie){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "item": { movieid": '+idmovie+'} }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "item": { "movieid": '+idmovie+'} }, "id": 1}';
     doc.send(str);
     return;
 }
@@ -187,9 +188,10 @@ Playlist.prototype.update = function(playlistModel){
             var result = JSON.parse(doc.responseText).result;
             if ( result && result.items) {
                 var items = result.items;
-                // TODO Checken ob sich was geändert hat
-                if (!Playlist.prototype.items || !isEqual(Playlist.prototype.items,items)) {
+
+                if (!Playlist.prototype.previousItems || !isEqual(Playlist.prototype.previousItems,items)) {
                     console.log("new playlist");
+                    Playlist.prototype.previousItems = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
@@ -201,20 +203,21 @@ Playlist.prototype.update = function(playlistModel){
                     }
                 }
             }
-            if (playlistModel.count > 0) {
+
+            if (result.state && playlistModel.count > 0) {
                 for (var i = 0; i < playlistModel.count; i++) {
                     playlistModel.setProperty(i, "select", false);
                 }
-                if (result.current >= 0)
-                    playlistModel.setProperty(result.current, "select", true);
-                Playlist.prototype.playing = result.playing == true ? true : false;
-                Playlist.prototype.paused = result.paused == true ? true : false;
+                if (result.state.current >= 0)
+                    playlistModel.setProperty(result.state.current, "select", true);
+                Playlist.prototype.playing = result.state.playing == true ? true : false;
+                Playlist.prototype.paused = result.state.paused == true ? true : false;
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "album", genre", "track", "duration"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -225,7 +228,13 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+            console.debug(doc.responseText);
+            var error = JSON.parse(doc.responseText).error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.update error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
         }
     }
 
@@ -235,7 +244,6 @@ Playlist.prototype.cmd = function(cmd, media, param) {
         str += param + ","
     }
     str += '"id": 1}';
-    console.log(str);
     doc.send(str);
     return;
 }

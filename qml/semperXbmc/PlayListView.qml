@@ -27,6 +27,7 @@ Page {
                 iconSource: "toolbar-mediacontrol-pause"
                 onClicked:  {
                     $().player.playPause()
+                    $().playlist.paused = true;
                     visible = false;
                     btPlay.visible = true;
                 }
@@ -36,9 +37,10 @@ Page {
                 id: btPlay
                 iconSource: "toolbar-mediacontrol-play"
                 onClicked: {
-                    if (!$().playlist.playing)
+                    if (!$().playlist.playing) {
                         $().playlist.cmd("Play", "Audio");
-                    else
+                        $().playlist.playing = true;
+                    } else
                         $().player.playPause();
                     visible = false;
                     btPause.visible = true;

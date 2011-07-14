@@ -110,8 +110,10 @@ Xbmc.prototype.init = function() {
             }
 
             xbmc.library.loadMovies();
-//            xbmc.library.loadTVShows();
-//            xbmc.library.loadArtists();
+            xbmc.library.loadTVShows();
+            xbmc.library.loadArtists();
+
+            playListStack.currentPage.init();
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

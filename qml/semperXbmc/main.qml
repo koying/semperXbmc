@@ -325,6 +325,7 @@ Window {
     Component.onCompleted: {
         globals.load();
         settings.setup();
+        xbmcEventClient.initialize(globals.server, globals.eventPort);
         initialize();
     }
 }

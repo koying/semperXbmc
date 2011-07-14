@@ -7,6 +7,7 @@
 function Playlist() {
 }
 
+Playlist.prototype.previousItems = {}
 Playlist.prototype.playing = false;
 Playlist.prototype.paused = false;
 
@@ -138,9 +139,10 @@ Playlist.prototype.update = function(playlistModel){
             var result = JSON.parse(doc.responseText).result;
             if ( result && result.items) {
                 var items = result.items;
-                // TODO Checken ob sich was geändert hat
-                if (!Playlist.prototype.items || !isEqual(Playlist.prototype.items,items)) {
+
+                if (!Playlist.prototype.previousItems || !isEqual(Playlist.prototype.previousItems,items)) {
                     console.log("new playlist");
+                    Playlist.prototype.previousItems = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
