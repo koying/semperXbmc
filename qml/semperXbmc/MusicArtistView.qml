@@ -61,8 +61,4 @@ Page {
         visible: btFilter.checked
     }
 
-    function init() {
-        $().library.loadArtists();
-    }
-
 }

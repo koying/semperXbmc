@@ -79,8 +79,4 @@ Page {
         id: searchDlg
         visible: btFilter.checked
     }
-
-    function init() {
-        $().library.loadTVShows();
-    }
 }

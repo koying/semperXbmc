@@ -102,6 +102,7 @@ Xbmc.prototype.init = function() {
                 xbmc.general = new General3.General();
                 xbmc.library = new Library3.Library();
                 xbmc.playlist = new Playlist3.Playlist();
+                xbmc.player = new Player3.Player();
                 break;
 
             default:
@@ -109,10 +110,8 @@ Xbmc.prototype.init = function() {
             }
 
             xbmc.library.loadMovies();
-            xbmc.library.loadTVShows();
-            xbmc.library.loadArtists();
-
-            movieStack.currentPage.init();
+//            xbmc.library.loadTVShows();
+//            xbmc.library.loadArtists();
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

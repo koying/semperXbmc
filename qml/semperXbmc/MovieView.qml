@@ -1,4 +1,4 @@
-import Qt 4.7
+import QtQuick 1.0
 import com.nokia.symbian 1.0
 import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
@@ -28,7 +28,7 @@ Page {
 
     Menu {
         id: pgMenu
-        content: MenuLayout {
+        MenuLayout {
 
             CheckBox {
                 text:  "Show viewed items"
@@ -36,6 +36,26 @@ Page {
                 onClicked: globals.showViewed = checked
             }
 
+            MenuItem {
+                text:  "View..."
+                platformSubItemIndicator: true
+                onClicked: viewMenu.open()
+            }
+
+
+        }
+    }
+
+    ContextMenu {
+        id: viewMenu
+        MenuLayout {
+            MenuItem {
+                text:  "List view"
+            }
+            MenuItem {
+                text:  "Coverflow view"
+                onClicked: movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
+            }
         }
     }
 
@@ -81,9 +101,5 @@ Page {
     Cp.SearchDialog {
         id: searchDlg
         visible: btFilter.checked
-    }
-
-    function init() {
-        $().library.loadMovies();
     }
 }

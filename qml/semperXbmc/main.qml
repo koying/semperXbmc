@@ -14,6 +14,7 @@ import "js/playlist.js" as Playlist
 import "js/general3.js" as General3
 import "js/library3.js" as Library3
 import "js/playlist3.js" as Playlist3
+import "js/player3.js" as Player3
 
 Window {
     id: main
@@ -166,6 +167,7 @@ Window {
                 toolBar: movieToolbar
 
                 Component.onCompleted: {
+//                    movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
                     movieStack.push(Qt.resolvedUrl("MovieView.qml"))
                 }
             }
