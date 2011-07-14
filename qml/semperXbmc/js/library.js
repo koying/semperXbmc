@@ -1,12 +1,3 @@
-function debugObject(object) {
-    var output = '';
-    for (var prop in object) {
-        output += prop + ': ' + object[prop]+'; ';
-    }
-    console.debug(output);
-}
-
-
 
 function Library() {
 }
@@ -102,7 +93,7 @@ Library.prototype.loadEpisodes = function (id) {
             var result = JSON.parse(doc.responseText).result;
             var episodes = result.episodes;
             for (var i = 0; i < episodes.length; i++){
-//                debugObject(episodes[i]);
+
                 var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (episodes[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
@@ -130,7 +121,6 @@ Library.prototype.loadTracks = function (idalbum) {
             var result = JSON.parse(doc.responseText).result;
             var songs = result.songs;
             for (var i = 0; i < songs.length; i++){
-//                debugObject(songs[i]);
                 trackModel.append({"idtrack": songs[i].trackid, "name": songs[i].label, "number": songs[i].tracknumber, "duration": songs[i].duration});
             }
         }
@@ -151,8 +141,7 @@ Library.prototype.loadAlbums = function (idartist) {
             var result = JSON.parse(doc.responseText).result;
             var albums = result.albums;
             for (var i = 0; i < albums.length; i++){
-//                console.debug(idartist);
-                debugObject(albums[i]);
+
                 var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (albums[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;

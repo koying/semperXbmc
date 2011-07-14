@@ -29,7 +29,9 @@ public:
     Q_INVOKABLE void actionButton(const QString &ActionMessage);
     Q_INVOKABLE void actionBuiltin(const QString &ActionMessage);
     Q_INVOKABLE void keypress(const QString &keycode);
+
 signals:
+    void errorDetected(QString type, QString msg, QString info);
 
 public slots:
 

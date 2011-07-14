@@ -1,6 +1,7 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
 import com.semperpax.qmlcomponents 1.0
+import "components" as Cp;
 
 import "js/xbmc.js" as Xbmc
 import "js/json.js" as Json
@@ -10,7 +11,9 @@ import "js/player.js" as Player
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
 
+import "js/general3.js" as General3
 import "js/library3.js" as Library3
+import "js/playlist3.js" as Playlist3
 
 Window {
     id: main
@@ -19,6 +22,13 @@ Window {
 
     Globals {
         id: globals
+    }
+
+    Cp.ErrorView {
+        id: errorView
+        z: 5
+
+       anchors.fill: parent
     }
 
 //    StatusBar {
@@ -270,6 +280,10 @@ Window {
 
     XbmcClient {
         id: xbmcEventClient
+
+        onErrorDetected: {
+            errorView.addError(type, msg, info);
+        }
     }
 
     function $() {

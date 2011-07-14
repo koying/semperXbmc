@@ -38,7 +38,7 @@ Page {
 
         Cp.Row {
             id: content
-            width: parent.width;
+            width: ListView.view.width;
             height: 200
 
             text: model.name

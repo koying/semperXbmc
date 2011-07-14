@@ -39,6 +39,7 @@ void XbmcEventClient::initialize(const QString &ip, const QString &port)
 #ifdef Q_OS_WIN
         qDebug() << "Socket creation failed" << WSAGetLastError();
 #endif
+        emit errorDetected("error", "Cannot connect to Event server", "");
     }
 }
 

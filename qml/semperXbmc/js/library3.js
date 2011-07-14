@@ -1,39 +1,3 @@
-function debugObject(object) {
-    var output = '';
-    for (var prop in object) {
-        output += prop + ': ' + object[prop]+'; ';
-    }
-    console.debug(output);
-}
-
-var MAX_DUMP_DEPTH = 10;
-function dumpObj(obj, name, indent, depth) {
-    if (depth > MAX_DUMP_DEPTH) {
-        return indent + name + ": <Maximum Depth Reached>\n";
-    }
-
-    if (typeof obj == "object") {
-        var child = null;
-        var output = indent + name + "\n";
-        indent += "\t";
-        for (var item in obj)
-        {
-            try {
-                child = obj[item];
-            } catch (e) {
-                child = "<Unable to Evaluate>";
-            }
-            if (typeof child == "object") {
-                output += dumpObj(child, item, indent, depth + 1);
-            } else {
-                output += indent + item + ": " + child + "\n";
-            }
-        }
-        return output;
-    } else {
-        return obj;
-    }
-}
 
 function Library() {
 }
@@ -46,7 +10,8 @@ Library.prototype.loadMovies = function () {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadMovies error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadMovies error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -68,7 +33,7 @@ Library.prototype.loadMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "premiered", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -81,7 +46,8 @@ Library.prototype.loadTVShows = function () {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadTVs error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadTVs error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -100,7 +66,7 @@ Library.prototype.loadTVShows = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "plot", "title", "originaltitle", "lastplayed", "premiered", "episode", "year", "playcount", "rating", "thumbnail"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -114,7 +80,8 @@ Library.prototype.loadSeasons = function (id) {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadSeasons error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadSeasons error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -129,13 +96,13 @@ Library.prototype.loadSeasons = function (id) {
                 if (seasons[i].season) {
                     season = seasons[i].season;
                 }
-                seasonModel.append({"id": season, "name": seasons[i].label, "thumb": thumb, "episodes":seasons[i].episode, "genre":  seasons[i].genre, "duration": seasons[i].duration, "rating": seasons[i].rating, "playcount":seasons[i].playcount});
+                seasonModel.append({"id": season, "name": seasons[i].label, "thumb": thumb, "episodes":seasons[i].episode, "playcount":seasons[i].playcount});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "tvshowid":'+ id +', "sort": {"method":"label", "order":"ascending"}, "fields": ["genre", "director", "trailer", "thumbnail", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "season", "episode", "runtime", "year", "playcount", "rating", "watchedepisodes"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "tvshowid":'+ id +', "sort": {"method":"label", "order":"ascending"}, "fields": ["thumbnail", "showtitle", "season", "episode", "playcount"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -149,7 +116,8 @@ Library.prototype.loadEpisodes = function (id) {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadepisodes error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadepisodes error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -157,21 +125,24 @@ Library.prototype.loadEpisodes = function (id) {
             var episodes = result.episodes;
             episodeModel.clear();
             for (var i = 0; i < episodes.length; i++){
-//                debugObject(episodes[i]);
+
                 var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (episodes[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
                 }
 
-                episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "thumb": thumb, "number":  episodes[i].episode, "duration": episodes[i].duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount});
+                var duration = 0;
+                if (episodes[i].streamDetails)
+                    duration = episodes[i].streamDetails.video[0].duration;
+
+                episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "thumb": thumb, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ this.idtvshow +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "fields": ["genre", "director", "thumbnail", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "episode", "year", "playcount", "rating"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ this.idtvshow +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "fields": ["thumbnail", "showtitle", "episode", "playcount", "rating", "streamDetails"] }, "id": 1}';
     doc.send(str);
-    console.log(str);
 
     return;
 }
@@ -183,7 +154,8 @@ Library.prototype.loadTracks = function (idalbum) {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadTracks error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadTracks error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -191,14 +163,13 @@ Library.prototype.loadTracks = function (idalbum) {
             var songs = result.songs;
             trackModel.clear();
             for (var i = 0; i < songs.length; i++){
-//                debugObject(songs[i]);
-                trackModel.append({"idtrack": songs[i].trackid, "name": songs[i].label, "number": songs[i].tracknumber, "duration": songs[i].duration});
+                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "number": songs[i].track, "duration": songs[i].duration});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "genre", "tracknumber", "discnumber", "duration", "year"], "albumid" : '+idalbum+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "genre", "track", "duration"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
 
     return;
@@ -212,7 +183,8 @@ Library.prototype.loadAlbums = function (idartist) {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadAlbums error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadAlbums error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -220,20 +192,19 @@ Library.prototype.loadAlbums = function (idartist) {
             var albums = result.albums;
             albumModel.clear();
             for (var i = 0; i < albums.length; i++){
-//                console.debug(idartist);
-                debugObject(albums[i]);
+
                 var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (albums[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "thumb": thumb});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["album_label", "album_artist", "album_genre", "album_rating", "track", "duration", "year", "thumbnail"], "artistid": '+idartist+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["label", "artist", "genre", "rating", "year", "thumbnail"], "artistid": '+idartist+' }, "id": 1}';
     doc.send(str);
 
     return;
@@ -246,7 +217,8 @@ Library.prototype.loadAllAlbums = function () {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadAllAlbums error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadAllAlbums error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
@@ -259,13 +231,13 @@ Library.prototype.loadAllAlbums = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "thumb": thumb});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["album_description", "album_theme", "album_mood", "album_style", "album_type", "album_label", "album_artist", "album_genre", "album_rating", "album_title", "thumbnail"]}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["label", "artist", "genre", "rating", "year", "thumbnail"}, "id": 1}';
     doc.send(str);
 
     return;
@@ -278,7 +250,8 @@ Library.prototype.loadArtists = function() {
 
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(dumpObj(error, "loadArtists error", "", 0));
+                console.log(Xbmc.dumpObj(error, "loadArtists error", "", 0));
+                errorView.addError("error", error.message, error.code);
                 return;
             }
 
