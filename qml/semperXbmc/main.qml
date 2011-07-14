@@ -109,7 +109,26 @@ Window {
             ToolButton {
                 iconSource: "img/close_stop.svg"
                 onClicked: Qt.quit()
+                onPlatformPressAndHold: mainMenu.open()
             }
+        }
+    }
+
+    ContextMenu {
+        id: mainMenu
+        MenuLayout {
+
+            MenuItem {
+                text:  "Close XBMC"
+                onClicked: xbmcEventClient.actionBuiltin("Quit");
+            }
+
+            MenuItem {
+                text:  "Shutdown"
+                onClicked: xbmcEventClient.actionBuiltin("Powerdown");
+            }
+
+
         }
     }
 
