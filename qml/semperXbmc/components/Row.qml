@@ -39,6 +39,7 @@ ListItem {
                 anchors {fill: parent; horizontalCenter: parent.horizontalCenter }
                 fillMode: Image.PreserveAspectFit
                 visible: source != ""
+                asynchronous: true
                 onStatusChanged: {
                     if (rowImage.status == Image.Ready) {
                         if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && content.banner) {   // banner

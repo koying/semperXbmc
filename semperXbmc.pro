@@ -21,11 +21,16 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += mobility
 # MOBILITY +=
 
+TARGET.EPOCHEAPSIZE = 0x500000  0x5000000
 ICON = semperXbmc_Anna_converted.svg
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 include (src/qtsources.pri)
+
+INCLUDEPATH +=src/QFatFs
+DEPENDPATH += src/QFatFs
+include(src/QFatFs/QFatFs.pri)
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

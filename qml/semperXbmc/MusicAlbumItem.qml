@@ -43,6 +43,7 @@ Rectangle {
                 fillMode:Image.PreserveAspectFit
                 visible: source != ""
                 source: model.thumb
+                asynchronous: true
 //                onStatusChanged: {
 //                    if (rowImage.status == Image.Ready) {
 //                    }

@@ -5,13 +5,13 @@ INCLUDEPATH += src
 
 SOURCES += \
     XbmcEventClient.cpp \
-    src/NetworkAccessManagerFactory.cpp \
-    src/SortFilterModel.cpp
+    NetworkAccessManagerFactory.cpp \
+    ThumbImageProvider.cpp
 
 HEADERS += \
     XbmcEventClient.h \
-    src/NetworkAccessManagerFactory.h \
-    src/SortFilterModel.h
+    NetworkAccessManagerFactory.h \
+    ThumbImageProvider.h
 
 !symbian {
     LIBS += -lws2_32

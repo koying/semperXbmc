@@ -40,6 +40,7 @@ Rectangle {
             height: parent.height
             fillMode:Image.PreserveAspectFit
             visible: rowImage.source != ""
+            asynchronous: true
             onStatusChanged: {
                 if (rowImage.status == Image.Ready) {
                     if (rowImage.sourceSize.width > rowImage.sourceSize.height*2) {   // banner
