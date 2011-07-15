@@ -61,4 +61,9 @@ Page {
         visible: btFilter.checked
     }
 
+    Component.onCompleted: {
+        if (artistModel.count == 0)
+            $().library.loadArtists();
+    }
+
 }

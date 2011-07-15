@@ -79,4 +79,10 @@ Page {
         id: searchDlg
         visible: btFilter.checked
     }
+
+    Component.onCompleted: {
+        if (tvshowModel.count == 0)
+            $().library.loadTVShows();
+    }
+
 }

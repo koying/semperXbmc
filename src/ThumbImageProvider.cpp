@@ -7,34 +7,19 @@ ThumbImageProvider::ThumbImageProvider(const QDir& basedir, const QSize& thumbSi
     , m_baseDir(basedir.path())
     , m_thumbSize(thumbSize)
     , m_thumbAspect(aspectRatioMode)
+    , m_netmanager(new QNetworkAccessManager(this))
 {
 }
 
 bool ThumbImageProvider::sendBlockingNetRequest(const QUrl& theUrl, QByteArray& reply)
 {
-    QNetworkAccessManager manager;
-    QEventLoop q;
-    QTimer tT;
-
-//    manager.setProxy(M_PREFS->getProxy(QUrl("http://merkaartor.be")));
-
-    tT.setSingleShot(true);
-    connect(&tT, SIGNAL(timeout()), &q, SLOT(quit()));
-    connect(&manager, SIGNAL(finished(QNetworkReply*)),
-            &q, SLOT(quit()));
-
-    QNetworkReply *netReply = manager.get(QNetworkRequest(theUrl));
-
-    tT.start(30000);
-    q.exec();
-    if(tT.isActive()) {
-        // download complete
-        tT.stop();
-    } else {
-        return false;
+    QNetworkReply *netReply = m_netmanager->get(QNetworkRequest(theUrl));
+    while(!netReply->isFinished()) {
+        if (!netReply->waitForReadyRead(30000))
+            return false;
+        reply.append(netReply->readAll());
     }
-
-    reply = netReply->readAll();
+    netReply->deleteLater();
     return true;
 }
 
@@ -51,7 +36,20 @@ void showFatStatus(const QString& filename)
 QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
     QImage pix;
-    QStringList levels = id.split("/");
+
+    bool fromNetwork = false;
+    QString fn;
+    QUrl u(id);
+    if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
+        fn = u.toString(QUrl::RemoveScheme | QUrl::RemoveAuthority).replace(":", "");
+        fromNetwork = true;
+    } else {
+        fn = id;
+    }
+
+    qDebug() << fn;
+
+    QStringList levels = fn.split("/");
     QString name = levels.takeLast();
     if (name.isEmpty())
         return pix;
@@ -59,16 +57,7 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
     if (size)
         *size = m_thumbSize;
 
-    QFile f;
-    bool fromNetwork = false;
-    QUrl u(id);
-    if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
-        f.setFileName(m_baseDir + u.toString(QUrl::RemoveScheme | QUrl::RemoveAuthority).replace(":", ""));
-        qDebug() << f.fileName();
-        fromNetwork = true;
-    } else {
-        f.setFileName(m_baseDir + id);
-    }
+    QFile f(m_baseDir + fn);
     if (!f.exists()) {
         QString path = levels.join("/");
 
@@ -78,10 +67,13 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
 
         if (fromNetwork) {
             QByteArray ba;
-            if (sendBlockingNetRequest(u, ba))
-                pix.loadFromData(ba);
+            if (sendBlockingNetRequest(u, ba)) {
+                QImage tmpPix;
+                tmpPix.loadFromData(ba);
+                pix = tmpPix.scaled(m_thumbSize, m_thumbAspect);
+            }
         } else {
-            pix = QImage(id).scaled(m_thumbSize, m_thumbAspect);
+            pix = QImage(fn).scaled(m_thumbSize, m_thumbAspect);
         }
 
         f.open(QIODevice::WriteOnly);

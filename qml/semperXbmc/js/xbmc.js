@@ -109,11 +109,7 @@ Xbmc.prototype.init = function() {
                 return;
             }
 
-            xbmc.library.loadMovies();
-            xbmc.library.loadTVShows();
-            xbmc.library.loadArtists();
-
-            playListStack.currentPage.init();
+            main.jsonInitialized = true;
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

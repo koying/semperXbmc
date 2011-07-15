@@ -102,4 +102,9 @@ Page {
         id: searchDlg
         visible: btFilter.checked
     }
+
+    Component.onCompleted: {
+        if (movieModel.count == 0)
+            $().library.loadMovies();
+    }
 }

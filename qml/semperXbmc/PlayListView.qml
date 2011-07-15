@@ -103,4 +103,8 @@ Page {
         $().playlist.update(playlistModel);
         timer.running = true
     }
+
+    Component.onCompleted: {
+        init();
+    }
 }

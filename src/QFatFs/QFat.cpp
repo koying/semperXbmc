@@ -455,7 +455,7 @@ FatError QFat::makeDirRecursive(const QString &reqpath)
         for (int j=1; j<=i; ++j)
             partPath += "/" + levels[j];
         ret = makeDir(partPath);
-        if (ret != FatNoError)
+        if (ret != FatNoError && ret != FatDirAlreadyExists)
             return ret;
         ++i;
     }

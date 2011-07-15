@@ -14,11 +14,12 @@ public:
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
 
-    static bool sendBlockingNetRequest(const QUrl &theUrl, QByteArray &reply);
+    bool sendBlockingNetRequest(const QUrl &theUrl, QByteArray &reply);
 protected:
     QString m_baseDir;
     QSize m_thumbSize;
     Qt::AspectRatioMode m_thumbAspect;
+    QNetworkAccessManager* m_netmanager;
 };
 
 #endif // THUMBIMAGEPROVIDER_H

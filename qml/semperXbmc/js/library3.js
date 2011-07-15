@@ -19,9 +19,9 @@ Library.prototype.loadMovies = function () {
             var movies = result.movies;
             for (var i = 0; i < movies.length; i++){
                 //console.log(movies[i].thumb)
-                var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                var thumb = "image://thumb/http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (movies[i].thumbnail) {
-                    thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
+                    thumb = "image://thumb/http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
                 }
                 var duration = 0;
                 if (movies[i].streamDetails)

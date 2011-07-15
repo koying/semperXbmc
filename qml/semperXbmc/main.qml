@@ -21,6 +21,8 @@ Window {
     width: 360
     height: 640
 
+    property bool jsonInitialized: false
+
     Globals {
         id: globals
     }
@@ -75,35 +77,78 @@ Window {
             }
 
             ButtonRow {
+                id: mainTabs
+                exclusive: true
+                opacity: 0
+
                 TabButton {
                     iconSource: "img/home.png"
                     tab: remoteTab
-                    onClicked: main.state = ""
+                    onClicked: {
+                        main.state = ""
+                    }
                 }
 
                 TabButton {
                     iconSource: "img/filmstrip.png"
                     tab: movieTab
-                    onClicked: main.state = "movies"
+                    onClicked: {
+                        main.state = "movies"
+                        if (movieStack.depth == 0) {
+//                            movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
+                            movieStack.push(Qt.resolvedUrl("MovieView.qml"))
+                        }
+                    }
                 }
 
                 TabButton {
                     iconSource: "img/tv.png"
                     tab: tvTab
-                    onClicked: main.state = "tvshows"
+                    onClicked: {
+                        main.state = "tvshows"
+                        if (tvshowStack.depth == 0) {
+                            tvshowStack.push(Qt.resolvedUrl("TvShowView.qml"))
+                        }
+                    }
                 }
 
                 TabButton {
                     iconSource: "img/music.png"
                     tab: musicTab
-                    onClicked: main.state = "music"
+                    onClicked: {
+                        main.state = "music"
+                        if (musicStack.depth == 0) {
+                            musicStack.push(Qt.resolvedUrl("MusicArtistView.qml"))
+                        }
+                    }
                 }
 
                 TabButton {
                     iconSource: "img/playlist.png"
                     tab:  playlistTab
-                    onClicked: main.state = "playlist"
+                    onClicked: {
+                        main.state = "playlist"
+                        if (playListStack.depth == 0) {
+                            playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
+                        }
+                    }
                 }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+
+                states: [
+                    State {
+                        name: "initialized"; when: main.jsonInitialized
+                        PropertyChanges {
+                            target: mainTabs
+                            opacity: 1
+                        }
+                    }
+                ]
             }
 
             ToolButton {
@@ -146,34 +191,6 @@ Window {
         }
 
         Item {
-            id: tvTab
-            PageStack {
-                id: tvshowStack
-
-                property string title: "TV"
-
-                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: tvToolbar.top }
-
-                toolBar: tvToolbar
-
-                Component.onCompleted: {
-                    tvshowStack.push(Qt.resolvedUrl("TvShowView.qml"))
-                }
-            }
-            ToolBar {
-                id: tvToolbar
-                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-
-        }
-
-        Item {
             id: movieTab
 
             PageStack {
@@ -182,13 +199,7 @@ Window {
                 property string title: "MOVIES"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: movieToolbar.top }
-
                 toolBar: movieToolbar
-
-                Component.onCompleted: {
-//                    movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
-                    movieStack.push(Qt.resolvedUrl("MovieView.qml"))
-                }
             }
 
             ToolBar {
@@ -204,6 +215,30 @@ Window {
         }
 
         Item {
+            id: tvTab
+            PageStack {
+                id: tvshowStack
+
+                property string title: "TV"
+
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: tvToolbar.top }
+                toolBar: tvToolbar
+
+            }
+            ToolBar {
+                id: tvToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+
+        }
+
+        Item {
             id: musicTab
 
             PageStack {
@@ -212,12 +247,8 @@ Window {
                 property string title: "MUSIC"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: musicToolbar.top }
-
                 toolBar: musicToolbar
 
-                Component.onCompleted: {
-                    musicStack.push(Qt.resolvedUrl("MusicArtistView.qml"))
-                }
             }
 
             ToolBar {
@@ -241,12 +272,8 @@ Window {
                 property string title: "PLAYLIST"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playListToolbar.top }
-
                 toolBar: playListToolbar
 
-                Component.onCompleted: {
-                    playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
-                }
             }
 
             ToolBar {
