@@ -13,13 +13,28 @@ ThumbImageProvider::ThumbImageProvider(const QDir& basedir, const QSize& thumbSi
 
 bool ThumbImageProvider::sendBlockingNetRequest(const QUrl& theUrl, QByteArray& reply)
 {
+    QEventLoop q;
+    QTimer tT;
+
+//    manager.setProxy(M_PREFS->getProxy(QUrl("http://merkaartor.be")));
+
+    tT.setSingleShot(true);
+    connect(&tT, SIGNAL(timeout()), &q, SLOT(quit()));
+
     QNetworkReply *netReply = m_netmanager->get(QNetworkRequest(theUrl));
-    while(!netReply->isFinished()) {
-        if (!netReply->waitForReadyRead(30000))
-            return false;
-        reply.append(netReply->readAll());
+    connect(netReply, SIGNAL(finished()),
+            &q, SLOT(quit()));
+
+    tT.start(30000);
+    q.exec();
+    if(tT.isActive()) {
+        // download complete
+        tT.stop();
+    } else {
+        return false;
     }
-    netReply->deleteLater();
+
+    reply = netReply->readAll();
     return true;
 }
 

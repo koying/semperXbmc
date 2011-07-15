@@ -20,6 +20,7 @@ Rectangle {
             id: txFilter
             height: searchDlg.height - platformStyle.paddingMedium
             width: searchDlg.width - platformStyle.paddingMedium
+            placeholderText: "Filter..."
         }
     }
 }

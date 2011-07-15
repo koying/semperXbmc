@@ -4,6 +4,7 @@ import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
+import "js/filter.js" as Filter
 
 Page {
     tools:  ToolBarLayout {
@@ -79,7 +80,7 @@ Page {
         Cp.Row {
             filtered: {
                           var ret = false;
-                          ret = (btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true);
+                          ret = (btFilter.checked && Filter.filtRx.test(model.name) != true);
                           ret = ret | (!globals.showViewed && model.playcount > 0 );
                           return ret;
                       }
@@ -101,6 +102,10 @@ Page {
     Cp.SearchDialog {
         id: searchDlg
         visible: btFilter.checked
+
+        onTextChanged: {
+            Filter.filtRx = new RegExp(searchDlg.text,"i");
+        }
     }
 
     Component.onCompleted: {
