@@ -1,2 +1,2 @@
-var filtRx;
+var filtRx = new RegExp();
 

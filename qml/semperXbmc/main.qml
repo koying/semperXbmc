@@ -152,9 +152,8 @@ Window {
             }
 
             ToolButton {
-                iconSource: "img/close_stop.svg"
-                onClicked: Qt.quit()
-                onPlatformPressAndHold: mainMenu.open()
+                iconSource: "toolbar-menu"
+                onClicked: mainMenu.open()
             }
         }
     }
@@ -164,16 +163,25 @@ Window {
         MenuLayout {
 
             MenuItem {
-                text:  "Close XBMC"
-                onClicked: xbmcEventClient.actionBuiltin("Quit");
+                text:  "Quit"
+                onClicked: Qt.quit();
             }
 
             MenuItem {
-                text:  "Shutdown"
-                onClicked: xbmcEventClient.actionBuiltin("Powerdown");
+                text:  "Close XBMC and Quit"
+                onClicked: {
+                    xbmcEventClient.actionBuiltin("Quit");
+                    Qt.quit();
+                }
             }
 
-
+            MenuItem {
+                text:  "Shutdown XBMC and Quit"
+                onClicked:  {
+                    xbmcEventClient.actionBuiltin("Powerdown");
+                    Qt.quit();
+                }
+            }
         }
     }
 
@@ -313,8 +321,9 @@ Window {
     ListModel {
         id: playlistModel
     }
-    ListModel {
+    VariantModel {
         id: movieModel
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "playcount", "posterThumb" ]
     }
     ListModel {
         id: tvshowModel

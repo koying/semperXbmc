@@ -2,6 +2,8 @@
 
 #include "QFat.h"
 
+#include <QImageReader>
+
 ThumbImageProvider::ThumbImageProvider(const QDir& basedir, const QSize& thumbSize, Qt::AspectRatioMode aspectRatioMode)
     : QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
     , m_baseDir(basedir.path())
@@ -9,33 +11,6 @@ ThumbImageProvider::ThumbImageProvider(const QDir& basedir, const QSize& thumbSi
     , m_thumbAspect(aspectRatioMode)
     , m_netmanager(new QNetworkAccessManager(this))
 {
-}
-
-bool ThumbImageProvider::sendBlockingNetRequest(const QUrl& theUrl, QByteArray& reply)
-{
-    QEventLoop q;
-    QTimer tT;
-
-//    manager.setProxy(M_PREFS->getProxy(QUrl("http://merkaartor.be")));
-
-    tT.setSingleShot(true);
-    connect(&tT, SIGNAL(timeout()), &q, SLOT(quit()));
-
-    QNetworkReply *netReply = m_netmanager->get(QNetworkRequest(theUrl));
-    connect(netReply, SIGNAL(finished()),
-            &q, SLOT(quit()));
-
-    tT.start(30000);
-    q.exec();
-    if(tT.isActive()) {
-        // download complete
-        tT.stop();
-    } else {
-        return false;
-    }
-
-    reply = netReply->readAll();
-    return true;
 }
 
 void showFatStatus(const QString& filename)
@@ -52,18 +27,7 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
 {
     QImage pix;
 
-    bool fromNetwork = false;
-    QString fn;
-    QUrl u(id);
-    if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
-        fn = u.toString(QUrl::RemoveScheme | QUrl::RemoveAuthority).replace(":", "");
-        fromNetwork = true;
-    } else {
-        fn = id;
-    }
-
-    qDebug() << fn;
-
+    QString fn = id;
     QStringList levels = fn.split("/");
     QString name = levels.takeLast();
     if (name.isEmpty())
@@ -80,29 +44,19 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
         if (!d.exists())
             d.mkpath(m_baseDir + path);
 
-        if (fromNetwork) {
-            QByteArray ba;
-            if (sendBlockingNetRequest(u, ba)) {
-                QImage tmpPix;
-                tmpPix.loadFromData(ba);
-                pix = tmpPix.scaled(m_thumbSize, m_thumbAspect);
-            }
-        } else {
-            pix = QImage(fn).scaled(m_thumbSize, m_thumbAspect);
-        }
+        pix = QImage(fn).scaled(m_thumbSize, m_thumbAspect);
 
         f.open(QIODevice::WriteOnly);
         QBuffer buf;
         buf.open(QIODevice::WriteOnly);
-        pix.save(&buf, "PNG");
+        pix.save(&buf, "JPG");
         f.write(buf.buffer());
 //        qDebug() << id << " : " << buf.data().size();
         f.close();
     } else {
         f.open(QIODevice::ReadOnly);
-        QByteArray ba;
-        ba = f.readAll();
-        pix.loadFromData(ba);
+        QImageReader imageReader(&f);
+        pix = imageReader.read();
         f.close();
     }
 

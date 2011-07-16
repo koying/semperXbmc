@@ -17,17 +17,18 @@ Library.prototype.loadMovies = function () {
 
             var result = JSON.parse(doc.responseText).result;
             var movies = result.movies;
+            movieModel.clear();
             for (var i = 0; i < movies.length; i++){
                 //console.log(movies[i].thumb)
-                var thumb = "image://thumb/http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
                 if (movies[i].thumbnail) {
-                    thumb = "image://thumb/http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
+                    thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
                 }
                 var duration = 0;
                 if (movies[i].streamDetails)
                     duration = movies[i].streamDetails.video[0].duration;
 
-                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "thumb": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "playcount":movies[i].playcount});
+                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "playcount":movies[i].playcount});
             }
         }
     }

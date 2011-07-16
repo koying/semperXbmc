@@ -79,16 +79,16 @@ Page {
 
         Cp.Row {
             filtered: {
-                          var ret = false;
-                          ret = (btFilter.checked && Filter.filtRx.test(model.name) != true);
-                          ret = ret | (!globals.showViewed && model.playcount > 0 );
-                          return ret;
-                      }
+                var ret = false;
+                ret = (btFilter.checked && model.name.indexOf(searchDlg.text) == -1);
+                ret = ret | (!globals.showViewed && model.playcount > 0 );
+                return ret;
+            }
 
             text: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
             duration:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            source: model.thumb
+            source: model.posterThumb
             watched: model.playcount > 0
 
             onSelected:  {
@@ -103,9 +103,10 @@ Page {
         id: searchDlg
         visible: btFilter.checked
 
-        onTextChanged: {
-            Filter.filtRx = new RegExp(searchDlg.text,"i");
-        }
+//        onTextChanged: {
+//            Filter.filtRx = new RegExp(searchDlg.text,"i");
+//            movieModel.sync();
+//        }
     }
 
     Component.onCompleted: {

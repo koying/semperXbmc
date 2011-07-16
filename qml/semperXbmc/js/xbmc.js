@@ -81,8 +81,8 @@ Xbmc.prototype.init = function() {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             if (doc.status != 200) {
-                console.log("Error connecting to XBMC");
-                errorView.addError("error", "Cannot connect to JSON-RPC");
+                console.log("Error " + doc.status + " connecting to XBMC: " + xbmc.server +":" + xbmc.port);
+                errorView.addError("error", "Cannot connect to JSON-RPC: " + xbmc.server +":" + xbmc.port);
                 Xbmc.prototype.inError = true;
                 return;
             }
@@ -112,7 +112,7 @@ Xbmc.prototype.init = function() {
             main.jsonInitialized = true;
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Version","id": 1}';
     doc.send(str);
 }
@@ -125,7 +125,7 @@ Xbmc.prototype.introspect = function() {
             console.log(dumpObj(oJSON, "JSON introspect", "", 0));
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Introspect","id": 1}';
     doc.send(str);
     return;
