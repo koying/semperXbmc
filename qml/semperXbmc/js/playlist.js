@@ -15,7 +15,14 @@ Playlist.prototype.insertTrack = function(idTrack){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
             if (!Playlist.prototype.playing) {
 //                console.log("play");
                 Playlist.prototype.cmd("Play", "Audio");
@@ -33,7 +40,14 @@ Playlist.prototype.addTrack = function(idTrack){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
             if (!Playlist.prototype.playing) {
 //                console.log("play");
                 Playlist.prototype.cmd("Play", "Audio");
@@ -42,7 +56,7 @@ Playlist.prototype.addTrack = function(idTrack){
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "songid": '+idTrack+' }, "id": 1}';
-//    console.log(str);
+    console.log(str);
     doc.send(str);
     return;
 }
@@ -138,7 +152,7 @@ Playlist.prototype.update = function(playlistModel){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-            console.debug(Xbmc.dumpObj(oJSON, "Playlist", "", 0));
+
             var result = oJSON.result;
             if ( result && result.items) {
                 var items = result.items;

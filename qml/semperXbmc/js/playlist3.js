@@ -15,8 +15,9 @@ Playlist.prototype.insertTrack = function(idTrack){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
 
-            var error = JSON.parse(doc.responseText).error;
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);
@@ -40,8 +41,9 @@ Playlist.prototype.addTrack = function(idTrack){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
 
-            var error = JSON.parse(doc.responseText).error;
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);

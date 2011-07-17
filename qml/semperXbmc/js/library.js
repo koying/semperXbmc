@@ -152,6 +152,7 @@ Library.prototype.loadTracks = function (idalbum) {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
 
+
             var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "loadTracks error", "", 0));
@@ -162,7 +163,7 @@ Library.prototype.loadTracks = function (idalbum) {
             var result = oJSON.result;
             var songs = result.songs;
             for (var i = 0; i < songs.length; i++){
-                trackModel.append({"idtrack": songs[i].trackid, "name": songs[i].label, "number": songs[i].tracknumber, "duration": songs[i].duration});
+                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "number": songs[i].tracknumber, "duration": songs[i].duration});
             }
         }
     }
