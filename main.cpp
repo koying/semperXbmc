@@ -43,19 +43,15 @@ int main(int argc, char *argv[])
 //    delete thumbProvider;
 //    delete fatHandler;
 
-//#ifdef Q_OS_SYMBIAN
-//    QFile::remove("c:/data/semperXbmcThumbs.fat");
-//#else
-//    QFile::remove("c:/semperXbmcThumbs.fat");
-//#endif
+#ifndef Q_OS_SYMBIAN
+    QFat* fat = new QFat("c:/semperXbmcThumbs.fat");
+    fat->open();
+    qDebug() << fat->fileName();
+    qDebug() << fat->status();
+    fat->close();
 
-//#ifndef Q_OS_SYMBIAN
-//    QFat* fat = new QFat("c:/semperXbmcThumbs.fat");
-//    fat->open();
-//    qDebug() << fat->fileName();
-//    qDebug() << fat->status();
-//    fat->close();
-//#endif
+    QFile::remove("c:/semperXbmcThumbs.fat");
+#endif
 
     return retval;
 }

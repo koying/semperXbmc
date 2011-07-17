@@ -27,7 +27,16 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
 {
     QImage pix;
 
-    QString fn = id;
+    bool fromNetwork = false;
+    QString fn;
+    QUrl u(id);
+    if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
+        fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
+        fromNetwork = true;
+    } else {
+        fn = id;
+    }
+
     QStringList levels = fn.split("/");
     QString name = levels.takeLast();
     if (name.isEmpty())
@@ -38,22 +47,33 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
 
     QFile f(m_baseDir + fn);
     if (!f.exists()) {
-        QString path = levels.join("/");
+        return QImage();
+//        QString path = levels.join("/");
 
-        QDir d(m_baseDir + path);
-        if (!d.exists())
-            d.mkpath(m_baseDir + path);
+//        QDir d(m_baseDir + path);
+//        if (!d.exists())
+//            d.mkpath(m_baseDir + path);
 
-        pix = QImage(fn).scaled(m_thumbSize, m_thumbAspect);
+//        if (fromNetwork) {
+//            QByteArray ba;
+//            if (sendBlockingNetRequest(u, ba)) {
+//                QImage tmpPix;
+//                tmpPix.loadFromData(ba);
+//                pix = tmpPix.scaled(m_thumbSize, m_thumbAspect);
+//            }
+//        } else {
+//            pix = QImage(fn).scaled(m_thumbSize, m_thumbAspect);
+//        }
 
-        f.open(QIODevice::WriteOnly);
-        QBuffer buf;
-        buf.open(QIODevice::WriteOnly);
-        pix.save(&buf, "JPG");
-        f.write(buf.buffer());
-//        qDebug() << id << " : " << buf.data().size();
-        f.close();
+//        f.open(QIODevice::WriteOnly);
+//        QBuffer buf;
+//        buf.open(QIODevice::WriteOnly);
+//        pix.save(&buf, "JPG");
+//        f.write(buf.buffer());
+////        qDebug() << id << " : " << buf.data().size();
+//        f.close();
     } else {
+//        qDebug() << "Reading thumb " << m_baseDir + fn;
         f.open(QIODevice::ReadOnly);
         QImageReader imageReader(&f);
         pix = imageReader.read();

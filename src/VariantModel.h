@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <QObject>
 #include <QAbstractItemModel>
+#include <QThread>
 
 #include "thumbnailcache.h"
 
@@ -12,6 +13,7 @@ class VariantModel : public QAbstractItemModel
     Q_OBJECT
 public:
     explicit VariantModel(QObject *parent = 0);
+    ~VariantModel();
 
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -38,6 +40,14 @@ public:
 public:
     int count() { return m_data.size(); }
 
+    Q_PROPERTY(QString thumbDir READ thumbDir WRITE setthumbDir)
+public:
+    QString thumbDir() { return m_thumbDir; }
+    void setthumbDir(QString val);
+private:
+    QString m_thumbDir;
+
+
     /************ END PROPERTIES **************/
 
 public:
@@ -57,8 +67,11 @@ protected:
     bool m_initialised;
 
     QList< QVariantMap > m_data;
-    mutable ThumbnailCache m_cache;
+    QThread* m_cacheThread;
+    mutable ThumbnailCache* m_cache;
     QHash< QVariant, QString > m_thumbFields;
 };
+
+Q_DECLARE_METATYPE ( QModelIndex )
 
 #endif // VARIANTMODEL_H

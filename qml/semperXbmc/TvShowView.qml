@@ -65,7 +65,7 @@ Page {
 
             text: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
-            source: model.thumb
+            source: model.posterThumb
             watched: model.playcount > 0
             banner: true
 

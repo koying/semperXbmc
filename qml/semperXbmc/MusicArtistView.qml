@@ -48,7 +48,7 @@ Page {
         Cp.Row {
             filtered: btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true
             text: model.name
-            source: model.thumb
+            source: model.posterThumb
 
             onSelected: {
                 musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})

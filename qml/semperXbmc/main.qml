@@ -152,7 +152,7 @@ Window {
             }
 
             ToolButton {
-                iconSource: "toolbar-menu"
+                iconSource: "img/close_stop.svg"
                 onClicked: mainMenu.open()
             }
         }
@@ -309,8 +309,10 @@ Window {
 
 
     /* Globale Models */
-    ListModel {
+    VariantModel {
         id: artistModel
+        fields: [ "id", "name", "poster", "selected", "posterThumb" ]
+        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
     }
     ListModel {
         id: albumModel
@@ -324,9 +326,12 @@ Window {
     VariantModel {
         id: movieModel
         fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "playcount", "posterThumb" ]
+        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
     }
-    ListModel {
+    VariantModel {
         id: tvshowModel
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb" ]
+        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
     }
     ListModel {
         id: seasonModel

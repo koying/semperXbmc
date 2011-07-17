@@ -45,8 +45,6 @@
 
 #include <QtCore/qmutex.h>
 #include <QtCore/qqueue.h>
-#include <QtCore/qthread.h>
-#include <QtCore/qwaitcondition.h>
 
 #include <QtNetwork>
 #include <QImageReader>
@@ -57,37 +55,35 @@ class QUrl;
 
 class Thumbnail;
 
-class ThumbnailCache : public QThread
+class ThumbnailCache : public QObject
 {
     Q_OBJECT
 public:
-    ThumbnailCache(QObject *parent = 0);
+    ThumbnailCache(const QString& thumbDir, QObject *parent = 0);
     ~ThumbnailCache();
 
-    QPixmap thumbnail(const QUrl &url, const QModelIndex& index);
-
-    bool event(QEvent *event);
+    QString thumbnail(const QUrl &url, const QModelIndex& index);
 
 signals:
     void thumbnailReady(const QModelIndex& index);
-
-protected:
-    void run();
+    void thumbnailRequested();
 
 private:
     QImage getImage(const QUrl &url) const;
     QImage loadImage(QImageReader &reader) const;
+    bool saveThumb(const QUrl &url, const QImage& image);
 
     QMutex mutex;
     QWaitCondition waitCondition;
     QCache<QUrl, Thumbnail> cache;
     QQueue<QUrl> pendingUrls;
-    bool cancelled;
 
     QNetworkAccessManager* netmanager;
+    QString m_thumbDir;
 
 protected slots:
-    void requestFinished(QNetworkReply* reply);
+    void onRequestFinished(QNetworkReply* reply);
+    void onThumbnailRequested();
 };
 
 #endif

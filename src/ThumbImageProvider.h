@@ -14,7 +14,6 @@ public:
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
 
-    bool sendBlockingNetRequest(const QUrl &theUrl, QByteArray &reply);
 protected:
     QString m_baseDir;
     QSize m_thumbSize;

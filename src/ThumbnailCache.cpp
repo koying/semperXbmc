@@ -65,7 +65,6 @@ public:
 
     const QUrl url;
     const QModelIndex index;
-    QPixmap pixmap;
 
 private:
     ThumbnailCache *cache;
@@ -85,93 +84,101 @@ public:
     const QImage image;
 };
 
-ThumbnailCache::ThumbnailCache(QObject *parent)
-    : QThread(parent)
-    , cache(150)
-    , cancelled(false)
+ThumbnailCache::ThumbnailCache(const QString& thumbDir, QObject *parent)
+    : QObject(parent)
+    , m_thumbDir(thumbDir)
 {
-    start(QThread::LowestPriority);
+    netmanager = new QNetworkAccessManager(this);
+    connect(netmanager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onRequestFinished(QNetworkReply*)), Qt::QueuedConnection);
+
+    connect(this, SIGNAL(thumbnailRequested()), this, SLOT(onThumbnailRequested()), Qt::QueuedConnection);
 }
 
 ThumbnailCache::~ThumbnailCache()
 {
-    {
-        QMutexLocker locker(&mutex);
-
-        cancelled = true;
-
-        waitCondition.wakeOne();
-    }
-    wait();
 }
 
-QPixmap ThumbnailCache::thumbnail(const QUrl &url, const QModelIndex& index)
+QString ThumbnailCache::thumbnail(const QUrl &url, const QModelIndex& index)
 {
     QMutexLocker locker(&mutex);
 
-    if (Thumbnail *thumbnail = cache.object(url)) {
-        return thumbnail->pixmap;
+    QString fn;
+    QUrl u(url);
+    if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
+        fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
     } else {
+        fn = url.toString();
+    }
+
+    QFile f(m_thumbDir + fn);
+    if (!f.exists()) {
         pendingUrls.enqueue(url);
 
         cache.insert(url, new Thumbnail(url, index));
 
-        waitCondition.wakeOne();
+        emit thumbnailRequested();
 
-        return QPixmap();
-    }
+        return "";
+    } else
+        return QString("image://thumb/%1").arg(url.toString());
 }
 
-bool ThumbnailCache::event(QEvent *event)
+bool ThumbnailCache::saveThumb(const QUrl& url, const QImage& image)
 {
-    if (event->type() == QEvent::User) {
-        ThumbnailEvent *thumbnailEvent = static_cast<ThumbnailEvent *>(event);
-
+    if (Thumbnail *thumbnail = cache.object(url)) {
         QMutexLocker locker(&mutex);
 
-        if (Thumbnail *thumbnail = cache.object(thumbnailEvent->url)) {
-            thumbnail->pixmap = QPixmap::fromImage(thumbnailEvent->image);
-
-            locker.unlock();
-
-            emit thumbnailReady(thumbnail->index);
+        QString fn;
+        QUrl u(thumbnail->url);
+        if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
+            fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
+        } else {
+            fn = u.toString();
         }
-        return true;
-    } else {
-        return QThread::event(event);
+
+        QStringList levels = fn.split("/");
+        QString name = levels.takeLast();
+        if (name.isEmpty())
+            return true;
+
+        QString path = levels.join("/");
+
+        QDir d(m_thumbDir + path);
+        if (!d.exists())
+            d.mkpath(m_thumbDir + path);
+
+        QFile f(m_thumbDir + fn);
+//        qDebug() << "Writing thumb to " << m_thumbDir + fn;
+        f.open(QIODevice::WriteOnly);
+        QBuffer buf;
+        buf.open(QIODevice::WriteOnly);
+        image.save(&buf, "JPG");
+        f.write(buf.buffer());
+        //        qDebug() << id << " : " << buf.data().size();
+        f.close();
+
+        emit thumbnailReady(thumbnail->index);
     }
+    return true;
 }
 
-void ThumbnailCache::run()
+void ThumbnailCache::onThumbnailRequested()
 {
-    QMutexLocker locker(&mutex);
+    if (!pendingUrls.isEmpty()) {
+        const QUrl url = pendingUrls.dequeue();
 
-    netmanager = new QNetworkAccessManager();
-    connect(netmanager, SIGNAL(finished(QNetworkReply*)), SLOT(requestFinished(QNetworkReply*)));
-
-    while(!cancelled) {
-        if (!pendingUrls.isEmpty()) {
-            const QUrl url = pendingUrls.dequeue();
-
-            if (cache.contains(url)) {
-                locker.unlock();
-                QImage image = getImage(url);
-                locker.relock();
-
-                if (!image.isNull())
-                    QCoreApplication::postEvent(this, new ThumbnailEvent(url, image));
-            }
-        } else {
-            waitCondition.wait(&mutex);
+        if (cache.contains(url)) {
+            QImage image = getImage(url);
+            if (!image.isNull())
+                saveThumb(url, image);
         }
     }
 
-    delete netmanager;
 }
 
 QImage ThumbnailCache::loadImage(QImageReader &reader) const
 {
-    reader.setQuality(25);
+//    reader.setQuality(75);
 
     if (reader.supportsOption(QImageIOHandler::Size)) {
         QSize size = reader.size();
@@ -183,7 +190,7 @@ QImage ThumbnailCache::loadImage(QImageReader &reader) const
 
         if (size.width() > VariantModel::thumbnailSize.width()
                 || size.height() > VariantModel::thumbnailSize.height()) {
-            size.scale(VariantModel::thumbnailSize, Qt::KeepAspectRatio);
+            size.scale(VariantModel::thumbnailSize, Qt::KeepAspectRatioByExpanding);
         }
 
         reader.setScaledSize(size);
@@ -207,13 +214,17 @@ QImage ThumbnailCache::getImage(const QUrl &url) const
     }
 }
 
-void ThumbnailCache::requestFinished(QNetworkReply *reply)
+void ThumbnailCache::onRequestFinished(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError)
         return;
 
+//    QList<QNetworkReply::RawHeaderPair> rawH =  reply->rawHeaderPairs();
+//    foreach (QNetworkReply::RawHeaderPair p, rawH)
+//        qDebug() << p.first << " : " << p.second;
     QImageReader reader(reply);
     QImage image = loadImage(reader);
     if (!image.isNull())
-        QCoreApplication::postEvent(this, new ThumbnailEvent(reply->url(), image));
+        saveThumb(reply->url(), image);
 }
+
