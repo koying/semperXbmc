@@ -66,6 +66,8 @@ QModelIndex VariantModel::parent(const QModelIndex &child) const
 
 void VariantModel::setfields(QVariantList val)
 {
+    beginResetModel();
+
     m_fields = val;
 
     QHash<int, QByteArray> roleNames;
@@ -85,6 +87,8 @@ void VariantModel::setfields(QVariantList val)
     setRoleNames(roleNames);
 
     m_initialised = true;
+
+    endResetModel();
 }
 
 void VariantModel::setthumbDir(QString val)

@@ -310,10 +310,15 @@ Window {
 
 
     /* Globale Models */
+    SortFilterModel {
+        id: artistProxyModel
+
+        sourceModel: artistModel
+    }
     VariantModel {
         id: artistModel
         fields: [ "id", "name", "poster", "selected", "posterThumb" ]
-        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
+        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
     }
     ListModel {
         id: albumModel
@@ -324,15 +329,26 @@ Window {
     ListModel {
         id: playlistModel
     }
+
+    SortFilterModel {
+        id: movieProxyModel
+
+        sourceModel: movieModel
+    }
     VariantModel {
         id: movieModel
         fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "playcount", "posterThumb" ]
-        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
+        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
+    }
+    SortFilterModel {
+        id: tvshowProxyModel
+
+        sourceModel: tvshowModel
     }
     VariantModel {
         id: tvshowModel
         fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb" ]
-        thumbDir: "fat:///c:/semperXbmcThumbs.fat#/"
+        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
     }
     ListModel {
         id: seasonModel

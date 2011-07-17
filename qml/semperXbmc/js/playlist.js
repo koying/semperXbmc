@@ -125,18 +125,21 @@ Playlist.prototype.addEpisode = function(idepisode){
 
 Playlist.prototype.videoClear = function(){
     Playlist.prototype.cmd("Clear", "Video");
+    Playlist.prototype.previousItems = {}
 }
 
 Playlist.prototype.audioClear = function(){
     Playlist.prototype.cmd("Clear", "Audio");
+    Playlist.prototype.previousItems = {}
 }
 
 Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-//            console.log(doc.responseText);
-            var result = JSON.parse(doc.responseText).result;
+            var oJSON = JSON.parse(doc.responseText);
+            console.debug(Xbmc.dumpObj(oJSON, "Playlist", "", 0));
+            var result = oJSON.result;
             if ( result && result.items) {
                 var items = result.items;
 
@@ -146,14 +149,19 @@ Playlist.prototype.update = function(playlistModel){
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
-                        var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                        var thumb = "qrc:/defaultImages/album";
                         if (items[i].thumbnail && items[i].thumbnail != "DefaultAlbumCover.png") {
                             thumb = "http://"+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
                         playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
                     }
                 }
+            } else {
+                playlistModel.clear();
+                Playlist.prototype.playing = false;
+                Playlist.prototype.paused = false;
             }
+
             if (playlistModel.count > 0) {
                 for (var i = 0; i < playlistModel.count; i++) {
                     playlistModel.setProperty(i, "select", false);

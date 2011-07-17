@@ -43,7 +43,7 @@ Page {
         anchors.fill: parent
         clip: true
 
-        model: tvshowModel
+        model: tvshowProxyModel
         delegate: tvshowDelegate
     }
 
@@ -58,7 +58,6 @@ Page {
         Cp.Row {
             filtered: {
                           var ret = false;
-                          ret = (btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true);
                           ret = ret | (!globals.showViewed && model.playcount > 0 );
                           return ret;
                       }
@@ -78,6 +77,20 @@ Page {
     Cp.SearchDialog {
         id: searchDlg
         visible: btFilter.checked
+
+        onTextChanged: {
+            tvshowProxyModel.filterRole = "name"
+            tvshowProxyModel.filterRegExp = searchDlg.text
+        }
+        onVisibleChanged: {
+            if (searchDlg.visible) {
+                tvshowProxyModel.filterRole = "name"
+                tvshowProxyModel.filterRegExp = searchDlg.text
+            } else {
+                tvshowProxyModel.filterRole = ""
+                tvshowProxyModel.filterRegExp = ""
+            }
+        }
     }
 
     Component.onCompleted: {

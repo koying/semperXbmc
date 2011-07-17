@@ -65,7 +65,7 @@ Page {
         anchors.fill: parent
         clip: true
 
-        model: movieModel
+        model: movieProxyModel
         delegate: movieDelegate
     }
 
@@ -80,7 +80,6 @@ Page {
         Cp.Row {
             filtered: {
                 var ret = false;
-                ret = (btFilter.checked && model.name.indexOf(searchDlg.text) == -1);
                 ret = ret | (!globals.showViewed && model.playcount > 0 );
                 return ret;
             }
@@ -103,10 +102,19 @@ Page {
         id: searchDlg
         visible: btFilter.checked
 
-//        onTextChanged: {
-//            Filter.filtRx = new RegExp(searchDlg.text,"i");
-//            movieModel.sync();
-//        }
+        onTextChanged: {
+            movieProxyModel.filterRole = "name"
+            movieProxyModel.filterRegExp = searchDlg.text
+        }
+        onVisibleChanged: {
+            if (searchDlg.visible) {
+                movieProxyModel.filterRole = "name"
+                movieProxyModel.filterRegExp = searchDlg.text
+            } else {
+                movieProxyModel.filterRole = ""
+                movieProxyModel.filterRegExp = ""
+            }
+        }
     }
 
     Component.onCompleted: {

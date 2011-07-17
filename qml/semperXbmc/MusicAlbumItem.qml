@@ -12,8 +12,8 @@ Rectangle {
     gradient: normal
     Gradient {
         id: normal
-        GradientStop { position: 0.0; color: "#333" }
-        GradientStop { position: 1.0; color: "#000" }
+        GradientStop { position: 0.0; color: "#777" }
+        GradientStop { position: 1.0; color: "#333" }
     }
     Gradient {
         id: pressed
@@ -55,7 +55,7 @@ Rectangle {
             anchors.margins: 5
             anchors { top: itImage.bottom; left: parent.left; right:  parent.right }
             width: parent.width
-            height: content.height * 0.2
+            height: content.height * 0.3
             Column {
                 anchors.horizontalCenter: parent.horizontalCenter
 

@@ -24,18 +24,19 @@ General.prototype.setVolume = function(i) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
 
-            var error = JSON.parse(doc.responseText).error;
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "setVolume error", "", 0));
                 return;
             }
 
-            General.prototype.volume = JSON.parse(doc.responseText).result;
+            General.prototype.volume = oJSON.result;
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "General.SetVolume", "params": ' + i + ', "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "XBMC.SetVolume", "params": ' + i + ', "id": 1}';
     doc.send(str);
     General.prototype.volume = i;
     return;
@@ -47,17 +48,18 @@ General.prototype.getVolume = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
 
-            var error = JSON.parse(doc.responseText).error;
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "getVolume error", "", 0));
                 return;
             }
-            General.prototype.volume = JSON.parse(doc.responseText).result;
+            General.prototype.volume = oJSON.result;
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "General.GetVolume","id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "XBMC.GetVolume","id": 1}';
     doc.send(str);
 //    console.debug(str);
     return;

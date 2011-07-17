@@ -19,14 +19,31 @@ ListItem {
 
     Rectangle {
         anchors.fill: parent
-        color: "lightsteelblue"
-        visible:  content.current
+
+        gradient: content.current ? highlight : normal
+
+        Gradient {
+            id: normal
+            GradientStop { position: 0.0; color: "#777" }
+            GradientStop { position: 1.0; color: "#333" }
+        }
+        Gradient {
+            id: pressed
+            GradientStop { position: 0.0; color: "#336" }
+            GradientStop { position: 1.0; color: "#003" }
+        }
+        Gradient {
+            id: highlight
+            GradientStop { position: 0.0; color: "#669" }
+            GradientStop { position: 1.0; color: "#336" }
+        }
     }
 
     Row {
         id: grid
-        spacing: 20
-        anchors.fill: content.paddingItem
+        spacing: platformStyle.paddingSmall
+        anchors.fill: content
+        anchors.margins: platformStyle.paddingSmall
         visible: !content.filtered
 
         Item {
@@ -68,7 +85,7 @@ ListItem {
             Column {
                 Item {
                     id: rowTitle
-                    height: content.subtitle ? details.height * 0.4 : details.height
+                    height: content.subtitle ? details.height * 0.5 : details.height
                     width:  details.width
 
                     ListItemText {

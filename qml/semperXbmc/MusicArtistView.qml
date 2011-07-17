@@ -33,7 +33,7 @@ Page {
         clip: true
         highlightMoveDuration: 300
 
-        model: artistModel
+        model: artistProxyModel
         delegate: artistDelegate
     }
 
@@ -46,7 +46,6 @@ Page {
         id: artistDelegate
 
         Cp.Row {
-            filtered: btFilter.checked && new RegExp(searchDlg.text,"i").test(model.name) != true
             text: model.name
             source: model.posterThumb
 
@@ -59,6 +58,20 @@ Page {
     Cp.SearchDialog {
         id: searchDlg
         visible: btFilter.checked
+
+        onTextChanged: {
+            artistProxyModel.filterRole = "name"
+            artistProxyModel.filterRegExp = searchDlg.text
+        }
+        onVisibleChanged: {
+            if (searchDlg.visible) {
+                artistProxyModel.filterRole = "name"
+                artistProxyModel.filterRegExp = searchDlg.text
+            } else {
+                artistProxyModel.filterRole = ""
+                artistProxyModel.filterRegExp = ""
+            }
+        }
     }
 
     Component.onCompleted: {

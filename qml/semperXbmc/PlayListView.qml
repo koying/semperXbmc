@@ -58,7 +58,6 @@ Page {
                 if ($().playlist.playing)
                     $().player.stop()
                 $().playlist.audioClear();
-                playlistModel.clear();
             }
             visible: playlistModel.count > 0
         }

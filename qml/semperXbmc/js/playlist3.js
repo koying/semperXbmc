@@ -177,15 +177,16 @@ Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
 
-            var error = JSON.parse(doc.responseText).error;
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.update error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
 
-            var result = JSON.parse(doc.responseText).result;
+            var result = oJSON.result;
             if ( result && result.items) {
                 var items = result.items;
 
@@ -195,13 +196,17 @@ Playlist.prototype.update = function(playlistModel){
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
-                        var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                        var thumb = "qrc:/defaultImages/album";
                         if (items[i].thumbnail && items[i].thumbnail != "DefaultAlbumCover.png") {
                             thumb = "http://"+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
                         playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
                     }
                 }
+            } else {
+                playlistModel.clear();
+                Playlist.prototype.playing = false;
+                Playlist.prototype.paused = false;
             }
 
             if (result.state && playlistModel.count > 0) {
