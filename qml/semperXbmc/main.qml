@@ -56,7 +56,7 @@ Window {
 //                pixelSize: parent.height -5
 //            }
 
-//            text: root.currentTab.title
+//            text: mainTabGroup.currentTab.title
 //        }
 
 //        MouseArea {
@@ -190,7 +190,7 @@ Window {
     }
 
     TabGroup {
-        id: root
+        id: mainTabGroup
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.top: toolBar.bottom

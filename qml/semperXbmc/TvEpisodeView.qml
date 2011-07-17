@@ -51,6 +51,7 @@ Page {
                 $().playlist.videoClear();
                 xbmcEventClient.actionButton("Stop");
                 $().playlist.addEpisode(id);
+                mainTabGroup.currentTab = remoteTab
             }
         }
     }

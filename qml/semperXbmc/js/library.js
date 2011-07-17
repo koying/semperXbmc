@@ -18,7 +18,6 @@ Library.prototype.loadMovies = function () {
             var result = oJSON.result;
             var movies = result.movies;
             for (var i = 0; i < movies.length; i++){
-                //console.log(movies[i].thumb)
                 var thumb = "qrc:/defaultImages/movie";
                 if (movies[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
@@ -59,7 +58,6 @@ Library.prototype.loadTVShows = function () {
                 }
 
                 tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "playcount":tvshows[i].playcount});
-                //                console.log("tvshow append: " + tvshows[i].label);
             }
         }
     }
@@ -267,7 +265,6 @@ Library.prototype.loadArtists = function() {
                 }
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].label, "poster": thumb, "selected": false});
             }
-            //            console.log("loading artists done")
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

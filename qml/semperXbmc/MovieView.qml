@@ -94,6 +94,7 @@ Page {
                 $().playlist.videoClear();
                 xbmcEventClient.actionButton("Stop");
                 $().playlist.addMovie(id);
+                mainTabGroup.currentTab = remoteTab
             }
         }
     }
