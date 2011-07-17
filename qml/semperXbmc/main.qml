@@ -73,7 +73,10 @@ Window {
 
             ToolButton {
                 iconSource: "img/settings.svg"
-                onClicked: settings.open()
+                onClicked: {
+                    settings.source = "Settings.qml"
+                    settings.item.open()
+                }
             }
 
             ButtonRow {
@@ -298,12 +301,14 @@ Window {
         }
     }
 
-    Settings {
+    Loader {
         id: settings
-        titleText: "SETTINGS"
+    }
 
+    Connections {
+        target: settings.item
         onSettingsChanged: {
-            remoteTab.settingsChanged();
+            xbmcEventClient.initialize(globals.server, globals.eventPort);
             main.initialize();
         }
     }
@@ -382,7 +387,11 @@ Window {
 
     Component.onCompleted: {
         globals.load();
-        settings.setup();
+        if (globals.server == "Unspecified") {
+            settings.source = "Settings.qml"
+            settings.item.open()
+            return;
+        }
         xbmcEventClient.initialize(globals.server, globals.eventPort);
         initialize();
     }

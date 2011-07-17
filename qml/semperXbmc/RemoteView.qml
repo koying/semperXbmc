@@ -166,9 +166,4 @@ Rectangle {
             }
         }
     ]
-
-    function settingsChanged() {
-    //        console.debug("settings changed");
-        xbmcEventClient.initialize(globals.server, globals.eventPort);
-    }
 }

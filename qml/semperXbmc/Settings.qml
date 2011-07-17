@@ -10,6 +10,7 @@ CommonDialog {
 
     signal settingsChanged();
 
+    titleText: "SETTINGS"
 
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
@@ -100,14 +101,12 @@ CommonDialog {
     }
 
     function setup() {
-        inpServer.text = globals.server;
+        if (globals.server == "Unspecified")
+            inpServer.placeholderText = "XBMC server address"
+        else
+            inpServer.text = globals.server;
         inpJsonPort.text = globals.jsonPort;
         inpEventPort.text = globals.eventPort;
-
-        if (inpServer.text == "Unspecified") {
-            dialog.open();
-            return;
-        }
     }
 
     onAccepted: {
@@ -119,4 +118,5 @@ CommonDialog {
         dialog.settingsChanged();
     }
 
+    Component.onCompleted: setup()
 }

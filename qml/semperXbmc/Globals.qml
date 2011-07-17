@@ -7,11 +7,9 @@ QtObject {
     property string eventPort: ""
     property bool showViewed: true
 
-    Component.onCompleted: {
-        DbSettings.initialize();
-    }
-
     function load() {
+        DbSettings.initialize();
+
         server = DbSettings.getSetting("server", "Unspecified");
         jsonPort = DbSettings.getSetting("jsonPort", "8080");
         eventPort = DbSettings.getSetting("eventPort", "9777");
