@@ -104,6 +104,9 @@ QString ThumbnailCache::thumbnail(const QUrl &url, const QModelIndex& index)
 
     QString fn;
     QUrl u(url);
+    if (u.isValid() && u.scheme() == "qrc")
+        return url.toString();
+
     if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
         fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
     } else {
@@ -228,3 +231,25 @@ void ThumbnailCache::onRequestFinished(QNetworkReply *reply)
         saveThumb(reply->url(), image);
 }
 
+/************* ThumbnailCacheThread ************************/
+
+ThumbnailCacheThread::ThumbnailCacheThread(const QString &thumbDir, QObject *parent)
+    : QThread(parent)
+    , m_thumbDir(thumbDir)
+{
+}
+
+void ThumbnailCacheThread::run()
+{
+    m_cache = new ThumbnailCache(m_thumbDir);
+    connect(m_cache, SIGNAL(thumbnailReady(QModelIndex)), this, SIGNAL(thumbnailReady(QModelIndex)));
+
+    QThread::run();
+
+    delete m_cache;
+}
+
+QString ThumbnailCacheThread::thumbnail(const QUrl &url, const QModelIndex& index)
+{
+    return m_cache->thumbnail(url, index);
+}

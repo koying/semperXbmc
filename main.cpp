@@ -41,16 +41,17 @@ int main(int argc, char *argv[])
 
     viewer.engine()->removeImageProvider(QLatin1String("thumb"));
 //    delete thumbProvider;
-//    delete fatHandler;
+    delete fatHandler;
 
 #ifndef Q_OS_SYMBIAN
-    QFat* fat = new QFat("c:/semperXbmcThumbs.fat");
-    fat->open();
-    qDebug() << fat->fileName();
-    qDebug() << fat->status();
-    fat->close();
+//    QFat* fat = new QFat("c:/semperXbmcThumbs.fat");
+//    fat->open();
+//    qDebug() << fat->fileName();
+//    qDebug() << fat->status();
+//    fat->close();
+//    delete fat;
 
-    QFile::remove("c:/semperXbmcThumbs.fat");
+//    QFile::remove("c:/semperXbmcThumbs.fat");
 #endif
 
     return retval;

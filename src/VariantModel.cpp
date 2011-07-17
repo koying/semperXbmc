@@ -10,7 +10,6 @@ const QSize VariantModel::thumbnailSize(128, 128);
 VariantModel::VariantModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_initialised(false)
-    , m_cache(0)
     , m_cacheThread(0)
 {
     qRegisterMetaType<QModelIndex>("QModelIndex");
@@ -18,9 +17,6 @@ VariantModel::VariantModel(QObject *parent)
 
 VariantModel::~VariantModel()
 {
-    if (m_cache) {
-        m_cache->deleteLater();
-    }
     if (m_cacheThread) {
         m_cacheThread->terminate();
         m_cacheThread->wait(5000);
@@ -42,7 +38,7 @@ QVariant VariantModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (m_thumbFields.contains(m_fields[role - Qt::UserRole])) {
-        return m_cache->thumbnail(QUrl(m_data.at(index.row()).value(m_thumbFields[m_fields[role - Qt::UserRole]]).toString()), index);
+        return m_cacheThread->thumbnail(QUrl(m_data.at(index.row()).value(m_thumbFields[m_fields[role - Qt::UserRole]]).toString()), index);
     }
 
     return m_data.at(index.row()).value(m_fields[role - Qt::UserRole].toString());
@@ -94,18 +90,12 @@ void VariantModel::setfields(QVariantList val)
 void VariantModel::setthumbDir(QString val)
 {
     m_thumbDir = val;
-    if (m_cache) {
-        m_cache->deleteLater();
-    }
     if (m_cacheThread) {
         m_cacheThread->terminate();
         m_cacheThread->deleteLater();
     }
-    m_cache = new ThumbnailCache(m_thumbDir);
-    connect(m_cache, SIGNAL(thumbnailReady(QModelIndex)), this, SLOT(thumbnailLoaded(QModelIndex)));
-
-    m_cacheThread = new QThread(this);
-    m_cache->moveToThread(m_cacheThread);
+    m_cacheThread = new ThumbnailCacheThread(m_thumbDir, this);
+    connect(m_cacheThread, SIGNAL(thumbnailReady(QModelIndex)), this, SLOT(thumbnailLoaded(QModelIndex)));
 
     m_cacheThread->start(QThread::LowPriority);
 }

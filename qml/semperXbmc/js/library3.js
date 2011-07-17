@@ -261,7 +261,7 @@ Library.prototype.loadArtists = function() {
             artists.sort(sort);
             artistModel.clear();
             for (var i = 0; i < artists.length; i++){
-                var thumb = "img/user.svg";
+                var thumb = "qrc:/defaultImages/artist";
                 if (artists[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + artists[i].thumbnail;
                 }

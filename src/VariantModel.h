@@ -67,8 +67,7 @@ protected:
     bool m_initialised;
 
     QList< QVariantMap > m_data;
-    QThread* m_cacheThread;
-    mutable ThumbnailCache* m_cache;
+    ThumbnailCacheThread* m_cacheThread;
     QHash< QVariant, QString > m_thumbFields;
 };
 

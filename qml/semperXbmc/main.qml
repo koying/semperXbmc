@@ -154,6 +154,7 @@ Window {
             ToolButton {
                 iconSource: "img/close_stop.svg"
                 onClicked: mainMenu.open()
+                onPlatformPressAndHold: Qt.quit()
             }
         }
     }

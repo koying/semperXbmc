@@ -86,4 +86,23 @@ protected slots:
     void onThumbnailRequested();
 };
 
+class ThumbnailCacheThread : public QThread
+{
+    Q_OBJECT
+public:
+    ThumbnailCacheThread(const QString& thumbDir, QObject *parent = 0);
+
+    QString thumbnail(const QUrl &url, const QModelIndex& index);
+
+protected:
+    void run();
+
+protected:
+    QString m_thumbDir;
+    ThumbnailCache *m_cache;
+
+signals:
+    void thumbnailReady(const QModelIndex& index);
+};
+
 #endif

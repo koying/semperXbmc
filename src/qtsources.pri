@@ -20,3 +20,6 @@ HEADERS += \
 !symbian {
     LIBS += -lws2_32
 }
+
+RESOURCES += \
+    src/resource.qrc
