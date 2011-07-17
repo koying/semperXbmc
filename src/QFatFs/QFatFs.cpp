@@ -33,6 +33,7 @@ QAbstractFileEngine * QFatFsHandler::create(const QString &fileName) const
 
     QString name = u.fragment();
 
+    QMutexLocker locker(&mutex);
     QFat* fat = cache[fatPath];
     if(!fat) {
         fat = new QFat(fatPath, m_clusterCount, m_clusterSize);
@@ -90,6 +91,8 @@ QString FatIterator::currentFileName() const
 
 /**************************/
 
+QMutex glob_mutex;
+
 QFatEngine::QFatEngine(QFat* fat, const QString& path, const QString& name)
     : m_fat(fat)
     , m_fatpath(path)
@@ -108,6 +111,7 @@ QFatEngine::QFatEngine(QFat* fat, const QString& path, const QString& name)
     if (m_name.isEmpty() || m_name == "/")
         m_flags |= ExistsFlag;
     else {
+        QMutexLocker locker(&glob_mutex);
         FatError ret = m_fat->getToc(m_name, m_toc);
         if (ret == FatNoError && m_toc.flags)
             m_flags |= ExistsFlag;
@@ -116,6 +120,8 @@ QFatEngine::QFatEngine(QFat* fat, const QString& path, const QString& name)
 
 bool QFatEngine::open( QIODevice::OpenMode mode)
 {
+    QMutexLocker locker(&glob_mutex);
+
     fatFile = new QFatFile(m_name, m_fat);
     if (!fatFile->open(mode)) {
         delete fatFile;
@@ -126,21 +132,25 @@ bool QFatEngine::open( QIODevice::OpenMode mode)
 
 qint64 QFatEngine::read( char * data, qint64 maxlen )
 {
+    QMutexLocker locker(&glob_mutex);
     return fatFile->read(data,maxlen);
 }
 
 qint64 QFatEngine::readLine(char *data, qint64 maxlen)
 {
+    QMutexLocker locker(&glob_mutex);
     return fatFile->readLine(data,maxlen);
 }
 
 qint64 QFatEngine::write(const char *data, qint64 len)
 {
+    QMutexLocker locker(&glob_mutex);
     return fatFile->write(data,len);
 }
 
 bool QFatEngine::close()
 {
+    QMutexLocker locker(&glob_mutex);
     fatFile->close();
     delete fatFile;
     return true;
@@ -148,6 +158,7 @@ bool QFatEngine::close()
 
 QAbstractFileEngine::Iterator * QFatEngine::beginEntryList(QDir::Filters filters, const QStringList &filterNames)
 {
+    QMutexLocker locker(&glob_mutex);
     return new FatIterator(filters, filterNames, m_fat, m_fatpath, m_name);
 }
 
@@ -171,6 +182,8 @@ bool QFatEngine::mkdir(const QString &dirName, bool createParentDirectories) con
 
     bool ret;
 
+    QMutexLocker locker(&glob_mutex);
+
     if (createParentDirectories)
         ret = (m_fat->makeDirRecursive(u.fragment()) == FatNoError) ? true : false;
     else
@@ -187,6 +200,8 @@ bool QFatEngine::rmdir(const QString &dirName, bool recurseParentDirectories) co
         return false;
 
     bool ret;
+
+    QMutexLocker locker(&glob_mutex);
 
     if (recurseParentDirectories)
         ret = (m_fat->removeDirRecursive(u.fragment()) == FatNoError) ? true : false;
@@ -210,6 +225,7 @@ bool QFatEngine::extension(QAbstractFileEngine::Extension extension, const QAbst
 
 bool QFatEngine::remove()
 {
+    QMutexLocker locker(&glob_mutex);
     m_fat->removeFile(m_name);
     m_fat->writeFat();
 }
@@ -238,6 +254,11 @@ QString QFatEngine::fileName(QAbstractFileEngine::FileName file) const
 bool QFatEngine::flush()
 {
     return true;
+}
+
+bool QFatEngine::seek(qint64 offset)
+{
+    return fatFile->seek(offset);
 }
 
 

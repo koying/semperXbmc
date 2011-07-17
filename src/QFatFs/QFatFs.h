@@ -40,6 +40,8 @@ private:
     quint16 m_clusterCount;
     quint16 m_clusterSize;
 
+    mutable QMutex mutex;
+
 };
 
 class QFatEngine : public QAbstractFileEngine
@@ -71,7 +73,7 @@ public:
     bool rmdir ( const QString & dirName, bool recurseParentDirectories ) const;
 
     qint64 pos () const { return fatFile->pos(); }
-    bool seek ( qint64 offset ) { return fatFile->seek(offset); }
+    bool seek ( qint64 offset );
 signals:
 
 public slots:
@@ -84,7 +86,6 @@ private:
     FatTocEntry m_toc;
 
     QFatFile* fatFile;
-
 };
 
 #endif // QFATFS_H

@@ -23,6 +23,7 @@ private:
     QDateTime m_modificationTime;
 
     FatTocEntry m_toc;
+
 };
 
 #endif // QFATFILE_H

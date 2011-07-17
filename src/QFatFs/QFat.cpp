@@ -114,6 +114,7 @@ FatError QFat::checkAndCreate(FAT_FAT_TYPE clusterNum)
         return FatNotOpen;
 
     if (!m_fatFile->isOpen()) {
+
         if (!m_fatFile->open(QIODevice::ReadWrite))
             return FatSysError;
 
@@ -203,16 +204,18 @@ FAT_FAT_TYPE QFat::writeData(const QByteArray& data, FAT_FAT_TYPE reqCluster)
     quint64 written;
     quint32 idx = 0;
     FAT_FAT_TYPE cluster = startCluster;
+    if (checkAndCreate(cluster) != FatNoError)
+        return m_clusterCount;
     m_fatFile->seek(m_startOfData + (cluster * m_clusterSize));
     forever {
-        if (checkAndCreate(cluster) != FatNoError)
-            return m_clusterCount;
         written =  m_fatFile->write(data.data() + idx, ((idx + m_clusterSize) < data.size() ? m_clusterSize : data.size() - idx));
         if (written == m_clusterSize) {
             idx += written;
             m_fat[cluster] = 0xff;
             FAT_FAT_TYPE nextCluster = findFreeCluster();
             if (nextCluster == m_clusterCount)
+                return m_clusterCount;
+            if (checkAndCreate(nextCluster) != FatNoError)
                 return m_clusterCount;
             m_fat[cluster] = nextCluster;
             if (nextCluster != cluster+1)
@@ -254,7 +257,7 @@ FatError QFat::setCurrentTocs(const QString &path)
         m_curTocsCluster = 0;
         return FatNoError;
     }
-    if (path == m_curTocsPath)
+    if (path == m_curTocsPath && !m_curTocsPath.isEmpty())
         return FatNoError;
 
     FatTocEntries curTocs = m_rootToc;

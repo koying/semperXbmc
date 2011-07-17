@@ -28,13 +28,13 @@ ICON = semperXbmc_Anna_converted.svg
 SOURCES += main.cpp
 include (src/qtsources.pri)
 
-#INCLUDEPATH +=src/QFatFs
-#DEPENDPATH += src/QFatFs
-#include(src/QFatFs/QFatFs.pri)
+INCLUDEPATH +=src/QFatFs
+DEPENDPATH += src/QFatFs
+include(src/QFatFs/QFatFs.pri)
 
-INCLUDEPATH += ../QFatFs/QFatFs
-DEPENDPATH += ../QFatFs/QFatFs
-include(../QFatFs/QFatFs/QFatFs.pri)
+#INCLUDEPATH += ../QFatFs/QFatFs
+#DEPENDPATH += ../QFatFs/QFatFs
+#include(../QFatFs/QFatFs/QFatFs.pri)
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
