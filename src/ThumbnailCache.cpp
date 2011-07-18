@@ -151,16 +151,18 @@ bool ThumbnailCache::saveThumb(const QUrl& url, const QImage& image)
             d.mkpath(m_thumbDir + path);
 
         QFile f(m_thumbDir + fn);
-//        qDebug() << "Writing thumb to " << m_thumbDir + fn;
-        f.open(QIODevice::WriteOnly);
-        QBuffer buf;
-        buf.open(QIODevice::WriteOnly);
-        image.save(&buf, "JPG");
-        f.write(buf.buffer());
-        //        qDebug() << id << " : " << buf.data().size();
-        f.close();
+        if (!f.open(QIODevice::WriteOnly))
+            qDebug() << "Error writing thumb to " << m_thumbDir + fn;
+        else {
+            QBuffer buf;
+            buf.open(QIODevice::WriteOnly);
+            image.save(&buf, "JPG");
+            f.write(buf.buffer());
+            //        qDebug() << id << " : " << buf.data().size();
+            f.close();
 
-        emit thumbnailReady(thumbnail->index);
+            emit thumbnailReady(thumbnail->index);
+        }
     }
     return true;
 }

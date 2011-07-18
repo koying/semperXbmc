@@ -41,7 +41,11 @@ bool QFatFile::open(QIODevice::OpenMode mode)
         m_toc.name = m_name;
         m_toc.startCluster = FAT_FAT_TYPE_NOVALUE;
 
-        Q_ASSERT(m_fat->addToc(m_path, m_name, m_toc) == FatNoError);
+        if (m_fat->addToc(m_path, m_name, m_toc) != FatNoError) {
+            qDebug() << "QFatFile::open: Error adding toc";
+            return false;
+        }
+
     } else if (ret == FatNoError){
         buffer() = m_fat->readData(m_toc.startCluster, m_toc.size);
     } else
@@ -64,7 +68,10 @@ void QFatFile::close()
             m_toc.startCluster = FAT_FAT_TYPE_NOVALUE;
         m_toc.size = size();
         m_toc.modificationTimestamp = QDateTime::currentDateTime().toTime_t();
-        Q_ASSERT(m_fat->addToc(m_path, m_name, m_toc) == FatNoError);
+        if (m_fat->addToc(m_path, m_name, m_toc) != FatNoError) {
+            qDebug() << "QFatFile::close: Error adding toc";
+            return;
+        }
         m_fat->writeFat();
     } else
         QBuffer::close();
