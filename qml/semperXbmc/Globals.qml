@@ -24,4 +24,6 @@ QtObject {
         DbSettings.setSetting("eventPort", eventPort);
         DbSettings.setSetting("showViewed", showViewed);
     }
+
+    Component.onDestruction: save()
 }

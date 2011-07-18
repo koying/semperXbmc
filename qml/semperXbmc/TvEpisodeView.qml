@@ -17,6 +17,24 @@ Page {
             onClicked: tvshowStack.pop()
             visible: tvshowStack.depth > 1
         }
+
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            CheckBox {
+                text:  "Show viewed items"
+                checked: globals.showViewed
+                onClicked: globals.showViewed = checked
+            }
+
+        }
     }
 
     ListView {
@@ -36,15 +54,18 @@ Page {
     Component {
         id: episodeDelegate
 
-        Cp.Row {
-            id: content
-            width: ListView.view.width;
-            height: 80
+        Cp.Delegate {
+            filtered: {
+                          var ret = false;
+                          ret = ret | (!globals.showViewed && model.playcount > 0 );
+                          return ret;
+                      }
 
-            text: (model.number > 0 ? model.number + ". " : "") + model.name
+            title: (model.number > 0 ? model.number + ". " : "") + model.name
             subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
-            source: model.thumb
+            image: model.thumb
             watched: model.playcount > 0
+            banner: true
 
             onSelected: {
 //                console.log("episode clicked" + id);
@@ -54,6 +75,7 @@ Page {
                 mainTabGroup.currentTab = remoteTab
             }
         }
+
     }
 
     onSeasonIdChanged: {

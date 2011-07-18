@@ -55,21 +55,21 @@ Page {
     Component {
         id: tvshowDelegate
 
-        Cp.Row {
+        Cp.Delegate {
             filtered: {
                           var ret = false;
                           ret = ret | (!globals.showViewed && model.playcount > 0 );
                           return ret;
                       }
 
-            text: model.name
+            title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
-            source: model.posterThumb
+            image: model.posterThumb
             watched: model.playcount > 0
             banner: true
 
             onSelected:  {
-                tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: id})
+                tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: model.id})
             }
         }
     }
@@ -78,18 +78,13 @@ Page {
         id: searchDlg
         visible: btFilter.checked
 
-        onTextChanged: {
+        onApply: {
             tvshowProxyModel.filterRole = "name"
             tvshowProxyModel.filterRegExp = searchDlg.text
         }
-        onVisibleChanged: {
-            if (searchDlg.visible) {
-                tvshowProxyModel.filterRole = "name"
-                tvshowProxyModel.filterRegExp = searchDlg.text
-            } else {
-                tvshowProxyModel.filterRole = ""
-                tvshowProxyModel.filterRegExp = ""
-            }
+        onCancel: {
+            tvshowProxyModel.filterRole = ""
+            tvshowProxyModel.filterRegExp = ""
         }
     }
 

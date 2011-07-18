@@ -7,6 +7,7 @@ import "js/Utils.js" as Utils
 import "js/filter.js" as Filter
 
 Page {
+    id: page
     tools:  ToolBarLayout {
 
         ToolButton {
@@ -77,23 +78,44 @@ Page {
     Component {
         id: movieDelegate
 
-        Cp.Row {
+//        Cp.Row {
+//            filtered: {
+//                var ret = false;
+//                ret = ret | (!globals.showViewed && model.playcount > 0 );
+//                return ret;
+//            }
+
+//            text: model.name
+//            subtitle: (model.genre != undefined ? model.genre : "")
+//            duration:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
+//            source: model.posterThumb
+//            watched: model.playcount > 0
+
+//            onSelected:  {
+//                $().playlist.videoClear();
+//                xbmcEventClient.actionButton("Stop");
+//                $().playlist.addMovie(id);
+//                mainTabGroup.currentTab = remoteTab
+//            }
+//        }
+
+        Cp.Delegate {
             filtered: {
                 var ret = false;
                 ret = ret | (!globals.showViewed && model.playcount > 0 );
                 return ret;
             }
 
-            text: model.name
+            title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
-            duration:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            source: model.posterThumb
+            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
+            image: model.posterThumb
             watched: model.playcount > 0
 
             onSelected:  {
                 $().playlist.videoClear();
                 xbmcEventClient.actionButton("Stop");
-                $().playlist.addMovie(id);
+                $().playlist.addMovie(model.id);
                 mainTabGroup.currentTab = remoteTab
             }
         }
@@ -103,18 +125,13 @@ Page {
         id: searchDlg
         visible: btFilter.checked
 
-        onTextChanged: {
+        onApply: {
             movieProxyModel.filterRole = "name"
             movieProxyModel.filterRegExp = searchDlg.text
         }
-        onVisibleChanged: {
-            if (searchDlg.visible) {
-                movieProxyModel.filterRole = "name"
-                movieProxyModel.filterRegExp = searchDlg.text
-            } else {
-                movieProxyModel.filterRole = ""
-                movieProxyModel.filterRegExp = ""
-            }
+        onCancel: {
+            movieProxyModel.filterRole = ""
+            movieProxyModel.filterRegExp = ""
         }
     }
 

@@ -2,8 +2,9 @@ import QtQuick 1.0
 
 Item {
     id: wrapper
-    width: 360
-    height: 80
+    width:  parent.width
+    height: filtered ? 0 : 80
+    visible: !filtered
 
     property url image
     property string title
@@ -11,7 +12,14 @@ Item {
     property string titleR
     property string subtitleR
 
+    property bool watched: false
+    property bool banner:  false
+    property bool filtered: false
+    property bool current:  false
+
     property url subComponent: ""
+
+    signal selected
 
     Rectangle {
         id: wrapperItem
@@ -24,7 +32,9 @@ Item {
             width: parent.width
             height: parent.height
 
-            gradient:     Gradient {
+            gradient:  normal
+            Gradient {
+                id: normal
                 GradientStop {
                     position: 0
                     color: "#545454"
@@ -45,7 +55,6 @@ Item {
                     color: "#211919"
                 }
             }
-
 
             Gradient {
                 id: highlight
@@ -102,37 +111,9 @@ Item {
                 }
             }
 
-            Gradient {
-                id: normal
-                GradientStop {
-                    position: 0
-                    color: "#545454"
-                }
-
-                GradientStop {
-                    position: 0.15
-                    color: "#343434"
-                }
-
-                GradientStop {
-                    position: 0.85
-                    color: "#242424"
-                }
-
-                GradientStop {
-                    position: 1
-                    color: "#211919"
-                }
-            }
-
-            Rectangle {
-                id: image
-                border.width: 2
-                border.color: "white"
-                color: "transparent"
-
-                width: 80 - 2*5
-                height: 80 - 2*5
+            Item {
+                id: imageRect
+                width: height
 
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 5
@@ -143,10 +124,31 @@ Item {
                 anchors.rightMargin: 5
 
                 Image {
+                    id: rowImage
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    source: "img/tv.png"
+                    source: wrapper.image
                     smooth: true
+                    asynchronous: true
+                    onStatusChanged: {
+                        if (rowImage.status == Image.Ready) {
+                            if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && wrapper.banner) {   // banner
+//                                details.visible = false;
+//                                grid.anchors.fill = content
+                                imageRect.width = wrapper.width
+                                rowImage.fillMode = Image.Stretch;
+                            }
+                        }
+                    }
+
+                    Image {
+                        source: "../img/checkmark_48.png"
+                        smooth: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        visible: wrapper.watched
+                    }
                 }
             }
 
@@ -159,7 +161,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 anchors.leftMargin: 10
-                anchors.left: image.right
+                anchors.left: imageRect.right
                 anchors.right: wrapper.titleR ? txTitleR.left : undefined
                 anchors.rightMargin: 5
                 font.pixelSize: 25
@@ -185,7 +187,7 @@ Item {
                 anchors.top: txTitle.bottom
                 anchors.topMargin: 10
                 anchors.leftMargin: 10
-                anchors.left: image.right
+                anchors.left: imageRect.right
                 anchors.right: wrapper.subtitleR ? txSubtitleR.left : undefined
                 anchors.rightMargin: 5
                 font.pixelSize: 18
@@ -207,13 +209,14 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if (wrapperItem.state == "") {
-                        if (wrapper.subComponent != "")
-                            wrapperItem.state = "full"
-                        else
-                            wrapperItem.state = "full"
-                    } else
-                        wrapperItem.state = ""
+                    selected();
+//                    if (wrapperItem.state == "") {
+//                        if (wrapper.subComponent != "")
+//                            wrapperItem.state = "full"
+//                        else
+//                            wrapperItem.state = "full"
+//                    } else
+//                        wrapperItem.state = ""
                 }
             }
         }
@@ -228,25 +231,25 @@ Item {
                 name: "iterimVert"
 
                 PropertyChanges {
-                    target: image
+                    target: imageRect
                     width: 150
                     height: 150
                 }
                 AnchorChanges {
-                    target: image
+                    target: imageRect
                     anchors.bottom: undefined
                     anchors.right: parent.right
                 }
 
                 AnchorChanges {
                     target: txTitle
-                    anchors.top: image.bottom
+                    anchors.top: imageRect.bottom
                     anchors.left: wrapper.titleR ? parent.left : undefined
                     anchors.horizontalCenter: wrapper.titleR ? undefined : parent.horizontalCenter
                 }
                 AnchorChanges {
                     target: txTitleR
-                    anchors.top: image.bottom
+                    anchors.top: imageRect.bottom
                 }
                 AnchorChanges {
                     target: txSubtitle
@@ -287,7 +290,7 @@ Item {
 
                 ParentChange {
                     target: wrapperItem
-                    parent: rootRect
+                    parent: page
                     x:0; y:0
                     width: root.width; height: root.height
                 }
@@ -309,7 +312,7 @@ Item {
                 reversible: true
 
                 ParentAnimation {
-                    via: invRoot
+//                    via: invRoot
                     NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
                 }
                 AnchorAnimation { duration: 500; }

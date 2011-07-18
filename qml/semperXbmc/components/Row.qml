@@ -24,18 +24,25 @@ ListItem {
 
         Gradient {
             id: normal
-            GradientStop { position: 0.0; color: "#777" }
-            GradientStop { position: 1.0; color: "#333" }
-        }
-        Gradient {
-            id: pressed
-            GradientStop { position: 0.0; color: "#336" }
-            GradientStop { position: 1.0; color: "#003" }
-        }
-        Gradient {
-            id: highlight
-            GradientStop { position: 0.0; color: "#669" }
-            GradientStop { position: 1.0; color: "#336" }
+            GradientStop {
+                position: 0
+                color: "#545454"
+            }
+
+            GradientStop {
+                position: 0.15
+                color: "#343434"
+            }
+
+            GradientStop {
+                position: 0.85
+                color: "#242424"
+            }
+
+            GradientStop {
+                position: 1
+                color: "#211919"
+            }
         }
     }
 

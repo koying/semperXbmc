@@ -17,6 +17,24 @@ Page {
             onClicked: tvshowStack.pop()
             visible: tvshowStack.depth > 1
         }
+
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            CheckBox {
+                text:  "Show viewed items"
+                checked: globals.showViewed
+                onClicked: globals.showViewed = checked
+            }
+
+        }
     }
 
     ListView {
@@ -36,17 +54,20 @@ Page {
     Component {
         id: seasonDelegate
 
-        Cp.Row {
-            id: content
-            width: ListView.view.width;
-            height: 200
+        Cp.Delegate {
+            filtered: {
+                          var ret = false;
+                          ret = ret | (!globals.showViewed && model.playcount > 0 );
+                          return ret;
+                      }
 
-            text: model.name
+            title: model.name
             subtitle: model.episodes + " episodes"
-            source: model.thumb
+            image: model.thumb
             watched: model.playcount > 0
+            banner: true
 
-            onSelected: {
+            onSelected:  {
                 tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
             }
         }

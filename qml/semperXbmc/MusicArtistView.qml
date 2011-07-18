@@ -59,18 +59,13 @@ Page {
         id: searchDlg
         visible: btFilter.checked
 
-        onTextChanged: {
+        onApply: {
             artistProxyModel.filterRole = "name"
             artistProxyModel.filterRegExp = searchDlg.text
         }
-        onVisibleChanged: {
-            if (searchDlg.visible) {
-                artistProxyModel.filterRole = "name"
-                artistProxyModel.filterRegExp = searchDlg.text
-            } else {
-                artistProxyModel.filterRole = ""
-                artistProxyModel.filterRegExp = ""
-            }
+        onCancel: {
+            artistProxyModel.filterRole = ""
+            artistProxyModel.filterRegExp = ""
         }
     }
 
