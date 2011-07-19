@@ -1,3 +1,6 @@
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, "");
+};
 
 function Library() {
 }
@@ -15,8 +18,10 @@ Library.prototype.loadMovies = function () {
                 return;
             }
 
+            var aGenres = []
             var result = oJSON.result;
             var movies = result.movies;
+
             for (var i = 0; i < movies.length; i++){
                 //console.log(movies[i].thumb)
                 var thumb = "qrc:/defaultImages/movie";
@@ -27,7 +32,18 @@ Library.prototype.loadMovies = function () {
                 if (movies[i].streamDetails)
                     duration = movies[i].streamDetails.video[0].duration;
 
+                var genre = movies[i].genre;
+                var aGenre = genre.split("/");
+                for (var j=0; j<aGenre.length; ++j) {
+                    if (aGenres.indexOf(aGenre[j].trim()) == -1)
+                        aGenres.push(aGenre[j].trim());
+                }
                 movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount":movies[i].playcount});
+            }
+
+            aGenres.sort();
+            for (var i = 0; i < aGenres.length; i++){
+                videoGenreModel.append({"name": aGenres[i]});
             }
         }
     }

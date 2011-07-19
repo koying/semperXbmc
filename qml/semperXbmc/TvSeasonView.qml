@@ -8,7 +8,7 @@ Page {
     id: page
     property int serieId
 
-    tools:  tvshowStack.depth > 1 ? pgTools : null
+    tools:  pgTools
 
     ToolBarLayout {
         id: pgTools
@@ -20,21 +20,7 @@ Page {
         }
 
         ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
-    }
-
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-
-            CheckBox {
-                text:  "Show viewed items"
-                checked: globals.showViewed
-                onClicked: globals.showViewed = checked
-            }
-
+            visible: false
         }
     }
 

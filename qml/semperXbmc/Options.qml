@@ -1,0 +1,88 @@
+import QtQuick 1.0
+import com.nokia.symbian 1.0
+
+CommonDialog {
+    id: dialog
+
+    titleText: "DISPLAY OPTIONS"
+
+    content: Flickable {
+        anchors { left: parent.left; right: parent.right; top: parent.top; }
+        anchors.margins: platformStyle.paddingMedium
+        height: 150
+
+        Grid {
+            id: grid
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            columns: 2
+            spacing: platformStyle.paddingMedium
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: swShowViewd.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Show viewed items"
+            }
+
+            Switch {
+                id: swShowViewd
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: swShowViewd.height
+                verticalAlignment: Text.AlignVCenter
+
+                    text: "Sort ascending (not names)"
+            }
+
+            Switch {
+                id: swSortAscending
+            }
+        }
+
+    }
+
+    buttons: ToolBar {
+        id: buttons
+        width: parent.width
+        height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
+
+        tools: Row {
+            anchors.centerIn: parent
+            spacing: platformStyle.paddingMedium
+
+            ToolButton {
+                text: "Ok"
+                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                onClicked: dialog.accept()
+            }
+
+            ToolButton {
+                text: "Cancel"
+                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
+                onClicked: dialog.reject()
+            }
+        }
+    }
+
+    function setup() {
+        swShowViewd.checked = globals.showViewed
+        swSortAscending.checked = globals.sortAscending
+    }
+
+    onAccepted: {
+        globals.showViewed = swShowViewd.checked;
+        globals.sortAscending = swSortAscending.checked;
+
+        globals.save();
+    }
+
+    Component.onCompleted: setup()
+}

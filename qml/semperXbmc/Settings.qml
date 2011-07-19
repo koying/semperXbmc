@@ -4,13 +4,9 @@ import com.nokia.symbian 1.0
 CommonDialog {
     id: dialog
 
-    property alias server: inpServer.text
-    property alias jsonPort: inpJsonPort.text
-    property alias eventPort: inpEventPort.text
-
     signal settingsChanged();
 
-    titleText: "SETTINGS"
+    titleText: "CONNECTION SETTINGS"
 
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }

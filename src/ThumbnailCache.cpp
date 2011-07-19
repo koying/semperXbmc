@@ -88,7 +88,7 @@ ThumbnailCache::ThumbnailCache(const QString& thumbDir, QObject *parent)
     : QObject(parent)
     , m_thumbDir(thumbDir)
 {
-    netmanager = new QNetworkAccessManager(this);
+    netmanager = new QNetworkAccessManager();
     connect(netmanager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onRequestFinished(QNetworkReply*)), Qt::QueuedConnection);
 
     connect(this, SIGNAL(thumbnailRequested()), this, SLOT(onThumbnailRequested()), Qt::QueuedConnection);
@@ -96,6 +96,7 @@ ThumbnailCache::ThumbnailCache(const QString& thumbDir, QObject *parent)
 
 ThumbnailCache::~ThumbnailCache()
 {
+    delete netmanager;
 }
 
 QString ThumbnailCache::thumbnail(const QUrl &url, const QModelIndex& index)
@@ -244,7 +245,7 @@ ThumbnailCacheThread::ThumbnailCacheThread(const QString &thumbDir, QObject *par
 void ThumbnailCacheThread::run()
 {
     m_cache = new ThumbnailCache(m_thumbDir);
-    connect(m_cache, SIGNAL(thumbnailReady(QModelIndex)), this, SIGNAL(thumbnailReady(QModelIndex)));
+    connect(m_cache, SIGNAL(thumbnailReady(QModelIndex)), this, SIGNAL(thumbnailReady(QModelIndex)), Qt::QueuedConnection);
 
     QThread::run();
 

@@ -21,21 +21,7 @@ Page {
         }
 
         ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
-    }
-
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-
-            CheckBox {
-                text:  "Show viewed items"
-                checked: globals.showViewed
-                onClicked: globals.showViewed = checked
-            }
-
+            visible: false
         }
     }
 

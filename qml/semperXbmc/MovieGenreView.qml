@@ -1,25 +1,21 @@
-import QtQuick 1.0
+import Qt 4.7
 import com.nokia.symbian 1.0
-import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
-import "js/filter.js" as Filter
 
 Page {
     id: page
-    tools:  ToolBarLayout {
+
+    tools:  pgTools
+
+    ToolBarLayout {
+        id: pgTools
 
         ToolButton {
             iconSource: "toolbar-back"
             onClicked: movieStack.pop()
             visible: movieStack.depth > 1
-        }
-
-        ToolButton {
-            id: btFilter
-            checkable: true
-            iconSource: "img/filter.svg"
         }
 
         ToolButton {
@@ -68,46 +64,54 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "By Year"
-                onClicked: {
-                    movieProxyModel.sortRole = "year"
-                }
+                onClicked: movieStack.replace(Qt.resolvedUrl("MovieView.qml"))
             }
             MenuItem {
                 text:  "By Rating"
-                onClicked: {
-                    movieProxyModel.sortRole = "rating"
-                }
             }
 
             MenuItem {
                 text:  "By Name"
-                onClicked: {
-                    movieProxyModel.sortRole = "name"
-                }
             }
         }
     }
 
-    MovieComponent {
+    ListView {
+        id: videoGenreList
         anchors.fill: parent
+        clip: true
+
+        model: videoGenreModel
+        delegate: videoGenreDelegate
     }
 
-    Cp.SearchDialog {
-        id: searchDlg
-        visible: btFilter.checked
-
-        onApply: {
-            movieProxyModel.filterRole = "name"
-            movieProxyModel.filterRegExp = searchDlg.text
-        }
-        onCancel: {
-            movieProxyModel.filterRole = ""
-            movieProxyModel.filterRegExp = ""
-        }
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: videoGenreList
     }
 
-    Component.onCompleted: {
-        if (movieModel.count == 0)
-            $().library.loadMovies();
+    Component {
+        id: videoGenreDelegate
+
+        Cp.Delegate {
+            title: model.name
+
+            type: "header"
+            style: "smallHorizontal"
+
+            subComponentSource: "MovieComponent.qml"
+
+            onSelected:  {
+                if (style == "smallHorizontal") {
+                    style = "full"
+                    movieProxyModel.filterRole = "genre"
+                    movieProxyModel.filterRegExp = model.name
+                } else {
+                    style = "smallHorizontal"
+                    movieProxyModel.filterRole = ""
+                    movieProxyModel.filterRegExp = ""
+                }
+            }
+        }
     }
 }

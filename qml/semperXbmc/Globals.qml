@@ -5,7 +5,9 @@ QtObject {
     property string server: ""
     property string jsonPort: ""
     property string eventPort: ""
+
     property bool showViewed: true
+    property bool sortAscending: false
 
     function load() {
         DbSettings.initialize();
@@ -13,16 +15,18 @@ QtObject {
         server = DbSettings.getSetting("server", "Unspecified");
         jsonPort = DbSettings.getSetting("jsonPort", "8080");
         eventPort = DbSettings.getSetting("eventPort", "9777");
-        showViewed = DbSettings.getSetting("showViewed", true);
 
-        console.debug(showViewed);
+        showViewed = DbSettings.getSetting("showViewed", true);
+        sortAscending = DbSettings.getSetting("sortAscending", false);
     }
 
     function save() {
         DbSettings.setSetting("server", server);
         DbSettings.setSetting("jsonPort", jsonPort);
         DbSettings.setSetting("eventPort", eventPort);
+
         DbSettings.setSetting("showViewed", showViewed);
+        DbSettings.setSetting("sortAscending", sortAscending);
     }
 
     Component.onDestruction: save()

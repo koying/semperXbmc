@@ -25,7 +25,7 @@ SortFilterModel::SortFilterModel(QObject* parent)
     : QSortFilterProxyModel(parent)
 {
     setObjectName("SortFilterModel");
-//    setDynamicSortFilter(true);
+    setDynamicSortFilter(true);
     connect(this, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this, SIGNAL(countChanged()));
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),

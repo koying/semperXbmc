@@ -74,8 +74,7 @@ Window {
             ToolButton {
                 iconSource: "img/settings.svg"
                 onClicked: {
-                    settings.source = "Settings.qml"
-                    settings.item.open()
+                    settingMenu.open()
                 }
             }
 
@@ -158,6 +157,28 @@ Window {
                 iconSource: "img/close_stop.svg"
                 onClicked: mainMenu.open()
                 onPlatformPressAndHold: Qt.quit()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: settingMenu
+        MenuLayout {
+
+            MenuItem {
+                text:  "Display options"
+                onClicked: {
+                    options.source = "Options.qml"
+                    options.item.open()
+                }
+            }
+
+            MenuItem {
+                text:  "Connection settings"
+                onClicked: {
+                    settings.source = "Settings.qml"
+                    settings.item.open()
+                }
             }
         }
     }
@@ -305,6 +326,10 @@ Window {
         id: settings
     }
 
+    Loader {
+        id: options
+    }
+
     Connections {
         target: settings.item
         onSettingsChanged: {
@@ -335,10 +360,15 @@ Window {
         id: playlistModel
     }
 
+    ListModel {
+        id: videoGenreModel
+    }
+
     SortFilterModel {
         id: movieProxyModel
 
         sourceModel: movieModel
+        sortOrder: globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
     }
     VariantModel {
         id: movieModel
@@ -349,6 +379,7 @@ Window {
         id: tvshowProxyModel
 
         sourceModel: tvshowModel
+        sortOrder: globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
     }
     VariantModel {
         id: tvshowModel

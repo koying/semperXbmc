@@ -9,7 +9,8 @@ Page {
 
         ToolButton {
             iconSource: "toolbar-back"
-            visible: false
+            onClicked: playListStack.pop()
+            visible: playListStack.depth > 1
         }
 
         ButtonRow {
