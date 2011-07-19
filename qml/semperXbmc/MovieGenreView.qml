@@ -64,14 +64,25 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "By Year"
-                onClicked: movieStack.replace(Qt.resolvedUrl("MovieView.qml"))
+                onClicked: {
+                    movieProxyModel.sortRole = "year"
+                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                }
             }
             MenuItem {
                 text:  "By Rating"
+                onClicked: {
+                    movieProxyModel.sortRole = "rating"
+                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                }
             }
 
             MenuItem {
                 text:  "By Name"
+                onClicked: {
+                    movieProxyModel.sortRole = "name"
+                    movieProxyModel.sortOrder =  Qt.AscendingOrder
+                }
             }
         }
     }

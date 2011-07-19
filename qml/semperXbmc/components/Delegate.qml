@@ -271,7 +271,7 @@ Item {
 
                 PropertyChanges {
                     target: wrapper
-                    height: 5 + 150 + 5
+                    height: filtered ? 0 : 5 + 150 + 5
                 }
             },
             State {
@@ -302,7 +302,7 @@ Item {
 
                 PropertyChanges {
                     target: wrapper
-                    height: 5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5
+                    height: filtered ? 0 : 5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5
                 }
 
             },

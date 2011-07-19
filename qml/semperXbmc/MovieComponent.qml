@@ -47,9 +47,4 @@ Item {
             }
         }
     }
-
-    Component.onCompleted: {
-        if (movieModel.count == 0)
-            $().library.loadMovies();
-    }
 }

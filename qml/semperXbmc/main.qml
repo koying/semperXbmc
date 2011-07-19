@@ -379,7 +379,6 @@ Window {
         id: tvshowProxyModel
 
         sourceModel: tvshowModel
-        sortOrder: globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
     }
     VariantModel {
         id: tvshowModel

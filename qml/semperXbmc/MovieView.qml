@@ -51,10 +51,10 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "All"
-                onClicked: movieStack.replace(Qt.resolvedUrl("MovieView.qml"))
             }
             MenuItem {
                 text:  "By Genre"
+                onClicked: movieStack.replace(Qt.resolvedUrl("MovieGenreView.qml"))
             }
 //            MenuItem {
 //                text:  "Coverflow view"
@@ -70,12 +70,14 @@ Page {
                 text:  "By Year"
                 onClicked: {
                     movieProxyModel.sortRole = "year"
+                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
             MenuItem {
                 text:  "By Rating"
                 onClicked: {
                     movieProxyModel.sortRole = "rating"
+                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
 
@@ -83,6 +85,7 @@ Page {
                 text:  "By Name"
                 onClicked: {
                     movieProxyModel.sortRole = "name"
+                    movieProxyModel.sortOrder =  Qt.AscendingOrder
                 }
             }
         }
