@@ -342,7 +342,7 @@ Window {
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "playcount", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "posterThumb" ]
         thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
     }
     SortFilterModel {

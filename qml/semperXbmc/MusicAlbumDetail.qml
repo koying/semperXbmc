@@ -1,8 +1,12 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
 
+import "js/Utils.js" as Utils
+
 Item {
     id: trackList
+
+    property int albumId: -99
 
     ToolBar {
         id: buttons
@@ -17,7 +21,7 @@ Item {
                 //                    iconSource: "img/add.svg"
                 text: "Append"
                 //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: $().playlist.addAlbum(model.idalbum)
+                onClicked: $().playlist.addAlbum(albumId)
             }
 
             ToolButton {
@@ -25,7 +29,7 @@ Item {
                 //                    iconSource: "img/add.svg"
                 text: "Insert"
                 //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: $().playlist.insertAlbum(model.idalbum)
+                onClicked: $().playlist.insertAlbum(albumId)
             }
 
             ToolButton {
@@ -35,22 +39,23 @@ Item {
                 //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
                 onClicked: {
                     $().playlist.audioClear();
-                    $().playlist.addAlbum(model.idalbum)
+                    $().playlist.addAlbum(albumId)
                 }
             }
         }
     }
 
-    Rectangle {
+    Item {
         anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom}
 
-        color: "black"
-        border { color: "white"; width:  2 }
-        radius: 10
+//        color: "black"
+//        border { color: "white"; width:  2 }
+//        radius: 10
 
         ListView {
+            id: trackListview
             anchors.fill: parent
-            anchors.margins: 10
+//            anchors.margins: 10
             clip: true
 
             model: trackModel
@@ -61,51 +66,84 @@ Item {
     Component {
         id: trackDelegate
 
-        ListItem {
-            id: liTrack
-            subItemIndicator: true
+        Rectangle {
 
-            Item {
-                anchors.fill: liTrack.paddingItem
-
-                ListItemText {
-                    id: txItemTitle
-                    anchors { left: parent.left }
-                    width: parent.width - 50
-
-                    mode: liTrack.mode
-                    role: "Title"
-                    text: model.number + ". " + model.name
+            width: liTrack.width
+            height: liTrack.height
+            gradient:
+                Gradient {
+                id: normal
+                GradientStop {
+                    position: 0
+                    color: "#545454"
                 }
 
-                ListItemText {
-                    id: txItemDuration
-                    anchors { right: parent.right }
-
-                    mode: liTrack.mode
-                    role: "SubTitle"
-                    text: Utils.secToMMSS(model.duration)
+                GradientStop {
+                    position: 0.15
+                    color: "#343434"
                 }
-            }
 
-            onClicked: trackMenu.open()
+                GradientStop {
+                    position: 0.85
+                    color: "#242424"
+                }
 
-            ContextMenu {
-                id: trackMenu
-                MenuLayout {
-                    MenuItem {
-                        text: "Append"
-                        onClicked: $().playlist.addTrack(model.idtrack)
-                    }
-                    MenuItem {
-                        text: "Insert"
-                        onClicked: $().playlist.insertTrack(model.idtrack)
-                    }
+                GradientStop {
+                    position: 1
+                    color: "#211919"
                 }
             }
+            ListItem {
+                id: liTrack
+                subItemIndicator: true
 
+                Item  {
+                    anchors.fill: liTrack.paddingItem
+
+                    ListItemText {
+                        id: txItemTitle
+                        anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: txItemDuration.left; rightMargin: 10 }
+
+                        mode: liTrack.mode
+                        role: "Title"
+                        text: model.number + ". " + model.name
+                    }
+
+                    ListItemText {
+                        id: txItemDuration
+                        anchors { top: parent.top; bottom: parent.bottom; right: parent.right }
+
+                        mode: liTrack.mode
+                        role: "SubTitle"
+                        text: Utils.secToMMSS(model.duration)
+                    }
+                }
+
+                onClicked: trackMenu.open()
+
+                ContextMenu {
+                    id: trackMenu
+                    MenuLayout {
+                        MenuItem {
+                            text: "Append"
+                            onClicked: $().playlist.addTrack(model.idtrack)
+                        }
+                        MenuItem {
+                            text: "Insert"
+                            onClicked: $().playlist.insertTrack(model.idtrack)
+                        }
+                    }
+                }
+
+            }
         }
 
     }
+
+    onAlbumIdChanged: {
+        trackModel.clear();
+        $().library.loadTracks(albumId);
+    }
+
 
 }

@@ -9,8 +9,7 @@ Page {
 
         ToolButton {
             iconSource: "toolbar-back"
-            onClicked: tvshowStack.pop()
-            visible: tvshowStack.depth > 1
+            visible: false
         }
 
         ButtonRow {
@@ -75,11 +74,11 @@ Page {
     Component {
         id: playlistDelegate
 
-        Cp.Row {
-            text: model.name
+        Cp.Delegate {
+            title: model.name
             subtitle: model.artist + "  -  " + model.album
 //            duration:  model.duration > 0 ? Utils.secToMMSS(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            source: model.thumb
+            image: model.thumb
             current: model.select
 
             onSelected:  {

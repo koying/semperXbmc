@@ -19,36 +19,73 @@ Page {
             visible: musicStack.depth > 1
         }
 
+//        ToolButton {
+//            id: btFilter
+//            checkable: true
+//            iconSource: "img/filter.svg"
+//        }
+
         ToolButton {
             visible: false
         }
     }
 
-    GridView {
-        id: albumView
-        cellWidth: page.width
-        cellHeight: 250
-        width: parent.width
-        height: parent.height
+    ListView {
+        id: musicAlbumList
+        anchors.fill: parent
+        clip: true
+        highlightMoveDuration: 300
+
         model: albumModel
         delegate: albumDelegate
-        clip:  true
     }
 
     ScrollDecorator {
         id: scrolldecorator
-        flickableItem: albumView
+        flickableItem: musicAlbumList
     }
 
     Component {
         id: albumDelegate
 
-        MusicAlbumItem {
-            id: albumItem
-            width: page.width;
-            height: 200
+        Cp.Delegate {
+            title: model.name
+            subtitle: model.artist
+            image: model.thumb
+
+            style: "bigHorizontal"
+            type: "header"
+
+            subComponentSource: "MusicAlbumDetail.qml"
+
+            Connections {
+                target: subComponent
+                onLoaded: subComponent.item.albumId = model.idalbum
+            }
+
+            onSelected:  {
+//                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
+                if (style == "bigHorizontal")
+                    style = "full"
+                else
+                    style = "bigHorizontal"
+            }
         }
     }
+
+//    Cp.SearchDialog {
+//        id: searchDlg
+//        visible: btFilter.checked
+
+//        onApply: {
+//            artistProxyModel.filterRole = "name"
+//            artistProxyModel.filterRegExp = searchDlg.text
+//        }
+//        onCancel: {
+//            artistProxyModel.filterRole = ""
+//            artistProxyModel.filterRegExp = ""
+//        }
+//    }
 
     onArtistIdChanged: {
         albumModel.clear();

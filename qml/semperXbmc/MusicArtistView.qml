@@ -45,9 +45,9 @@ Page {
     Component {
         id: artistDelegate
 
-        Cp.Row {
-            text: model.name
-            source: model.posterThumb
+        Cp.Delegate {
+            title: model.name
+            image: model.posterThumb
 
             onSelected: {
                 musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})

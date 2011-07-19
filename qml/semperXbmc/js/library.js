@@ -23,7 +23,7 @@ Library.prototype.loadMovies = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
                 }
 
-                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "playcount":movies[i].playcount});
+                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount": movies[i].playcount});
             }
         }
     }

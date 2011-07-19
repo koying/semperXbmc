@@ -2,6 +2,6 @@
     <qresource prefix="/defaultImages">
         <file alias="artist">img/view_media_artist.svgz</file>
         <file alias="album">img/CD_DVD.svg</file>
-        <file alias="movie">img/maidis_Film_Slate.svg</file>
+        <file alias="movie">img/Movie_icon_2.svg</file>
     </qresource>
 </RCC>

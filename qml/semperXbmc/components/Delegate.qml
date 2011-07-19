@@ -1,4 +1,5 @@
 import QtQuick 1.0
+import com.nokia.symbian 1.0
 
 Item {
     id: wrapper
@@ -37,7 +38,7 @@ Item {
             width: parent.width
             height: parent.height
 
-            gradient:  (wrapper.type == "normal") ? normal : ((wrapper.type == "header") ? header : highlight)
+            gradient:  current ? highlight : (wrapper.type == "header") ? header : normal
             Gradient {
                 id: normal
                 GradientStop {
@@ -116,113 +117,140 @@ Item {
                 }
             }
 
-            Item {
-                id: imageRect
-                width: height
+            ListItem {
+                id: li
+                anchors.fill: parent
 
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
-                anchors.top: parent.top
-                anchors.topMargin: 5
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                anchors.rightMargin: 5
+                Item {
+                    id: imageRect
 
-                Image {
-                    id: rowImage
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    source: wrapper.image
-                    smooth: true
-                    asynchronous: true
-                    onStatusChanged: {
-                        if (rowImage.status == Image.Ready) {
-                            if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && wrapper.banner) {   // banner
-//                                details.visible = false;
-//                                grid.anchors.fill = content
-                                imageRect.width = wrapper.width
-                                rowImage.fillMode = Image.Stretch;
-                            }
-                        }
-                    }
+                    //                border.width: 1
+                    //                border.color: "blue"
+                    //                color: "transparent"
+
+                    width: height
+
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5
+                    anchors.top: parent.top
+                    anchors.topMargin: 5
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
 
                     Image {
-                        source: "../img/checkmark_48.png"
+                        id: rowImage
+                        anchors.fill: parent
+                        fillMode: Image.PreserveAspectFit
+                        source: wrapper.image
                         smooth: true
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: 10
-                        visible: wrapper.watched
+                        asynchronous: true
+                        onStatusChanged: {
+                            if (rowImage.status == Image.Ready) {
+                                if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && wrapper.banner) {   // banner
+                                    details.visible = false;
+                                    imageRect.width = wrapper.width
+                                    rowImage.fillMode = Image.Stretch;
+                                }
+                            }
+                        }
+
+                        Image {
+                            source: "../img/checkmark_48.png"
+                            smooth: true
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            visible: wrapper.watched
+                        }
                     }
                 }
-            }
 
-            Text {
-                id: txTitle
-                color: "#ffffff"
-                text: wrapper.title
-                elide: Text.ElideRight
+                Item {
+                    id: details
 
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
-                anchors.left: imageRect.right
-                anchors.right: wrapper.titleR ? txTitleR.left : undefined
-                anchors.rightMargin: 5
-                font.pixelSize: 25
-            }
-            Text {
-                id: txTitleR
-                color: "#ffffff"
-                text: wrapper.titleR
+                    //                border.width: 1
+                    //                border.color: "red"
+                    //                color: "transparent"
 
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.rightMargin: 5
-                anchors.right: parent.right
-                font.pixelSize: 20
-            }
+                    anchors.top: parent.top
+                    anchors.topMargin: 5
+                    anchors.leftMargin: 5
+                    anchors.left: imageRect.right
+                    anchors.right: parent.right
+                    anchors.rightMargin: 5
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5
 
-            Text {
-                id: txSubtitle
-                color: "#999999"
-                text: wrapper.subtitle
-                elide: Text.ElideRight
+                    Item {
+                        //                    border.width: 1
+                        //                    border.color: "green"
+                        //                    color: "transparent"
 
-                anchors.top: txTitle.bottom
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
-                anchors.left: imageRect.right
-                anchors.right: wrapper.subtitleR ? txSubtitleR.left : undefined
-                anchors.rightMargin: 5
-                font.pixelSize: 18
-            }
+                        width: parent.width
+                        height: {
+                            var h = 0;
+                            if ((wrapper.title || wrapper.titleR))
+                                h += txTitle.height;
+                            if ((wrapper.subtitle || wrapper.subtitleR))
+                                h += txSubtitle.height;
+                            if ((wrapper.title || wrapper.titleR) && (wrapper.subtitle || wrapper.subtitleR))
+                                h+= 10;
 
-            Text {
-                id: txSubtitleR
-                color: "#999999"
-                text: wrapper.subtitleR
-                elide: Text.ElideRight
+                            return h;
+                        }
 
-                anchors.top: txTitle.bottom
-                anchors.topMargin: 10
-                anchors.rightMargin: 5
-                anchors.right: parent.right
-                font.pixelSize: 15
-            }
+                        anchors.verticalCenter: parent.verticalCenter
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    selected();
-//                    if (wrapperItem.state == "") {
-//                        if (wrapper.subComponent != "")
-//                            wrapperItem.state = "full"
-//                        else
-//                            wrapperItem.state = "full"
-//                    } else
-//                        wrapperItem.state = ""
+                        Text {
+                            id: txTitle
+                            color: "#ffffff"
+                            text: wrapper.title
+                            elide: Text.ElideRight
+
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: wrapper.titleR ? txTitleR.left : parent.right
+                            font.pixelSize: 25
+                        }
+                        Text {
+                            id: txTitleR
+                            color: "#ffffff"
+                            text: wrapper.titleR
+
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            font.pixelSize: 20
+                        }
+
+                        Text {
+                            id: txSubtitle
+                            color: "#999999"
+                            text: wrapper.subtitle
+                            elide: Text.ElideRight
+
+                            anchors.top: txTitle.bottom
+                            anchors.topMargin: 10
+                            anchors.left: parent.left
+                            anchors.right: wrapper.subtitleR ? txSubtitleR.left : parent.right
+                            font.pixelSize: 18
+                        }
+
+                        Text {
+                            id: txSubtitleR
+                            color: "#999999"
+                            text: wrapper.subtitleR
+                            elide: Text.ElideRight
+
+                            anchors.top: txTitle.bottom
+                            anchors.topMargin: 10
+                            anchors.right: parent.right
+                            font.pixelSize: 15
+                        }
+                    }
                 }
+
+                onClicked: selected()
             }
         }
 
@@ -261,24 +289,10 @@ Item {
                 }
 
                 AnchorChanges {
-                    target: txTitle
+                    target: details
                     anchors.top: imageRect.bottom
-                    anchors.left: wrapper.titleR ? parent.left : undefined
+                    anchors.left: parent.left
                     anchors.horizontalCenter: wrapper.titleR ? undefined : parent.horizontalCenter
-                }
-                AnchorChanges {
-                    target: txTitleR
-                    anchors.top: imageRect.bottom
-                }
-                AnchorChanges {
-                    target: txSubtitle
-                    anchors.left: wrapper.subtitleR ? parent.left : undefined
-                    anchors.horizontalCenter: wrapper.subtitleR ? undefined : parent.horizontalCenter
-                }
-
-                PropertyChanges {
-                    target: txSubtitle
-                    anchors.topMargin: 5
                 }
             },
 

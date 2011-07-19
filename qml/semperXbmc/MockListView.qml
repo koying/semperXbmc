@@ -75,7 +75,13 @@ Item {
             subtitle: model.subtitle
             titleR: model.titleR
             subtitleR: model.subtitleR
+
+            style: "bigHorizontal"
+
+            onSelected: {
+            }
         }
+
     }
 }
 

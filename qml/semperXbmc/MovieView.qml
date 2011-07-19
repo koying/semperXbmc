@@ -107,8 +107,10 @@ Page {
             }
 
             title: model.name
+            titleR: model.year
             subtitle: (model.genre != undefined ? model.genre : "")
-            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
+            subtitleR:  Utils.sprintf("%.1f", model.rating)
+//            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: model.posterThumb
             watched: model.playcount > 0
 
