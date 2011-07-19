@@ -5,7 +5,7 @@ function debugObject(object) {
     for (var prop in object) {
         output += prop + ': ' + object[prop]+'; ';
     }
-    console.debug(output);
+    console.log(output);
 }
 
 var MAX_DUMP_DEPTH = 10;

@@ -1,3 +1,6 @@
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, "");
+};
 
 function Library() {
 }
@@ -15,7 +18,7 @@ Library.prototype.loadMovies = function () {
                 return;
             }
 
-            var aGenres = []
+            var aGenres = [];
             var result = oJSON.result;
             var movies = result.movies;
 
@@ -25,11 +28,12 @@ Library.prototype.loadMovies = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
                 }
 
-                var genre = movies[i].genre;
-                var aGenre = genre.split("/");
-                for (var j=0; j<aGenre.length; ++j) {
-                    if (aGenres.indexOf(aGenre[j].trim()) == -1)
-                        aGenres.push(aGenre[j].trim());
+                if (movies[i].genre) {
+                    var aGenre = movies[i].genre.split("/");
+                    for (var j=0; j<aGenre.length; ++j) {
+                        if (aGenres.indexOf(aGenre[j].trim()) == -1)
+                            aGenres.push(aGenre[j].trim());
+                    }
                 }
 
                 movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount": movies[i].playcount});
@@ -43,7 +47,7 @@ Library.prototype.loadMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "lastplayed", "showtitle", "firstaired", "duration", "season", "episode", "runtime", "year", "playcount", "rating"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 
