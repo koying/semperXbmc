@@ -5,6 +5,7 @@ import "components" as Cp;
 import "js/Utils.js" as Utils
 
 Page {
+    id: page
     property int serieId
 
     tools:  tvshowStack.depth > 1 ? pgTools : null
@@ -62,13 +63,28 @@ Page {
                       }
 
             title: model.name
-            subtitle: model.episodes + " episodes"
+            subtitle:  model.showtitle
+            subtitleR: model.episodes + " ep"
             image: model.thumb
             watched: model.playcount > 0
             banner: true
 
+            style: "bigHorizontal"
+            type: "header"
+
+            subComponentSource: "TvEpisodeComponent.qml"
+
+            Connections {
+                target: subComponent
+                onLoaded: subComponent.item.seasonId = model.id
+            }
+
             onSelected:  {
-                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
+//                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
+                if (style == "bigHorizontal")
+                    style = "full"
+                else
+                    style = "bigHorizontal"
             }
         }
     }

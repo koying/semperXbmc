@@ -17,7 +17,11 @@ Item {
     property bool filtered: false
     property bool current:  false
 
-    property url subComponent: ""
+    property string type: "normal"
+
+    property url subComponentSource: ""
+    property alias subComponent: subComponent
+    property alias style: wrapperItem.state
 
     signal selected
 
@@ -26,13 +30,14 @@ Item {
         width: parent.width
         height: parent.height
         color: "black"
+        state:  "smallHorizontal"
 
         Rectangle {
             id: mainRect
             width: parent.width
             height: parent.height
 
-            gradient:  normal
+            gradient:  (wrapper.type == "normal") ? normal : ((wrapper.type == "header") ? header : highlight)
             Gradient {
                 id: normal
                 GradientStop {
@@ -228,6 +233,20 @@ Item {
 
         states: [
             State {
+                name: "bigHorizontal"
+
+                PropertyChanges {
+                    target: imageRect
+                    width: 150
+                    height: 150
+                }
+
+                PropertyChanges {
+                    target: wrapper
+                    height: 5 + 150 + 5
+                }
+            },
+            State {
                 name: "iterimVert"
 
                 PropertyChanges {
@@ -276,16 +295,15 @@ Item {
 
             State {
                 name: "full"
-                extend: "iterimVert"
 
                 PropertyChanges {
                     target: mainRect
-                    height: 5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5
+                    height: 80
                 }
 
                 PropertyChanges {
                     target: subComponent
-                    source: wrapper.subComponent
+                    source: wrapper.subComponentSource
                 }
 
                 ParentChange {
@@ -299,7 +317,6 @@ Item {
 
         transitions: [
             Transition {
-                to: "vertical"
                 reversible: true
 
                 ParallelAnimation {

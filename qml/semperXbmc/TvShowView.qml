@@ -5,6 +5,7 @@ import "components" as Cp;
 import "js/Utils.js" as Utils
 
 Page {
+    id: page
     tools:  ToolBarLayout {
 
         ToolButton {

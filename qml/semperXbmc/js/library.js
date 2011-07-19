@@ -95,7 +95,7 @@ Library.prototype.loadSeasons = function (id) {
                 if (seasons[i].season) {
                     season = seasons[i].season;
                 }
-                seasonModel.append({"id": season, "name": seasons[i].label, "thumb": thumb, "episodes":seasons[i].episode, "genre":  seasons[i].genre, "duration": seasons[i].duration, "rating": seasons[i].rating, "playcount":seasons[i].playcount});
+                seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "thumb": thumb, "episodes":seasons[i].episode, "genre":  seasons[i].genre, "duration": seasons[i].duration, "rating": seasons[i].rating, "playcount":seasons[i].playcount});
             }
         }
     }
