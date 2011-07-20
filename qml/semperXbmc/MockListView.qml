@@ -62,6 +62,12 @@ Item {
             subtitle: "lorem ipsum 1"
             subtitleR: "2h47"
         }
+
+        ListElement {
+            image: "qrc:/defaultImages/album"
+            title: "Lorem Ipsum 2"
+            titleR: "Lor2"
+        }
     }
 
     Component {
@@ -76,7 +82,7 @@ Item {
             titleR: model.titleR
             subtitleR: model.subtitleR
 
-            style: "bigHorizontal"
+            style: "vertical"
 
             onSelected: {
             }

@@ -19,6 +19,12 @@ Page {
         }
 
         ToolButton {
+            id: btFilter
+            checkable: true
+            iconSource: "img/filter.svg"
+        }
+
+        ToolButton {
             iconSource: "toolbar-menu"
             onClicked: pgMenu.open()
         }
@@ -47,7 +53,10 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "All"
-                onClicked: movieStack.replace(Qt.resolvedUrl("MovieView.qml"))
+                onClicked: {
+                    globals.initialMovieView = "MovieView.qml"
+                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                }
             }
             MenuItem {
                 text:  "By Genre"
@@ -124,5 +133,24 @@ Page {
                 }
             }
         }
+    }
+
+    Cp.SearchDialog {
+        id: searchDlg
+        visible: btFilter.checked
+
+        onApply: {
+            movieProxyModel.filterRole = "name"
+            movieProxyModel.filterRegExp = searchDlg.text
+        }
+        onCancel: {
+            movieProxyModel.filterRole = ""
+            movieProxyModel.filterRegExp = ""
+        }
+    }
+
+    Component.onCompleted: {
+        if (movieModel.count == 0)
+            $().library.loadMovies();
     }
 }

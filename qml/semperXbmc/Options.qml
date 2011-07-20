@@ -22,6 +22,20 @@ CommonDialog {
                 font.family: platformStyle.fontFamilyRegular
                 font.pixelSize: platformStyle.fontSizeLarge
                 color: platformStyle.colorNormalLight
+                height: swCacheThumbnails.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Cache thumbnails"
+            }
+
+            Switch {
+                id: swCacheThumbnails
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
                 height: swShowViewd.height
                 verticalAlignment: Text.AlignVCenter
 
@@ -75,11 +89,13 @@ CommonDialog {
     function setup() {
         swShowViewd.checked = globals.showViewed
         swSortAscending.checked = globals.sortAscending
+        swCacheThumbnails.checked = globals.cacheThumbnails
     }
 
     onAccepted: {
         globals.showViewed = swShowViewd.checked;
         globals.sortAscending = swSortAscending.checked;
+        globals.cacheThumbnails = swCacheThumbnails.checked;
 
         globals.save();
     }

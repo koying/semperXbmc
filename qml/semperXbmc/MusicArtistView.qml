@@ -22,9 +22,67 @@ Page {
         }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
         }
+    }
 
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            MenuItem {
+                text:  "View"
+                platformSubItemIndicator: true
+                onClicked: viewMenu.open()
+            }
+
+            MenuItem {
+                text:  "Style"
+                platformSubItemIndicator: true
+                onClicked: styleMenu.open()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: viewMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Artists"
+            }
+            MenuItem {
+                text:  "Albums"
+                onClicked: {
+                    globals.initialMusicView = "MusicAlbumView.qml"
+                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})
+                }
+            }
+        }
+    }
+
+    ContextMenu {
+        id: styleMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Small Horizontal"
+                onClicked: {
+                    globals.styleMusicArtists = "smallHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Big Horizontal"
+                onClicked: {
+                    globals.styleMusicArtists = "bigHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Vertical"
+                onClicked: {
+                    globals.styleMusicArtists = "vertical"
+                }
+            }
+        }
     }
 
     ListView {
@@ -47,7 +105,10 @@ Page {
 
         Cp.Delegate {
             title: model.name
-            image: model.posterThumb
+            image: globals.cacheThumbnails ? model.posterThumb : model.poster
+
+            style: globals.styleMusicArtists
+            banner: globals.showBanners
 
             onSelected: {
                 musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})

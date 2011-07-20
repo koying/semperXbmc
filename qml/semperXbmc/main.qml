@@ -97,8 +97,7 @@ Window {
                     onClicked: {
                         main.state = "movies"
                         if (movieStack.depth == 0) {
-//                            movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
-                            movieStack.push(Qt.resolvedUrl("MovieView.qml"))
+                            movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
                         }
                     }
                 }
@@ -120,7 +119,7 @@ Window {
                     onClicked: {
                         main.state = "music"
                         if (musicStack.depth == 0) {
-                            musicStack.push(Qt.resolvedUrl("MusicArtistView.qml"))
+                            musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
                         }
                     }
                 }
@@ -348,10 +347,18 @@ Window {
     VariantModel {
         id: artistModel
         fields: [ "id", "name", "poster", "selected", "posterThumb" ]
-        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
+        thumbDir: thumbFile
     }
-    ListModel {
+
+    SortFilterModel {
+        id: albumProxyModel
+
+        sourceModel: albumModel
+    }
+    VariantModel {
         id: albumModel
+        fields: [ "idalbum", "name", "artist", "genre", "rating", "cover", "coverThumb" ]
+        thumbDir: thumbFile
     }
     ListModel {
         id: trackModel
@@ -373,7 +380,7 @@ Window {
     VariantModel {
         id: movieModel
         fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "posterThumb" ]
-        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
+        thumbDir: thumbFile
     }
     SortFilterModel {
         id: tvshowProxyModel
@@ -383,7 +390,7 @@ Window {
     VariantModel {
         id: tvshowModel
         fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb" ]
-        thumbDir: "fat:///c:/data/semperXbmcThumbs.fat#/"
+        thumbDir: thumbFile
     }
     ListModel {
         id: seasonModel

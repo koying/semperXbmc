@@ -21,7 +21,44 @@ Page {
         }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            MenuItem {
+                text:  "Style"
+                platformSubItemIndicator: true
+                onClicked: styleMenu.open()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: styleMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Small Horizontal"
+                onClicked: {
+                    globals.styleTvShows = "smallHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Big Horizontal"
+                onClicked: {
+                    globals.styleTvShows = "bigHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Vertical"
+                onClicked: {
+                    globals.styleTvShows = "vertical"
+                }
+            }
         }
     }
 
@@ -53,7 +90,9 @@ Page {
             subtitle: (model.genre != undefined ? model.genre : "")
             image: model.posterThumb
             watched: model.playcount > 0
-            banner: true
+
+            banner: globals.showBanners
+            style: globals.styleTvShows
 
             onSelected:  {
                 tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: model.id})

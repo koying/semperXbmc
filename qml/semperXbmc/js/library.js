@@ -214,7 +214,7 @@ Library.prototype.loadAlbums = function (idartist) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "cover": thumb});
             }
         }
     }
@@ -248,13 +248,13 @@ Library.prototype.loadAllAlbums = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "cover": thumb});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "sort": {"method":"album", "order":"ascending"}, "fields": ["album_description", "album_theme", "album_mood", "album_style", "album_type", "album_label", "album_artist", "album_genre", "album_rating", "album_title"]}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "start": 0, "sort": {"method":"album", "order":"ascending"}, "fields": ["album_label", "album_artist", "album_genre", "album_rating", "track", "duration", "year"]}, "id": 1}';
     doc.send(str);
     albumModel.clear();
 

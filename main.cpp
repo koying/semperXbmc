@@ -25,8 +25,11 @@ int main(int argc, char *argv[])
 
     QmlApplicationViewer viewer;
     viewer.engine()->setNetworkAccessManagerFactory(&factory);
-    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///c:/data/semperXbmcThumbs.fat#/"), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
+
+    QString thumbFile("fat:///c:/data/semperXbmcThumbs.fat#/");
+    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(thumbFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
+    viewer.rootContext()->setContextProperty("thumbFile", thumbFile);
 
     viewer.engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 

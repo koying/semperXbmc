@@ -43,6 +43,12 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: sortMenu.open()
             }
+
+            MenuItem {
+                text:  "Style"
+                platformSubItemIndicator: true
+                onClicked: styleMenu.open()
+            }
         }
     }
 
@@ -54,7 +60,10 @@ Page {
             }
             MenuItem {
                 text:  "By Genre"
-                onClicked: movieStack.replace(Qt.resolvedUrl("MovieGenreView.qml"))
+                onClicked: {
+                    globals.initialMovieView = "MovieGenreView.qml"
+                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                }
             }
 //            MenuItem {
 //                text:  "Coverflow view"
@@ -86,6 +95,30 @@ Page {
                 onClicked: {
                     movieProxyModel.sortRole = "name"
                     movieProxyModel.sortOrder =  Qt.AscendingOrder
+                }
+            }
+        }
+    }
+
+    ContextMenu {
+        id: styleMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Small Horizontal"
+                onClicked: {
+                    globals.styleMovies = "smallHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Big Horizontal"
+                onClicked: {
+                    globals.styleMovies = "bigHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Vertical"
+                onClicked: {
+                    globals.styleMovies = "vertical"
                 }
             }
         }

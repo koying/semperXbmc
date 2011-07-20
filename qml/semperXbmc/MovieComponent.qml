@@ -36,8 +36,11 @@ Item {
             subtitle: (model.genre != undefined ? model.genre : "")
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            image: model.posterThumb
+            image: globals.cacheThumbnails ? model.posterThumb : model.poster
             watched: model.playcount > 0
+
+            style: globals.styleMovies
+            banner: globals.showBanners
 
             onSelected:  {
                 $().playlist.videoClear();

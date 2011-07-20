@@ -6,9 +6,9 @@ import "js/Utils.js" as Utils
 
 Page {
     id: page
-    property int artistId
+    property int artistId: -99
 
-    tools:  musicStack.depth > 1 ? pgTools : null
+    tools:
 
     ToolBarLayout {
         id: pgTools
@@ -19,14 +19,73 @@ Page {
             visible: musicStack.depth > 1
         }
 
-//        ToolButton {
-//            id: btFilter
-//            checkable: true
-//            iconSource: "img/filter.svg"
-//        }
+        ToolButton {
+            id: btFilter
+            checkable: true
+            iconSource: "img/filter.svg"
+        }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            MenuItem {
+                text:  "View"
+                platformSubItemIndicator: true
+                onClicked: viewMenu.open()
+            }
+
+            MenuItem {
+                text:  "Style"
+                platformSubItemIndicator: true
+                onClicked: styleMenu.open()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: viewMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Artists"
+                onClicked: {
+                    globals.initialMusicView = "MusicArtistView.qml"
+                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                }
+            }
+            MenuItem {
+                text:  "Albums"
+            }
+        }
+    }
+
+    ContextMenu {
+        id: styleMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Small Horizontal"
+                onClicked: {
+                    globals.styleMusicAlbums = "smallHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Big Horizontal"
+                onClicked: {
+                    globals.styleMusicAlbums = "bigHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Vertical"
+                onClicked: {
+                    globals.styleMusicAlbums = "vertical"
+                }
+            }
         }
     }
 
@@ -36,7 +95,7 @@ Page {
         clip: true
         highlightMoveDuration: 300
 
-        model: albumModel
+        model: albumProxyModel
         delegate: albumDelegate
     }
 
@@ -51,9 +110,10 @@ Page {
         Cp.Delegate {
             title: model.name
             subtitle: model.artist
-            image: model.thumb
+            image: globals.cacheThumbnails ? model.coverThumb : model.cover
 
-            style: "bigHorizontal"
+            style: globals.styleMusicAlbums
+            banner: globals.showBanners
             type: "header"
 
             subComponentSource: "MusicAlbumDetail.qml"
@@ -64,34 +124,38 @@ Page {
             }
 
             onSelected:  {
-//                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
-                if (style == "bigHorizontal")
+                if (style == globals.styleMusicAlbums)
                     style = "full"
                 else
-                    style = "bigHorizontal"
+                    style = globals.styleMusicAlbums
             }
         }
     }
 
-//    Cp.SearchDialog {
-//        id: searchDlg
-//        visible: btFilter.checked
+    Cp.SearchDialog {
+        id: searchDlg
+        visible: btFilter.checked
 
-//        onApply: {
-//            artistProxyModel.filterRole = "name"
-//            artistProxyModel.filterRegExp = searchDlg.text
-//        }
-//        onCancel: {
-//            artistProxyModel.filterRole = ""
-//            artistProxyModel.filterRegExp = ""
-//        }
-//    }
+        onApply: {
+            albumProxyModel.filterRole = "name"
+            albumProxyModel.filterRegExp = searchDlg.text
+        }
+        onCancel: {
+            albumProxyModel.filterRole = ""
+            albumProxyModel.filterRegExp = ""
+        }
+    }
 
     onArtistIdChanged: {
         albumModel.clear();
-        if (artistId == -1)
+        if (artistId < 0)
             $().library.loadAllAlbums();
         else
             $().library.loadAlbums(artistId);
+    }
+
+    Component.onCompleted: {
+        if (musicStack.depth < 2)
+            $().library.loadAllAlbums();
     }
 }

@@ -224,7 +224,7 @@ Library.prototype.loadAlbums = function (idartist) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "cover": thumb});
             }
         }
     }
@@ -258,13 +258,13 @@ Library.prototype.loadAllAlbums = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
                 }
 
-                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "thumb": thumb});
+                albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "cover": thumb});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["label", "artist", "genre", "rating", "year", "thumbnail"}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "fields": ["label", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
     albumModel.clear();
 

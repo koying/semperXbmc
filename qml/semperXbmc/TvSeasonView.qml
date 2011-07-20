@@ -20,7 +20,44 @@ Page {
         }
 
         ToolButton {
-            visible: false
+            iconSource: "toolbar-menu"
+            onClicked: pgMenu.open()
+        }
+    }
+
+    Menu {
+        id: pgMenu
+        content: MenuLayout {
+
+            MenuItem {
+                text:  "Style"
+                platformSubItemIndicator: true
+                onClicked: styleMenu.open()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: styleMenu
+        MenuLayout {
+            MenuItem {
+                text:  "Small Horizontal"
+                onClicked: {
+                    globals.styleTvShowSeasons = "smallHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Big Horizontal"
+                onClicked: {
+                    globals.styleTvShowSeasons = "bigHorizontal"
+                }
+            }
+            MenuItem {
+                text:  "Vertical"
+                onClicked: {
+                    globals.styleTvShowSeasons = "vertical"
+                }
+            }
         }
     }
 
@@ -53,9 +90,9 @@ Page {
             subtitleR: model.episodes + " ep"
             image: model.thumb
             watched: model.playcount > 0
-            banner: true
 
-            style: "bigHorizontal"
+            style: globals.styleTvShowSeasons
+            banner: globals.showBanners
             type: "header"
 
             subComponentSource: "TvEpisodeComponent.qml"
@@ -67,10 +104,10 @@ Page {
 
             onSelected:  {
 //                tvshowStack.push(Qt.resolvedUrl("TvEpisodeView.qml"), {seasonId: id})
-                if (style == "bigHorizontal")
+                if (style == globals.styleTvShowSeasons)
                     style = "full"
                 else
-                    style = "bigHorizontal"
+                    style = globals.styleTvShowSeasons
             }
         }
     }

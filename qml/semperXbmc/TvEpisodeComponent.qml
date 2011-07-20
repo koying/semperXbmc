@@ -33,9 +33,12 @@ Item {
 
             title: (model.number > 0 ? model.number + ". " : "") + model.name
             subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
+            subtitleR: model.rating
             image: model.thumb
             watched: model.playcount > 0
-            banner: true
+
+            style: globals.styleTvShowSeasons
+            banner: globals.showBanners
 
             onSelected: {
 //                console.log("episode clicked" + id);

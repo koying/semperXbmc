@@ -128,7 +128,7 @@ Item {
                     //                border.color: "blue"
                     //                color: "transparent"
 
-                    width: height
+                    width: rowImage.isBannered ? parent.width : height
 
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 5
@@ -140,16 +140,18 @@ Item {
 
                     Image {
                         id: rowImage
+
+                        property bool isBannered: false
+
                         anchors.fill: parent
-                        fillMode: Image.PreserveAspectFit
+                        fillMode: rowImage.isBannered ? Image.Stretch: Image.PreserveAspectFit
                         source: wrapper.image
                         smooth: true
                         asynchronous: true
                         onStatusChanged: {
                             if (rowImage.status == Image.Ready) {
                                 if (rowImage.sourceSize.width > rowImage.sourceSize.height*2 && wrapper.banner) {   // banner
-                                    details.visible = false;
-                                    imageRect.width = wrapper.width
+                                    rowImage.isBannered = true;
                                     rowImage.fillMode = Image.Stretch;
                                 }
                             }
@@ -169,18 +171,20 @@ Item {
                 Item {
                     id: details
 
-                    //                border.width: 1
-                    //                border.color: "red"
-                    //                color: "transparent"
+//                                    border.width: 1
+//                                    border.color: "red"
+//                                    color: "transparent"
 
                     anchors.top: parent.top
                     anchors.topMargin: 5
                     anchors.leftMargin: 5
-                    anchors.left: imageRect.right
+                    anchors.left: rowImage.isBannered ? parent.left : imageRect.right
                     anchors.right: parent.right
                     anchors.rightMargin: 5
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 5
+
+                    visible: !rowImage.isBannered;
 
                     Item {
                         //                    border.width: 1
@@ -265,7 +269,7 @@ Item {
 
                 PropertyChanges {
                     target: imageRect
-                    width: 150
+//                    width: 150
                     height: 150
                 }
 
@@ -275,12 +279,12 @@ Item {
                 }
             },
             State {
-                name: "iterimVert"
+                name: "vertical"
 
                 PropertyChanges {
                     target: imageRect
-                    width: 150
-                    height: 150
+//                    width: 150
+                    height: (rowImage.isBannered ? 80 : 150)
                 }
                 AnchorChanges {
                     target: imageRect
@@ -292,17 +296,36 @@ Item {
                     target: details
                     anchors.top: imageRect.bottom
                     anchors.left: parent.left
+                }
+                PropertyChanges {
+                    target: details
+                    visible: true
+                }
+                AnchorChanges {
+                    target: txTitle
+                    anchors.left: wrapper.titleR ? parent.left : undefined
+                    anchors.right: wrapper.titleR ? txTitleR.left : undefined
                     anchors.horizontalCenter: wrapper.titleR ? undefined : parent.horizontalCenter
                 }
-            },
+                PropertyChanges {
+                    target: txTitle
+                    horizontalAlignment: wrapper.titleR ? Text.AlignLeft : Text.AlignHCenter
+                }
 
-            State {
-                name: "vertical"
-                extend: "iterimVert"
+                AnchorChanges {
+                    target: txSubtitle
+                    anchors.left: wrapper.subtitleR ? parent.left : undefined
+                    anchors.right: wrapper.subtitleR ? txSubtitleR.left : undefined
+                    anchors.horizontalCenter: wrapper.subtitleR ? undefined : parent.horizontalCenter
+                }
+                PropertyChanges {
+                    target: txSubtitle
+                    horizontalAlignment: wrapper.subtitleR ? Text.AlignLeft : Text.AlignHCenter
+                }
 
                 PropertyChanges {
                     target: wrapper
-                    height: filtered ? 0 : 5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5
+                    height: filtered ? 0 : (rowImage.isBannered ? 5 + 80 + 10 + txTitle.height + 10 + txSubtitle.height + 5 :  5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5)
                 }
 
             },
