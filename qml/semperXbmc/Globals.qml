@@ -6,6 +6,7 @@ QtObject {
     property string jsonPort: "8080"
     property string eventPort: "9777"
 
+    property bool showSplash: true
     property bool cacheThumbnails: true
     property bool showViewed: true
     property bool sortAscending: false
@@ -27,6 +28,7 @@ QtObject {
         jsonPort = DbSettings.getSetting("jsonPort", jsonPort);
         eventPort = DbSettings.getSetting("eventPort", eventPort);
 
+        showSplash = DbSettings.getSetting("showSplash", showSplash);
         cacheThumbnails = DbSettings.getSetting("cacheThumbnails", cacheThumbnails);
         showViewed = DbSettings.getSetting("showViewed", showViewed);
         sortAscending = DbSettings.getSetting("sortAscending", sortAscending);
@@ -47,6 +49,7 @@ QtObject {
         DbSettings.setSetting("jsonPort", jsonPort);
         DbSettings.setSetting("eventPort", eventPort);
 
+        DbSettings.setSetting("showSplash", showSplash);
         DbSettings.setSetting("cacheThumbnails", cacheThumbnails);
         DbSettings.setSetting("showViewed", showViewed);
         DbSettings.setSetting("sortAscending", sortAscending);

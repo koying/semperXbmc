@@ -324,16 +324,31 @@ Window {
     Loader {
         id: settings
     }
-
-    Loader {
-        id: options
-    }
-
     Connections {
         target: settings.item
         onSettingsChanged: {
             xbmcEventClient.initialize(globals.server, globals.eventPort);
             main.initialize();
+        }
+    }
+
+    Loader {
+        id: options
+    }
+
+    Loader {
+        id: splash
+        source: globals.showSplash ? "Splash.qml" : ""
+        anchors.fill:  parent
+        z: 5
+        onLoaded: {
+            item.state = "show"
+        }
+    }
+    Connections {
+        target: splash.item
+        onHidden: {
+            splash.source = ""
         }
     }
 

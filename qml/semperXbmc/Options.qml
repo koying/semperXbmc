@@ -9,7 +9,7 @@ CommonDialog {
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
         anchors.margins: platformStyle.paddingMedium
-        height: 150
+        height: 220
 
         Grid {
             id: grid
@@ -59,6 +59,20 @@ CommonDialog {
             Switch {
                 id: swSortAscending
             }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: swShowSplash.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Show splashscreen"
+            }
+
+            Switch {
+                id: swShowSplash
+            }
         }
 
     }
@@ -87,12 +101,14 @@ CommonDialog {
     }
 
     function setup() {
+        swShowSplash.checked = globals.showSplash
         swShowViewd.checked = globals.showViewed
         swSortAscending.checked = globals.sortAscending
         swCacheThumbnails.checked = globals.cacheThumbnails
     }
 
     onAccepted: {
+        globals.showSplash = swShowSplash.checked;
         globals.showViewed = swShowViewd.checked;
         globals.sortAscending = swSortAscending.checked;
         globals.cacheThumbnails = swCacheThumbnails.checked;

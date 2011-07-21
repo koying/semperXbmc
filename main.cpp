@@ -11,6 +11,9 @@
 #include "VariantModel.h"
 #include "SortFilterModel.h"
 
+#define QUOTE_(x) #x
+#define QUOTE(x) QUOTE_(x)
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -30,6 +33,9 @@ int main(int argc, char *argv[])
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(thumbFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
     viewer.rootContext()->setContextProperty("thumbFile", thumbFile);
+
+    QString appVersion = QUOTE(APP_VERSION);
+    viewer.rootContext()->setContextProperty("appVersion", appVersion);
 
     viewer.engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 
