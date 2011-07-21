@@ -16,7 +16,6 @@ Playlist.prototype.insertTrack = function(idTrack){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-
             var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
@@ -42,7 +41,6 @@ Playlist.prototype.addTrack = function(idTrack){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-
             var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
@@ -68,8 +66,8 @@ Playlist.prototype.insertAlbum = function(idalbum){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-
-            var error = JSON.parse(doc.responseText).error;
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertAlbum error", "", 0));
                 errorView.addError("error", error.message, error.code);
@@ -95,8 +93,8 @@ Playlist.prototype.addAlbum = function(idalbum){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-
-            var error = JSON.parse(doc.responseText).error;
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
                 errorView.addError("error", error.message, error.code);
@@ -122,7 +120,8 @@ Playlist.prototype.addMovie = function(idmovie){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 
-            var error = JSON.parse(doc.responseText).error;
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
                 errorView.addError("error", error.message, error.code);
@@ -147,7 +146,8 @@ Playlist.prototype.addEpisode = function(idepisode){
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 
-            var error = JSON.parse(doc.responseText).error;
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
                 errorView.addError("error", error.message, error.code);
@@ -179,8 +179,8 @@ Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            console.debug(doc.responseText)
             var oJSON = JSON.parse(doc.responseText);
-
             var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.update error", "", 0));
@@ -235,10 +235,10 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText);
-            var error = JSON.parse(doc.responseText).error;
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.update error", "", 0));
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }

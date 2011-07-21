@@ -11,37 +11,11 @@ Playlist.prototype.previousItems = {}
 Playlist.prototype.playing = false;
 Playlist.prototype.paused = false;
 
-Playlist.prototype.insertTrack = function(idTrack){
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-
-            var error = oJSON.error;
-            if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
-                errorView.addError("error", error.message, error.code);
-                return;
-            }
-            if (!Playlist.prototype.playing) {
-//                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
-            }
-        }
-    }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "songid": '+idTrack+', "index": 0 }, "id": 1}';
-//    console.log(str);
-    doc.send(str);
-    return;
-}
-
 Playlist.prototype.addTrack = function(idTrack){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-
             var error = oJSON.error;
             if (error) {
                 console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
@@ -61,32 +35,19 @@ Playlist.prototype.addTrack = function(idTrack){
     return;
 }
 
-Playlist.prototype.insertAlbum = function(idalbum){
-//    console.log("add");
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
-            if (!Playlist.prototype.playing) {
-//                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
-            }
-        }
-    }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "albumid": '+idalbum+', "index": 0 }, "id": 1}';
-//    console.log(str);
-    doc.send(str);
-    return;
-}
-
-
 Playlist.prototype.addAlbum = function(idalbum){
 //    console.log("add");
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
             if (!Playlist.prototype.playing) {
 //                console.log("play");
                 Playlist.prototype.cmd("Play", "Audio");
@@ -105,7 +66,14 @@ Playlist.prototype.addMovie = function(idmovie){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
             if (!Playlist.prototype.playing) {
                 console.log("play");
                 Playlist.prototype.cmd("Play", "Video");
@@ -123,7 +91,14 @@ Playlist.prototype.addEpisode = function(idepisode){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            //console.log(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
             if (!Playlist.prototype.playing) {
 //                console.log("play");
                 Playlist.prototype.cmd("Play", "Video");
@@ -200,7 +175,14 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log(doc.responseText);
+
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
         }
     }
 

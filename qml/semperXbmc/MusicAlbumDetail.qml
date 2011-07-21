@@ -26,6 +26,7 @@ Item {
 
             ToolButton {
                 id: tbInsert
+                visible: $().jsonRPCVer > 2
                 //                    iconSource: "img/add.svg"
                 text: "Insert"
                 //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
@@ -130,6 +131,7 @@ Item {
                         }
                         MenuItem {
                             text: "Insert"
+                            visible: $().jsonRPCVer > 2
                             onClicked: $().playlist.insertTrack(model.idtrack)
                         }
                     }

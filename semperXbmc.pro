@@ -21,7 +21,8 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += mobility
 # MOBILITY +=
 
-TARGET.EPOCHEAPSIZE = 0x500000  0x5000000
+VERSION = 0.9.0
+TARGET.EPOCHEAPSIZE = 0x200000  0x5000000
 ICON = semperXbmc_Anna_converted.svg
 
 # The .cpp file which was generated for your project. Feel free to hack it.

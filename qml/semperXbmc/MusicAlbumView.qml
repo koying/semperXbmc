@@ -56,7 +56,12 @@ Page {
                 text:  "Artists"
                 onClicked: {
                     globals.initialMusicView = "MusicArtistView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                    if (musicStack.depth < 1) {
+                        musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                    } else {
+                        musicStack.clear();
+                        musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
+                    }
                 }
             }
             MenuItem {
@@ -155,7 +160,9 @@ Page {
     }
 
     Component.onCompleted: {
-        if (musicStack.depth < 2)
+        if (musicStack.depth < 1) {
+            albumModel.clear();
             $().library.loadAllAlbums();
+        }
     }
 }
