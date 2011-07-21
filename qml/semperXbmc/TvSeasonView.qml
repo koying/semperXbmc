@@ -66,7 +66,7 @@ Page {
         anchors.fill: parent
         clip: true
 
-        model: seasonModel
+        model: seasonProxyModel
         delegate: seasonDelegate
     }
 
@@ -79,17 +79,11 @@ Page {
         id: seasonDelegate
 
         Cp.Delegate {
-            filtered: {
-                          var ret = false;
-                          ret = ret | (!globals.showViewed && model.playcount > 0 );
-                          return ret;
-                      }
-
             title: model.name
             subtitle:  model.showtitle
             subtitleR: model.episodes + " ep"
-            image: model.thumb
-            watched: model.playcount > 0
+            image: model.poster
+            watched: model.watched
 
             style: globals.styleTvShowSeasons
             banner: globals.showBanners

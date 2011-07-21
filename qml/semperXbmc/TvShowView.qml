@@ -80,16 +80,10 @@ Page {
         id: tvshowDelegate
 
         Cp.Delegate {
-            filtered: {
-                          var ret = false;
-                          ret = ret | (!globals.showViewed && model.playcount > 0 );
-                          return ret;
-                      }
-
             title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
             image: model.posterThumb
-            watched: model.playcount > 0
+            watched: model.watched
 
             banner: globals.showBanners
             style: globals.styleTvShows

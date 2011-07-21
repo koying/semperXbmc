@@ -25,19 +25,13 @@ Item {
         id: movieDelegate
 
         Cp.Delegate {
-            filtered: {
-                var ret = false;
-                ret = ret | (!globals.showViewed && model.playcount > 0 );
-                return ret;
-            }
-
             title: model.name
             titleR: model.year
             subtitle: (model.genre != undefined ? model.genre : "")
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: globals.cacheThumbnails ? model.posterThumb : model.poster
-            watched: model.playcount > 0
+            watched: model.watched
 
             style: globals.styleMovies
             banner: globals.showBanners

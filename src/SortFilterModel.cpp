@@ -23,6 +23,7 @@
 
 SortFilterModel::SortFilterModel(QObject* parent)
     : QSortFilterProxyModel(parent)
+    , m_boolFilterIntRole(-1)
 {
     setObjectName("SortFilterModel");
 //    setDynamicSortFilter(true);
@@ -100,6 +101,18 @@ QString SortFilterModel::filterRole() const
     return m_filterRole;
 }
 
+void SortFilterModel::setBoolFilterRole(const QString &role)
+{
+    m_boolFilterIntRole = roleNameToId(role);
+    m_boolFilterRole = role;
+    invalidateFilter();
+}
+
+QString SortFilterModel::boolFilterRole() const
+{
+    return m_boolFilterRole;
+}
+
 void SortFilterModel::setSortRole(const QString &role)
 {
     QSortFilterProxyModel::setSortRole(roleNameToId(role));
@@ -115,5 +128,15 @@ QString SortFilterModel::sortRole() const
 void SortFilterModel::setSortOrder(const Qt::SortOrder order)
 {
     sort(0, order);
+}
+
+bool SortFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+    if (m_boolFilterIntRole >= Qt::UserRole) {
+        bool value = sourceModel()->data( sourceModel()->index(source_row, 0, source_parent), m_boolFilterIntRole ).toBool();
+        if (value)
+            return false;
+    }
+    return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
 }
 

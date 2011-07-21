@@ -4,8 +4,7 @@ import com.nokia.symbian 1.0
 Item {
     id: wrapper
     width:  parent.width
-    height: filtered ? 0 : 80
-    visible: !filtered
+    height: 80
 
     property url image
     property string title
@@ -15,7 +14,6 @@ Item {
 
     property bool watched: false
     property bool banner:  false
-    property bool filtered: false
     property bool current:  false
 
     property string type: "normal"
@@ -275,7 +273,7 @@ Item {
 
                 PropertyChanges {
                     target: wrapper
-                    height: filtered ? 0 : 5 + 150 + 5
+                    height: 5 + 150 + 5
                 }
             },
             State {
@@ -325,7 +323,7 @@ Item {
 
                 PropertyChanges {
                     target: wrapper
-                    height: filtered ? 0 : (rowImage.isBannered ? 5 + 80 + 10 + txTitle.height + 10 + txSubtitle.height + 5 :  5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5)
+                    height: (rowImage.isBannered ? 5 + 80 + 10 + txTitle.height + 10 + txSubtitle.height + 5 :  5 + 150 + 10 + txTitle.height + 10 + txSubtitle.height + 5)
                 }
 
             },

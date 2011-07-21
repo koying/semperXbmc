@@ -375,28 +375,47 @@ Window {
         id: movieProxyModel
 
         sourceModel: movieModel
-        sortOrder: globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+        boolFilterRole: globals.showViewed ? "" : "watched"
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "watched", "posterThumb" ]
         thumbDir: thumbFile
     }
     SortFilterModel {
         id: tvshowProxyModel
 
         sourceModel: tvshowModel
+        boolFilterRole: globals.showViewed ? "" : "watched"
     }
     VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "watched", "posterThumb" ]
         thumbDir: thumbFile
     }
-    ListModel {
-        id: seasonModel
+
+    SortFilterModel {
+        id: seasonProxyModel
+
+        sourceModel: seasonModel
+        boolFilterRole: globals.showViewed ? "" : "watched"
     }
-    ListModel {
+    VariantModel {
+        id: seasonModel
+        fields: [ "id", "name", "showtitle", "poster", "episodes", "genre", "duration", "rating", "watched" ]
+        thumbDir: thumbFile
+    }
+
+    SortFilterModel {
+        id: episodeProxyModel
+
+        sourceModel: episodeModel
+        boolFilterRole: globals.showViewed ? "" : "watched"
+    }
+    VariantModel {
         id: episodeModel
+        fields: [ "id", "name", "poster", "number", "duration", "rating", "watched" ]
+        thumbDir: thumbFile
     }
 
     XbmcClient {

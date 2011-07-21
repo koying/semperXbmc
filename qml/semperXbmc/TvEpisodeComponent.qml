@@ -12,7 +12,7 @@ Item {
         anchors.fill: parent
         clip: true
 
-        model: episodeModel
+        model: episodeProxyModel
         delegate: episodeDelegate
     }
 
@@ -25,17 +25,11 @@ Item {
         id: episodeDelegate
 
         Cp.Delegate {
-            filtered: {
-                          var ret = false;
-                          ret = ret | (!globals.showViewed && model.playcount > 0 );
-                          return ret;
-                      }
-
             title: (model.number > 0 ? model.number + ". " : "") + model.name
             subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
-            subtitleR: model.rating
-            image: model.thumb
-            watched: model.playcount > 0
+            subtitleR: Utils.sprintf("%.1f", model.rating)
+            image: model.poster
+            watched: model.watched
 
             style: globals.styleTvShowSeasons
             banner: globals.showBanners

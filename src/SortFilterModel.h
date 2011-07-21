@@ -32,6 +32,7 @@ class SortFilterModel : public QSortFilterProxyModel
 
     Q_PROPERTY(QString filterRegExp READ filterRegExp WRITE setFilterRegExp)
     Q_PROPERTY(QString filterRole READ filterRole WRITE setFilterRole)
+    Q_PROPERTY(QString boolFilterRole READ boolFilterRole WRITE setBoolFilterRole)
     Q_PROPERTY(QString sortRole READ sortRole WRITE setSortRole)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
@@ -51,6 +52,9 @@ public:
     void setFilterRole(const QString &role);
     QString filterRole() const;
 
+    void setBoolFilterRole(const QString &role);
+    QString boolFilterRole() const;
+
     void setSortRole(const QString &role);
     QString sortRole() const;
 
@@ -63,12 +67,15 @@ Q_SIGNALS:
 
 protected:
     int roleNameToId(const QString &name);
+    virtual bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;
 
 protected Q_SLOTS:
     void syncRoleNames();
 
 private:
     QString m_filterRole;
+    QString m_boolFilterRole;
+    int m_boolFilterIntRole;
     QString m_sortRole;
     QHash<QString, int> m_roleIds;
 };

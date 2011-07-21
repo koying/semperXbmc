@@ -40,7 +40,7 @@ Library.prototype.loadMovies = function () {
                     }
                 }
 
-                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount":movies[i].playcount});
+                movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "watched":movies[i].playcount>0});
             }
 
             aGenres.sort();
@@ -79,7 +79,7 @@ Library.prototype.loadTVShows = function () {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "playcount":tvshows[i].playcount});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "watched":tvshows[i].playcount>0});
                 //                console.log("tvshow append: " + tvshows[i].label);
             }
         }
@@ -118,7 +118,7 @@ Library.prototype.loadSeasons = function (id) {
                 if (seasons[i].season) {
                     season = seasons[i].season;
                 }
-                seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "thumb": thumb, "episodes":seasons[i].episode, "playcount":seasons[i].playcount});
+                seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "thumb": thumb, "episodes":seasons[i].episode, "watched":seasons[i].playcount>0});
             }
         }
     }
@@ -158,7 +158,7 @@ Library.prototype.loadEpisodes = function (id) {
                 if (episodes[i].streamDetails)
                     duration = episodes[i].streamDetails.video[0].duration;
 
-                episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "thumb": thumb, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount});
+                episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "watched":episodes[i].playcount>0});
             }
         }
     }
