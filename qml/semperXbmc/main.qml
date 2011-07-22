@@ -390,22 +390,22 @@ Window {
         id: movieProxyModel
 
         sourceModel: movieModel
-        boolFilterRole: globals.showViewed ? "" : "watched"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "watched", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "posterThumb" ]
         thumbDir: thumbFile
     }
     SortFilterModel {
         id: tvshowProxyModel
 
         sourceModel: tvshowModel
-        boolFilterRole: globals.showViewed ? "" : "watched"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "duration", "rating", "watched", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb" ]
         thumbDir: thumbFile
     }
 
@@ -413,11 +413,11 @@ Window {
         id: seasonProxyModel
 
         sourceModel: seasonModel
-        boolFilterRole: globals.showViewed ? "" : "watched"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
         id: seasonModel
-        fields: [ "id", "name", "showtitle", "poster", "episodes", "genre", "duration", "rating", "watched" ]
+        fields: [ "id", "name", "showtitle", "poster", "episodes", "genre", "duration", "rating", "playcount" ]
         thumbDir: thumbFile
     }
 
@@ -425,16 +425,79 @@ Window {
         id: episodeProxyModel
 
         sourceModel: episodeModel
-        boolFilterRole: globals.showViewed ? "" : "watched"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
         id: episodeModel
-        fields: [ "id", "name", "poster", "number", "duration", "rating", "watched" ]
+        fields: [ "id", "name", "poster", "number", "duration", "rating", "playcount" ]
         thumbDir: thumbFile
     }
 
-    XbmcClient {
+    XbmcEventClient {
         id: xbmcEventClient
+
+        onErrorDetected: {
+            errorView.addError(type, msg, info);
+        }
+    }
+
+    XbmcJsonTcpClient {
+        id: xbmcTcpClient
+
+        onNotificationReceived: {
+            var oJSON = JSON.parse(jsonMsg);
+            var error = oJSON.error;
+            if (error) {
+                console.debug(Xbmc.dumpObj(error, "Error", "", 0));
+                return;
+            }
+            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
+
+            var method = oJSON.method;
+            if (!method) return;
+
+            var data;
+            switch (method) {
+            case "VideoLibrary.OnUpdate":
+                data = oJSON.params.data;
+                if (!data) return;
+
+                switch(data.type) {
+                case "movie":
+                    movieModel.update(data);
+                    break;
+
+                case "episode":
+                    episodeModel.update(data);
+                    break;
+                }
+
+                break;
+
+            case "VideoLibrary.OnRemove":
+                data = oJSON.params.data;
+                if (!data) return;
+
+                switch(data.type) {
+                case "movie":
+                    movieModel.remove(data);
+                    break;
+
+                case "episode":
+                    episodeModel.remove(data);
+                    break;
+                }
+
+                break;
+
+            case "AudioLibrary.OnUpdate":
+                break;
+
+            case "AudioLibrary.OnRemove":
+                break;
+            }
+
+        }
 
         onErrorDetected: {
             errorView.addError(type, msg, info);
@@ -464,6 +527,7 @@ Window {
             return;
         }
         xbmcEventClient.initialize(globals.server, globals.eventPort);
+        xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort);
         initialize();
     }
 }

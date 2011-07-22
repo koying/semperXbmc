@@ -224,7 +224,7 @@ Playlist.prototype.update = function(playlistModel){
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"track", "order":"ascending"}, "fields": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"playlist", "order":"ascending"}, "fields": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;

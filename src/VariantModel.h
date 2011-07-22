@@ -55,6 +55,8 @@ public:
     /*********** METTHODS ***************/
 
     Q_INVOKABLE void append(const QVariantMap &vals);
+    Q_INVOKABLE void update(const QVariantMap &vals);
+    Q_INVOKABLE void remove(const QVariantMap &vals);
     Q_INVOKABLE void clear();
 
     /********** END METHODS *************/

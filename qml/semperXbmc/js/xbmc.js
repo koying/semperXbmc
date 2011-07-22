@@ -85,19 +85,45 @@ Xbmc.prototype.init = function() {
     doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Version","id": 1}';
     doc.send(str);
+
+//    var docPerm = new XMLHttpRequest();
+//    docPerm.onreadystatechange = function() {
+//        if (docPerm.readyState == XMLHttpRequest.DONE) {
+//            var oJSON = JSON.parse(docPerm.responseText);
+
+//            var error = oJSON.error;
+//            if (error) {
+//                console.log(Xbmc.dumpObj(error, "perlmissions error", "", 0));
+//                errorView.addError("error", error.message, error.code);
+//                return;
+//            }
+
+//            console.log(docPerm.responseText);
+//        }
+//    }
+//    docPerm.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
+//    str = '{"jsonrpc": "2.0", "method": "JSONRPC.Permission","id": 1}';
+//    docPerm.send(str);
 }
 
 Xbmc.prototype.introspect = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+//            console.debug(doc.responseText);
+            if (doc.status != 200) {
+                console.log("Error " + doc.status + " connecting to XBMC: " + xbmc.server +":" + xbmc.port);
+                errorView.addError("error", "Cannot connect to JSON-RPC: " + xbmc.server +":" + xbmc.port);
+                Xbmc.prototype.inError = true;
+                return;
+            }
+
             var oJSON = JSON.parse(doc.responseText).result;
-            console.log(dumpObj(oJSON, "JSON introspect", "", 0));
+            console.debug(dumpObj(oJSON, "JSON introspect", "", 0));
         }
     }
     doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Introspect","id": 1}';
     doc.send(str);
-    return;
 }
 
