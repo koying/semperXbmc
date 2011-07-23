@@ -31,9 +31,69 @@ Page {
         content: MenuLayout {
 
             MenuItem {
+                text:  "View"
+                platformSubItemIndicator: true
+                onClicked: viewMenu.open()
+            }
+
+            MenuItem {
+                text:  "Sort"
+                platformSubItemIndicator: true
+                onClicked: sortMenu.open()
+            }
+
+            MenuItem {
                 text:  "Style"
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
+            }
+        }
+    }
+
+    ContextMenu {
+        id: viewMenu
+        MenuLayout {
+            MenuItem {
+                text:  "All"
+            }
+            MenuItem {
+                text:  "By Genre"
+                onClicked: {
+                    globals.initialTvshowView = "TvShowGenreView.qml"
+                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+            }
+//            MenuItem {
+//                text:  "Coverflow view"
+//                onClicked: movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
+//            }
+        }
+    }
+
+    ContextMenu {
+        id: sortMenu
+        MenuLayout {
+//            MenuItem {
+//                text:  "By Last Played"
+//                onClicked: {
+//                    tvshowProxyModel.sortRole = "lastplayed"
+//                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+//                }
+//            }
+            MenuItem {
+                text:  "By Rating"
+                onClicked: {
+                    tvshowProxyModel.sortRole = "rating"
+                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                }
+            }
+
+            MenuItem {
+                text:  "By Name"
+                onClicked: {
+                    tvshowProxyModel.sortRole = "name"
+                    tvshowProxyModel.sortOrder =  Qt.AscendingOrder
+                }
             }
         }
     }
@@ -62,36 +122,8 @@ Page {
         }
     }
 
-    ListView {
-        id: tvshowList
+    TvshowComponent {
         anchors.fill: parent
-        clip: true
-
-        model: tvshowProxyModel
-        delegate: tvshowDelegate
-    }
-
-    ScrollDecorator {
-        id: scrolldecorator
-        flickableItem: tvshowList
-    }
-
-    Component {
-        id: tvshowDelegate
-
-        Cp.Delegate {
-            title: model.name
-            subtitle: (model.genre != undefined ? model.genre : "")
-            image: model.posterThumb
-            watched: model.watched
-
-            banner: globals.showBanners
-            style: globals.styleTvShows
-
-            onSelected:  {
-                tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: model.id})
-            }
-        }
     }
 
     Cp.SearchDialog {

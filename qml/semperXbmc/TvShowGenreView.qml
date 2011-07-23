@@ -14,8 +14,8 @@ Page {
 
         ToolButton {
             iconSource: "toolbar-back"
-            onClicked: movieStack.pop()
-            visible: movieStack.depth > 1
+            onClicked: tvshowStack.pop()
+            visible: tvshowStack.depth > 1
         }
 
         ToolButton {
@@ -60,10 +60,10 @@ Page {
             MenuItem {
                 text:  "All"
                 onClicked: {
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
-                    globals.initialMovieView = "MovieView.qml"
-                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                    tvshowProxyModel.filterRole = ""
+                    tvshowProxyModel.filterRegExp = ""
+                    globals.initialTvshowView = "TvShowView.qml"
+                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
                 }
             }
             MenuItem {
@@ -79,26 +79,26 @@ Page {
     ContextMenu {
         id: sortMenu
         MenuLayout {
-            MenuItem {
-                text:  "By Year"
-                onClicked: {
-                    movieProxyModel.sortRole = "year"
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-                }
-            }
+//            MenuItem {
+//                text:  "By Last Played"
+//                onClicked: {
+//                    tvshowProxyModel.sortRole = "lastplayed"
+//                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+//                }
+//            }
             MenuItem {
                 text:  "By Rating"
                 onClicked: {
-                    movieProxyModel.sortRole = "rating"
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                    tvshowProxyModel.sortRole = "rating"
+                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
 
             MenuItem {
                 text:  "By Name"
                 onClicked: {
-                    movieProxyModel.sortRole = "name"
-                    movieProxyModel.sortOrder =  Qt.AscendingOrder
+                    tvshowProxyModel.sortRole = "name"
+                    tvshowProxyModel.sortOrder =  Qt.AscendingOrder
                 }
             }
         }
@@ -129,21 +129,21 @@ Page {
     }
 
     ListView {
-        id: videoGenreList
+        id: tvshowGenreList
         anchors.fill: parent
         clip: true
 
-        model: movieGenreModel
-        delegate: videoGenreDelegate
+        model: tvshowGenreModel
+        delegate: tvshowGenreDelegate
     }
 
     ScrollDecorator {
         id: scrolldecorator
-        flickableItem: videoGenreList
+        flickableItem: tvshowGenreList
     }
 
     Component {
-        id: videoGenreDelegate
+        id: tvshowGenreDelegate
 
         Cp.Delegate {
             title: model.name
@@ -151,17 +151,17 @@ Page {
             type: "header"
             style: "smallHorizontal"
 
-            subComponentSource: "MovieComponent.qml"
+            subComponentSource: "TvshowComponent.qml"
 
             onSelected:  {
                 if (style == "smallHorizontal") {
                     style = "full"
-                    movieProxyModel.filterRole = "genre"
-                    movieProxyModel.filterRegExp = model.name
+                    tvshowProxyModel.filterRole = "genre"
+                    tvshowProxyModel.filterRegExp = model.name
                 } else {
                     style = "smallHorizontal"
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
+                    tvshowProxyModel.filterRole = ""
+                    tvshowProxyModel.filterRegExp = ""
                 }
             }
         }
@@ -172,17 +172,17 @@ Page {
         visible: btFilter.checked
 
         onApply: {
-            movieProxyModel.filterRole = "name"
-            movieProxyModel.filterRegExp = searchDlg.text
+            tvshowProxyModel.filterRole = "name"
+            tvshowProxyModel.filterRegExp = searchDlg.text
         }
         onCancel: {
-            movieProxyModel.filterRole = ""
-            movieProxyModel.filterRegExp = ""
+            tvshowProxyModel.filterRole = ""
+            tvshowProxyModel.filterRegExp = ""
         }
     }
 
     Component.onCompleted: {
-        if (movieModel.count == 0)
-            $().library.loadMovies();
+        if (tvshowModel.count == 0)
+            $().library.loadTVShows();
     }
 }

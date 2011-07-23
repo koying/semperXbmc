@@ -108,7 +108,7 @@ Window {
                     onClicked: {
                         main.state = "tvshows"
                         if (tvshowStack.depth == 0) {
-                            tvshowStack.push(Qt.resolvedUrl("TvShowView.qml"))
+                            tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                         }
                     }
                 }
@@ -383,9 +383,8 @@ Window {
     }
 
     ListModel {
-        id: videoGenreModel
+        id: movieGenreModel
     }
-
     SortFilterModel {
         id: movieProxyModel
 
@@ -397,6 +396,10 @@ Window {
         fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "watched", "posterThumb" ]
         thumbDir: thumbFile
     }
+
+    ListModel {
+        id: tvshowGenreModel
+    }
     SortFilterModel {
         id: tvshowProxyModel
 
@@ -405,7 +408,7 @@ Window {
     }
     VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "duration", "rating", "watched", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "lastplayed", "watched", "posterThumb" ]
         thumbDir: thumbFile
     }
 

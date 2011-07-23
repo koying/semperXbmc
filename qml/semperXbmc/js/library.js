@@ -41,7 +41,7 @@ Library.prototype.loadMovies = function () {
 
             aGenres.sort();
             for (var i = 0; i < aGenres.length; i++){
-                videoGenreModel.append({"name": aGenres[i]});
+                movieGenreModel.append({"name": aGenres[i]});
             }
         }
     }
@@ -67,6 +67,7 @@ Library.prototype.loadTVShows = function () {
                 return;
             }
 
+            var aGenres = []
             var result = oJSON.result;
             var tvshows = result.tvshows;
             for (var i = 0; i < tvshows.length; i++){
@@ -74,8 +75,20 @@ Library.prototype.loadTVShows = function () {
                 if (tvshows[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
+                if (tvshows[i].genre != "") {
+                    var aGenre = tvshows[i].genre.split("/");
+                    for (var j=0; j<aGenre.length; ++j) {
+                        if (aGenres.indexOf(aGenre[j].trim()) == -1)
+                            aGenres.push(aGenre[j].trim());
+                    }
+                }
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "watched":tvshows[i].playcount>0});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "lastplayed": tvshows[i].lastplayed, "watched":tvshows[i].playcount>0});
+            }
+
+            aGenres.sort();
+            for (var i = 0; i < aGenres.length; i++){
+                tvshowGenreModel.append({"name": aGenres[i]});
             }
         }
     }

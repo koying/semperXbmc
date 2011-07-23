@@ -19,6 +19,7 @@ QtObject {
     property string styleMusicAlbums: "bigHorizontal"
 
     property string initialMovieView: "MovieView.qml"
+    property string initialTvshowView: "TvShowView.qml"
     property string initialMusicView: "MusicArtistView.qml"
 
     function load() {
@@ -41,6 +42,7 @@ QtObject {
         styleMusicAlbums = DbSettings.getSetting("styleMusicAlbums", styleMusicAlbums);
 
         initialMovieView = DbSettings.getSetting("initialMovieView", initialMovieView);
+        initialTvshowView = DbSettings.getSetting("initialTvshowView", initialTvshowView);
         initialMusicView = DbSettings.getSetting("initialMusicView", initialMusicView);
     }
 
@@ -62,6 +64,7 @@ QtObject {
         DbSettings.setSetting("styleMusicAlbums", styleMusicAlbums);
 
         DbSettings.setSetting("initialMovieView", initialMovieView);
+        DbSettings.setSetting("initialTvshowView", initialTvshowView);
         DbSettings.setSetting("initialMusicView", initialMusicView);
     }
 
