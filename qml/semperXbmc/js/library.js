@@ -75,13 +75,14 @@ Library.prototype.loadTVShows = function () {
                 if (tvshows[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
-                if (tvshows[i].genre != "") {
+                if (tvshows[i].genre) {
                     var aGenre = tvshows[i].genre.split("/");
                     for (var j=0; j<aGenre.length; ++j) {
                         if (aGenres.indexOf(aGenre[j].trim()) == -1)
                             aGenres.push(aGenre[j].trim());
                     }
                 }
+                console.debug(tvshows[i].lastplayed);
 
                 tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "lastplayed": tvshows[i].lastplayed, "watched":tvshows[i].playcount>0});
             }
