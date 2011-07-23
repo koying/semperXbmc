@@ -73,17 +73,20 @@ Page {
     ContextMenu {
         id: sortMenu
         MenuLayout {
-//            MenuItem {
-//                text:  "By Last Played"
-//                onClicked: {
-//                    tvshowProxyModel.sortRole = "lastplayed"
-//                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-//                }
-//            }
+            MenuItem {
+                text:  "By Last Played"
+                onClicked: {
+                    globals.initialTvshowSort = "lastplayed"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
+                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                }
+            }
+
             MenuItem {
                 text:  "By Rating"
                 onClicked: {
-                    tvshowProxyModel.sortRole = "rating"
+                    globals.initialTvshowSort = "rating"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
                     tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
@@ -91,7 +94,8 @@ Page {
             MenuItem {
                 text:  "By Name"
                 onClicked: {
-                    tvshowProxyModel.sortRole = "name"
+                    globals.initialTvshowSort = "name"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
                     tvshowProxyModel.sortOrder =  Qt.AscendingOrder
                 }
             }
@@ -141,6 +145,11 @@ Page {
     }
 
     Component.onCompleted: {
+        tvshowProxyModel.sortRole = globals.initialTvshowSort
+        if (globals.initialTvshowSort == "name")
+            tvshowProxyModel.sortOrder =  Qt.AscendingOrder
+        else
+            tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
         if (tvshowModel.count == 0)
             $().library.loadTVShows();
     }

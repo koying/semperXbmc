@@ -102,6 +102,8 @@ Page {
 
         model: albumProxyModel
         delegate: albumDelegate
+
+        cacheBuffer: 800
     }
 
     ScrollDecorator {

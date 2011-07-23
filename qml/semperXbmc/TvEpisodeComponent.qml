@@ -39,6 +39,9 @@ Item {
                 $().playlist.videoClear();
                 xbmcEventClient.actionButton("Stop");
                 $().playlist.addEpisode(id);
+                tvshowLastplayedModel.keyUpdate({"id":model.tvshowId, "lastplayed":new Date()});
+                if (tvshowProxyModel.sortRole == "lastplayed")
+                    tvshowProxyModel.reSort();
                 mainTabGroup.currentTab = remoteTab
             }
         }

@@ -407,8 +407,18 @@ Window {
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
+        id: tvshowLastplayedModel
+        fields: [ "id", "lastplayed" ]
+        key: "id"
+
+        stream: thumbFile + "/tvshowLastplayedModel.dat"
+    }
+
+    VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "duration", "rating", "lastplayed", "playcount", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb", "lastplayed" ]
+        key: "id"
+        relatedFields: [ "lastplayed" ]
         thumbDir: thumbFile
     }
 
@@ -432,7 +442,7 @@ Window {
     }
     VariantModel {
         id: episodeModel
-        fields: [ "id", "name", "poster", "number", "duration", "rating", "playcount" ]
+        fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount" ]
         thumbDir: thumbFile
     }
 
@@ -531,6 +541,9 @@ Window {
         }
         xbmcEventClient.initialize(globals.server, globals.eventPort);
         xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort);
+
+        tvshowModel.relatedModel = tvshowLastplayedModel
+
         initialize();
     }
 }

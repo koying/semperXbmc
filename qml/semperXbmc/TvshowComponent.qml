@@ -14,6 +14,8 @@ Item {
 
         model: tvshowProxyModel
         delegate: tvshowDelegate
+
+        cacheBuffer: 800
     }
 
     ScrollDecorator {
@@ -27,6 +29,7 @@ Item {
         Cp.Delegate {
             title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
+            subtitleR: tvshowProxyModel.sortRole == "lastplayed" ? (model.lastplayed ? Utils.dateToString(model.lastplayed) : "") : ""
             image: model.posterThumb
             watched: model.playcount>0
 

@@ -14,6 +14,8 @@ Item {
 
         model: movieProxyModel
         delegate: movieDelegate
+
+        cacheBuffer: 800
     }
 
     ScrollDecorator {

@@ -31,9 +31,9 @@ class SortFilterModel : public QSortFilterProxyModel
     Q_PROPERTY(QObject *sourceModel READ sourceModel WRITE setModel)
 
     Q_PROPERTY(QString filterRegExp READ filterRegExp WRITE setFilterRegExp)
-    Q_PROPERTY(QString filterRole READ filterRole WRITE setFilterRole)
+    Q_PROPERTY(QString filterRole READ filterRole WRITE setFilterRole NOTIFY filterRoleChanged)
     Q_PROPERTY(QString boolFilterRole READ boolFilterRole WRITE setBoolFilterRole)
-    Q_PROPERTY(QString sortRole READ sortRole WRITE setSortRole)
+    Q_PROPERTY(QString sortRole READ sortRole WRITE setSortRole NOTIFY sortRoleChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
@@ -62,8 +62,12 @@ public:
 
     int count() const {return QSortFilterProxyModel::rowCount();}
 
+    Q_INVOKABLE void reSort();
+
 Q_SIGNALS:
     void countChanged();
+    void filterRoleChanged();
+    void sortRoleChanged();
 
 protected:
     int roleNameToId(const QString &name);

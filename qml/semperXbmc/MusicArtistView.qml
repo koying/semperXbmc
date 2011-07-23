@@ -93,6 +93,8 @@ Page {
 
         model: artistProxyModel
         delegate: artistDelegate
+
+        cacheBuffer: 800
     }
 
     ScrollDecorator {

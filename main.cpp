@@ -28,29 +28,30 @@ int main(int argc, char *argv[])
 
     NetworkAccessManagerFactory factory;
 
-    QmlApplicationViewer viewer;
-    viewer.engine()->setNetworkAccessManagerFactory(&factory);
+    QmlApplicationViewer* viewer = new QmlApplicationViewer;
+    viewer->engine()->setNetworkAccessManagerFactory(&factory);
 
     QString thumbFile("fat:///c:/data/semperXbmcThumbs.fat#/");
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(thumbFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
-    viewer.rootContext()->setContextProperty("thumbFile", thumbFile);
+    viewer->rootContext()->setContextProperty("thumbFile", thumbFile);
 
     QString appVersion = QUOTE(APP_VERSION);
-    viewer.rootContext()->setContextProperty("appVersion", appVersion);
+    viewer->rootContext()->setContextProperty("appVersion", appVersion);
 
-    viewer.engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
+    viewer->engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 
-    viewer.setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
-    viewer.showExpanded();
+    viewer->setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
+    viewer->showExpanded();
 
     int retval = app.exec();
 
     // Clear the cache at exit
-    viewer.engine()->networkAccessManager()->cache()->clear();
+    viewer->engine()->networkAccessManager()->cache()->clear();
 
-    viewer.engine()->removeImageProvider(QLatin1String("thumb"));
-//    delete thumbProvider;
+    viewer->engine()->removeImageProvider(QLatin1String("thumb"));
+
+    delete viewer;
     delete fatHandler;
 
 #ifndef Q_OS_SYMBIAN

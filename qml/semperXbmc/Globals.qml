@@ -23,6 +23,9 @@ QtObject {
     property string initialTvshowView: "TvShowView.qml"
     property string initialMusicView: "MusicArtistView.qml"
 
+    property string initialMovieSort:  "name"
+    property string initialTvshowSort:  "name"
+
     function load() {
         DbSettings.initialize();
 
@@ -45,6 +48,9 @@ QtObject {
         initialMovieView = DbSettings.getSetting("initialMovieView", initialMovieView);
         initialTvshowView = DbSettings.getSetting("initialTvshowView", initialTvshowView);
         initialMusicView = DbSettings.getSetting("initialMusicView", initialMusicView);
+
+        initialMovieSort = DbSettings.getSetting("initialMovieSort", initialMovieSort);
+        initialTvshowSort = DbSettings.getSetting("initialTvshowSort", initialTvshowSort);
     }
 
     function save() {
@@ -67,6 +73,9 @@ QtObject {
         DbSettings.setSetting("initialMovieView", initialMovieView);
         DbSettings.setSetting("initialTvshowView", initialTvshowView);
         DbSettings.setSetting("initialMusicView", initialMusicView);
+
+        DbSettings.setSetting("initialMovieSort", initialMovieSort);
+        DbSettings.setSetting("initialTvshowSort", initialTvshowSort);
     }
 
     Component.onDestruction: save()

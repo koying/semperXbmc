@@ -9,7 +9,7 @@ CommonDialog {
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
         anchors.margins: platformStyle.paddingMedium
-        height: 220
+        height: 250
 
         Grid {
             id: grid
@@ -17,20 +17,6 @@ CommonDialog {
 
             columns: 2
             spacing: platformStyle.paddingMedium
-
-            Text {
-                font.family: platformStyle.fontFamilyRegular
-                font.pixelSize: platformStyle.fontSizeLarge
-                color: platformStyle.colorNormalLight
-                height: swCacheThumbnails.height
-                verticalAlignment: Text.AlignVCenter
-
-                text: "Cache thumbnails"
-            }
-
-            Switch {
-                id: swCacheThumbnails
-            }
 
             Text {
                 font.family: platformStyle.fontFamilyRegular
@@ -50,6 +36,20 @@ CommonDialog {
                 font.family: platformStyle.fontFamilyRegular
                 font.pixelSize: platformStyle.fontSizeLarge
                 color: platformStyle.colorNormalLight
+                height: swShowBanners.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Show Banners"
+            }
+
+            Switch {
+                id: swShowBanners
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
                 height: swShowViewd.height
                 verticalAlignment: Text.AlignVCenter
 
@@ -58,6 +58,20 @@ CommonDialog {
 
             Switch {
                 id: swSortAscending
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: swCacheThumbnails.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Cache thumbnails"
+            }
+
+            Switch {
+                id: swCacheThumbnails
             }
 
             Text {
@@ -105,6 +119,7 @@ CommonDialog {
         swShowViewd.checked = globals.showViewed
         swSortAscending.checked = globals.sortAscending
         swCacheThumbnails.checked = globals.cacheThumbnails
+        swShowBanners.checked = globals.showBanners
     }
 
     onAccepted: {
@@ -112,6 +127,7 @@ CommonDialog {
         globals.showViewed = swShowViewd.checked;
         globals.sortAscending = swSortAscending.checked;
         globals.cacheThumbnails = swCacheThumbnails.checked;
+        globals.showBanners = swShowBanners.checked
 
         globals.save();
     }

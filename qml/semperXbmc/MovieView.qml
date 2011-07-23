@@ -78,14 +78,16 @@ Page {
             MenuItem {
                 text:  "By Year"
                 onClicked: {
-                    movieProxyModel.sortRole = "year"
+                    globals.initialMovieSort = "year"
+                    movieProxyModel.sortRole = globals.initialMovieSort
                     movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
             MenuItem {
                 text:  "By Rating"
                 onClicked: {
-                    movieProxyModel.sortRole = "rating"
+                    globals.initialMovieSort = "rating"
+                    movieProxyModel.sortRole = globals.initialMovieSort
                     movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
@@ -93,7 +95,8 @@ Page {
             MenuItem {
                 text:  "By Name"
                 onClicked: {
-                    movieProxyModel.sortRole = "name"
+                    globals.initialMovieSort = "name"
+                    movieProxyModel.sortRole = globals.initialMovieSort
                     movieProxyModel.sortOrder =  Qt.AscendingOrder
                 }
             }
@@ -143,6 +146,12 @@ Page {
     }
 
     Component.onCompleted: {
+        movieProxyModel.sortRole = globals.initialMovieSort
+        if (globals.initialMovieSort == "name")
+            movieProxyModel.sortOrder =  Qt.AscendingOrder
+        else
+            movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+
         if (movieModel.count == 0)
             $().library.loadMovies();
     }
