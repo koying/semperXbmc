@@ -4,6 +4,7 @@ import "js/settings.js" as DbSettings
 QtObject {
     property string server: "Unspecified"
     property string jsonPort: "8080"
+    property string jsonTcpPort: "9090"
     property string eventPort: "9777"
 
     property bool showSplash: true

@@ -29,7 +29,7 @@ Item {
             subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
             subtitleR: Utils.sprintf("%.1f", model.rating)
             image: model.poster
-            watched: model.watched
+            watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons
             banner: globals.showBanners

@@ -84,9 +84,11 @@ void VariantModel::setfields(QVariantList val)
             }
         }
     }
-    setRoleNames(roleNames);
 
-    m_initialised = true;
+    if (roleNames.size()) {
+        setRoleNames(roleNames);
+        m_initialised = true;
+    }
 
     endResetModel();
 }
@@ -106,11 +108,58 @@ void VariantModel::setthumbDir(QString val)
 
 void VariantModel::append(const QVariantMap &vals)
 {
+    if (!m_initialised) return;
+
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
 
     m_data.append(vals);
 
     endInsertRows();
+}
+
+void VariantModel::update(const QVariantMap &vals)
+{
+    if (!m_initialised) return;
+
+    QString keystring = m_fields[0].toString();
+    QVariant keyVal = vals[keystring];
+    if (!keyVal.isValid()) return;
+
+    int row = 0;
+    for (; row < m_data.size(); ++row)
+        if (m_data[row].value(keystring) == keyVal)
+            break;
+    if (row == m_data.size()) return;
+
+    QMapIterator<QString, QVariant> it(vals);
+    while (it.hasNext()) {
+        it.next();
+
+        if (m_fields.contains(it.key()))
+            m_data[row][it.key()] = it.value();
+    }
+
+    QModelIndex index = createIndex(row, 0, 0);
+    emit dataChanged(index, index);
+}
+
+void VariantModel::remove(const QVariantMap &vals)
+{
+    if (!m_initialised) return;
+
+    QString keystring = m_fields[0].toString();
+    QVariant keyVal = vals[keystring];
+    if (!keyVal.isValid()) return;
+
+    int row = 0;
+    for (; row < m_data.size(); ++row)
+        if (m_data[row].value(keystring) == keyVal)
+            break;
+    if (row == m_data.size()) return;
+
+    beginRemoveRows(QModelIndex(), row, row);
+    m_data.removeAt(row);
+    endRemoveRows();
 }
 
 void VariantModel::clear()

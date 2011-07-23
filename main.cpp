@@ -6,6 +6,7 @@
 #include "networkaccessmanagerfactory.h"
 
 #include "XbmcEventClient.h"
+#include "XbmcTcpTransport.h"
 #include "QFatFs.h"
 #include "ThumbImageProvider.h"
 #include "VariantModel.h"
@@ -19,7 +20,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QFatFsHandler* fatHandler = new QFatFsHandler(50000, 8192);
 
-    qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcClient");
+    qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcEventClient");
+    qmlRegisterType<XbmcTcpTransport>("com.semperpax.qmlcomponents", 1, 0, "XbmcJsonTcpClient");
     qmlRegisterType<VariantModel>("com.semperpax.qmlcomponents", 1, 0, "VariantModel");
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
 //    qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");

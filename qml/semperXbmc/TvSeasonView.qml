@@ -83,7 +83,7 @@ Page {
             subtitle:  model.showtitle
             subtitleR: model.episodes + " ep"
             image: model.poster
-            watched: model.watched
+            watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons
             banner: globals.showBanners

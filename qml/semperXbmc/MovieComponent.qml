@@ -31,7 +31,7 @@ Item {
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: globals.cacheThumbnails ? model.posterThumb : model.poster
-            watched: model.watched
+            watched: model.playcount > 0
 
             style: globals.styleMovies
             banner: globals.showBanners
