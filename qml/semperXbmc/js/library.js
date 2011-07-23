@@ -70,7 +70,7 @@ Library.prototype.loadTVShows = function () {
             var result = oJSON.result;
             var tvshows = result.tvshows;
             for (var i = 0; i < tvshows.length; i++){
-                var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                var thumb = "qrc:/defaultImages/tvshow";
                 if (tvshows[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
@@ -105,7 +105,7 @@ Library.prototype.loadSeasons = function (id) {
             var result = oJSON.result;
             var seasons = result.seasons;
             for (var i = 0; i < seasons.length; i++){
-                var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                var thumb = "qrc:/defaultImages/tvshow";
                 if (seasons[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + seasons[i].thumbnail;
                 }
@@ -144,7 +144,7 @@ Library.prototype.loadEpisodes = function (id) {
             var episodes = result.episodes;
             for (var i = 0; i < episodes.length; i++){
 
-                var thumb = "http://"+$().server+":" + $().port + "/images/DefaultAlbumCover.png";
+                var thumb = "qrc:/defaultImages/tvshow";
                 if (episodes[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
                 }
