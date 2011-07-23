@@ -87,17 +87,12 @@ Library.prototype.loadTVShows = function () {
                     }
                 }
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "lastplayed": tvshows[i].lastplayed, "watched":tvshows[i].playcount>0});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "lastplayed": tvshows[i].lastplayed, "playcount":tvshows[i].playcount});
             }
 
-<<<<<<< HEAD
             aGenres.sort();
             for (var i = 0; i < aGenres.length; i++){
                 tvshowGenreModel.append({"name": aGenres[i]});
-=======
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "watched":tvshows[i].playcount});
-                //                console.log("tvshow append: " + tvshows[i].label);
->>>>>>> EDEN_Notif
             }
         }
     }

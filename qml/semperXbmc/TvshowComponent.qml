@@ -28,7 +28,7 @@ Item {
             title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
             image: model.posterThumb
-            watched: model.watched
+            watched: model.playcount>0
 
             banner: globals.showBanners
             style: globals.styleTvShows
