@@ -23,8 +23,6 @@ VariantModel::~VariantModel()
         m_cacheThread->terminate();
         m_cacheThread->wait(5000);
     }
-    if (!m_stream.isEmpty() && m_dirty)
-        save();
 }
 
 QVariant VariantModel::data(const QModelIndex &index, int role) const
@@ -314,6 +312,9 @@ void VariantModel::load()
 
 void VariantModel::save()
 {
+    if (m_stream.isEmpty() || !m_dirty)
+        return;
+
     QFile file(m_stream);
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Error serializing to " << m_stream;

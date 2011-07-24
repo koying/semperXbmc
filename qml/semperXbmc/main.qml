@@ -412,6 +412,10 @@ Window {
         key: "id"
 
         stream: thumbFile + "/tvshowLastplayedModel.dat"
+
+        Component.onDestruction: {
+            save();
+        }
     }
 
     VariantModel {
