@@ -179,7 +179,7 @@ Playlist.prototype.update = function(playlistModel){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText)
+//            console.debug(doc.responseText)
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
@@ -193,7 +193,7 @@ Playlist.prototype.update = function(playlistModel){
                 var items = result.items;
 
                 if (!Playlist.prototype.previousItems || !isEqual(Playlist.prototype.previousItems,items)) {
-                    console.log("new playlist");
+//                    console.log("new playlist");
                     Playlist.prototype.previousItems = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){

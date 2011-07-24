@@ -67,6 +67,13 @@ Page {
                 }
             }
             MenuItem {
+                text:  "Recent"
+                onClicked: {
+                    globals.initialMovieView = "MovieRecentView.qml"
+                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                }
+            }
+            MenuItem {
                 text:  "By Genre"
             }
 //            MenuItem {

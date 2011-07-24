@@ -1,10 +1,8 @@
-import QtQuick 1.0
+import Qt 4.7
 import com.nokia.symbian 1.0
-import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
-import "js/filter.js" as Filter
 
 Page {
     id: page
@@ -12,8 +10,8 @@ Page {
 
         ToolButton {
             iconSource: "toolbar-back"
-            onClicked: movieStack.pop()
-            visible: movieStack.depth > 1
+            onClicked: tvshowStack.pop()
+            visible: tvshowStack.depth > 1
         }
 
         ToolButton {
@@ -57,19 +55,21 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "All"
+                onClicked: {
+                    tvshowProxyModel.clear();
+                    globals.initialTvshowView = "TvShowView.qml"
+                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                }
             }
             MenuItem {
-                text:  "Recent"
-                onClicked: {
-                    globals.initialMovieView = "MovieRecentView.qml"
-                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
-                }
+                text:  "Recent episodes"
             }
             MenuItem {
                 text:  "By Genre"
                 onClicked: {
-                    globals.initialMovieView = "MovieGenreView.qml"
-                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                    tvshowProxyModel.clear();
+                    globals.initialTvshowView = "TvShowGenreView.qml"
+                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
                 }
             }
 //            MenuItem {
@@ -83,28 +83,29 @@ Page {
         id: sortMenu
         MenuLayout {
             MenuItem {
-                text:  "By Year"
+                text:  "By Last Played"
                 onClicked: {
-                    globals.initialMovieSort = "year"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                    globals.initialTvshowSort = "lastplayed"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
+                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
+
             MenuItem {
                 text:  "By Rating"
                 onClicked: {
-                    globals.initialMovieSort = "rating"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                    globals.initialTvshowSort = "rating"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
+                    tvshowProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
                 }
             }
 
             MenuItem {
                 text:  "By Name"
                 onClicked: {
-                    globals.initialMovieSort = "name"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  Qt.AscendingOrder
+                    globals.initialTvshowSort = "name"
+                    tvshowProxyModel.sortRole = globals.initialTvshowSort
+                    tvshowProxyModel.sortOrder =  Qt.AscendingOrder
                 }
             }
         }
@@ -116,25 +117,25 @@ Page {
             MenuItem {
                 text:  "Small Horizontal"
                 onClicked: {
-                    globals.styleMovies = "smallHorizontal"
+                    globals.styleTvShows = "smallHorizontal"
                 }
             }
             MenuItem {
                 text:  "Big Horizontal"
                 onClicked: {
-                    globals.styleMovies = "bigHorizontal"
+                    globals.styleTvShows = "bigHorizontal"
                 }
             }
             MenuItem {
                 text:  "Vertical"
                 onClicked: {
-                    globals.styleMovies = "vertical"
+                    globals.styleTvShows = "vertical"
                 }
             }
         }
     }
 
-    MovieComponent {
+    TvEpisodeComponent {
         anchors.fill: parent
     }
 
@@ -143,23 +144,20 @@ Page {
         visible: btFilter.checked
 
         onApply: {
-            movieProxyModel.filterRole = "name"
-            movieProxyModel.filterRegExp = searchDlg.text
+            tvshowProxyModel.filterRole = "name"
+            tvshowProxyModel.filterRegExp = searchDlg.text
         }
         onCancel: {
-            movieProxyModel.filterRole = ""
-            movieProxyModel.filterRegExp = ""
+            tvshowProxyModel.filterRole = ""
+            tvshowProxyModel.filterRegExp = ""
         }
     }
 
     Component.onCompleted: {
-        movieProxyModel.sortRole = globals.initialMovieSort
-        if (globals.initialMovieSort == "name")
-            movieProxyModel.sortOrder =  Qt.AscendingOrder
-        else
-            movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-
-        if (movieModel.count == 0)
-            $().library.loadMovies();
+        tvshowProxyModel.filterRole = ""
+        tvshowProxyModel.filterRegExp = ""
+        tvshowProxyModel.sortRole = ""
+        $().library.recentEpisodes();
     }
+
 }

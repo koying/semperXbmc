@@ -6,7 +6,6 @@ import "js/Utils.js" as Utils
 
 Page {
     id: page
-    property int artistId: -99
 
     tools:
 
@@ -66,13 +65,14 @@ Page {
             }
             MenuItem {
                 text:  "Recent Albums"
-                onClicked: {
-                    globals.initialMusicView = "MusicRecentAlbumView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
-                }
             }
             MenuItem {
                 text:  "All Albums"
+                onClicked: {
+                    albumModel.clear();
+                    globals.initialMusicView = "MusicAlbumView.qml"
+                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})
+                }
             }
         }
     }
@@ -109,8 +109,6 @@ Page {
 
         model: albumProxyModel
         delegate: albumDelegate
-
-        cacheBuffer: 800
     }
 
     ScrollDecorator {
@@ -160,17 +158,7 @@ Page {
         }
     }
 
-    onArtistIdChanged: {
-        albumModel.clear();
-        if (artistId < 0)
-            $().library.loadAllAlbums();
-        else
-            $().library.loadAlbums(artistId);
-    }
-
     Component.onCompleted: {
-        if (musicStack.depth < 1 || albumModel.count == 0) {
-            $().library.loadAllAlbums();
-        }
+        $().library.recentAlbums();
     }
 }

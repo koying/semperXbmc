@@ -52,7 +52,14 @@ Page {
                 text:  "Artists"
             }
             MenuItem {
-                text:  "Albums"
+                text:  "Recent Albums"
+                onClicked: {
+                    globals.initialMusicView = "MusicRecentAlbumView.qml"
+                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                }
+            }
+            MenuItem {
+                text:  "All Albums"
                 onClicked: {
                     globals.initialMusicView = "MusicAlbumView.qml"
                     musicStack.replace(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})

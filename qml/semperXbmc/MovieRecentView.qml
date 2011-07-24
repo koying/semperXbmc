@@ -38,11 +38,11 @@ Page {
                 onClicked: viewMenu.open()
             }
 
-            MenuItem {
-                text:  "Sort"
-                platformSubItemIndicator: true
-                onClicked: sortMenu.open()
-            }
+//            MenuItem {
+//                text:  "Sort"
+//                platformSubItemIndicator: true
+//                onClicked: sortMenu.open()
+//            }
 
             MenuItem {
                 text:  "Style"
@@ -57,17 +57,19 @@ Page {
         MenuLayout {
             MenuItem {
                 text:  "All"
-            }
-            MenuItem {
-                text:  "Recent"
                 onClicked: {
-                    globals.initialMovieView = "MovieRecentView.qml"
+                    movieModel.clear();
+                    globals.initialMovieView = "MovieView.qml"
                     movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
                 }
             }
             MenuItem {
+                text:  "Recent"
+            }
+            MenuItem {
                 text:  "By Genre"
                 onClicked: {
+                    movieModel.clear();
                     globals.initialMovieView = "MovieGenreView.qml"
                     movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
                 }
@@ -153,13 +155,9 @@ Page {
     }
 
     Component.onCompleted: {
-        movieProxyModel.sortRole = globals.initialMovieSort
-        if (globals.initialMovieSort == "name")
-            movieProxyModel.sortOrder =  Qt.AscendingOrder
-        else
-            movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-
-        if (movieModel.count == 0)
-            $().library.loadMovies();
+        movieProxyModel.filterRole = ""
+        movieProxyModel.filterRegExp = ""
+        movieProxyModel.sortRole = ""
+        $().library.recentMovies();
     }
 }

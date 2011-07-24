@@ -49,7 +49,6 @@ Item {
     }
 
     onSeasonIdChanged: {
-        episodeModel.clear();
         $().library.loadEpisodes(seasonId);
     }
 }

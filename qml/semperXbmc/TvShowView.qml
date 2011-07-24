@@ -57,6 +57,13 @@ Page {
                 text:  "All"
             }
             MenuItem {
+                text:  "Recent episodes"
+                onClicked: {
+                    globals.initialTvshowView = "TvShowRecentView.qml"
+                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+            }
+            MenuItem {
                 text:  "By Genre"
                 onClicked: {
                     globals.initialTvshowView = "TvShowGenreView.qml"

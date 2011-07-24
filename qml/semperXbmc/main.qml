@@ -467,14 +467,21 @@ Window {
             console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
 
             var method = oJSON.method;
-            if (!method) return;
+            console.debug(method);
+            if (!method) {
+                console.debug("no method");
+                return;
+            }
 
-            var data;
+            var data = oJSON.params.data;
+            if (!data) {
+                console.debug("No data");
+                return;
+            }
+            console.debug(Xbmc.dumpObj(data, "data", "", 0));
+
             switch (method) {
             case "VideoLibrary.OnUpdate":
-                data = oJSON.params.data;
-                if (!data) return;
-
                 switch(data.type) {
                 case "movie":
                     movieModel.update(data);
@@ -488,9 +495,6 @@ Window {
                 break;
 
             case "VideoLibrary.OnRemove":
-                data = oJSON.params.data;
-                if (!data) return;
-
                 switch(data.type) {
                 case "movie":
                     movieModel.remove(data);
