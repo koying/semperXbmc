@@ -42,6 +42,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -137,6 +141,10 @@ Page {
             artistProxyModel.filterRole = ""
             artistProxyModel.filterRegExp = ""
         }
+    }
+
+    function refresh() {
+        $().library.loadArtists();
     }
 
     Component.onCompleted: {

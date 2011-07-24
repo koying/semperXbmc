@@ -46,6 +46,7 @@ Library.prototype.handleMovies = function (responseText) {
     for (var i = 0; i < aGenres.length; i++){
         movieGenreModel.append({"name": aGenres[i]});
     }
+    movieProxyModel.reSort();
 }
 
 Library.prototype.loadMovies = function () {
@@ -53,7 +54,6 @@ Library.prototype.loadMovies = function () {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleMovies(doc.responseText);
-            movieProxyModel.reSort();
         }
     }
 
@@ -158,6 +158,7 @@ Library.prototype.loadSeasons = function (id) {
                 }
                 seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "poster": thumb, "episodes":seasons[i].episode, "playcount":seasons[i].playcount});
             }
+            seasonProxyModel.reSort();
         }
     }
 
@@ -195,6 +196,7 @@ Library.prototype.handleEpisodes = function (responseText) {
 
         episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "tvshowId": Library.prototype.tvshowId, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount});
     }
+    episodeProxyModel.reSort();
 }
 
 Library.prototype.loadEpisodes = function (id) {
@@ -280,6 +282,7 @@ Library.prototype.handleAlbums = function (responseText) {
 
         albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "cover": thumb});
     }
+    albumProxyModel.reSort();
 }
 
 Library.prototype.loadAlbums = function (idartist) {
@@ -353,7 +356,7 @@ Library.prototype.loadArtists = function() {
                 }
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].artist, "poster": thumb, "selected": false});
             }
-            //            console.log("loading artists done")
+            artistProxyModel.reSort();
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

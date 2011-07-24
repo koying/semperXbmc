@@ -45,6 +45,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -156,6 +160,10 @@ Page {
             albumProxyModel.filterRole = ""
             albumProxyModel.filterRegExp = ""
         }
+    }
+
+    function refresh() {
+        $().library.recentAlbums();
     }
 
     Component.onCompleted: {

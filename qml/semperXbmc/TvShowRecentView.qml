@@ -47,6 +47,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -151,6 +155,10 @@ Page {
             tvshowProxyModel.filterRole = ""
             tvshowProxyModel.filterRegExp = ""
         }
+    }
+
+    function refresh() {
+        $().library.recentEpisodes();
     }
 
     Component.onCompleted: {

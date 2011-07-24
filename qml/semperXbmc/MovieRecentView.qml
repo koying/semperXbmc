@@ -49,6 +49,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -152,6 +156,10 @@ Page {
             movieProxyModel.filterRole = ""
             movieProxyModel.filterRegExp = ""
         }
+    }
+
+    function refresh() {
+        $().library.recentMovies();
     }
 
     Component.onCompleted: {

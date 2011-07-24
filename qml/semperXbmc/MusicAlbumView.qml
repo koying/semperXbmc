@@ -46,6 +46,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -166,6 +170,10 @@ Page {
             $().library.loadAllAlbums();
         else
             $().library.loadAlbums(artistId);
+    }
+
+    function refresh() {
+        $().library.loadAllAlbums();
     }
 
     Component.onCompleted: {

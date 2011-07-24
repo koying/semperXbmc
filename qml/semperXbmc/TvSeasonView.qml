@@ -34,6 +34,10 @@ Page {
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
             }
+            MenuItem {
+                text:  "Refresh"
+                onClicked: refresh()
+            }
         }
     }
 
@@ -106,8 +110,11 @@ Page {
         }
     }
 
+    function refresh() {
+        $().library.loadSeasons(serieId);
+    }
+
     onSerieIdChanged: {
-        seasonModel.clear();
         $().library.loadSeasons(serieId);
     }
 }

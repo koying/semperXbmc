@@ -36,6 +36,7 @@ Library.prototype.handleMovies = function (responseText) {
         }
 
         movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount": movies[i].playcount});
+        movieProxyModel.reSort();
     }
 
     aGenres.sort();
@@ -49,7 +50,6 @@ Library.prototype.loadMovies = function () {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleMovies(doc.responseText);
-            movieProxyModel.reSort();
         }
     }
 
@@ -154,6 +154,7 @@ Library.prototype.loadSeasons = function (id) {
                 }
                 seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "poster": thumb, "episodes":seasons[i].episode, "genre":  seasons[i].genre, "duration": seasons[i].duration, "rating": seasons[i].rating, "playcount":seasons[i].playcount});
             }
+            seasonProxyModel.reSort();
         }
     }
 
@@ -187,6 +188,7 @@ Library.prototype.handleEpisodes = function (responseText) {
 
         episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "tvshowId": Library.prototype.tvshowId, "number":  episodes[i].episode, "duration": episodes[i].duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount});
     }
+    episodeProxyModel.reSort();
 }
 
 Library.prototype.loadEpisodes = function (id) {
@@ -272,6 +274,7 @@ Library.prototype.handleAlbums = function (responseText) {
 
         albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].album_artist, "genre":albums[i].album_genre, "rating": albums[i].album_rating,  "cover": thumb});
     }
+    albumProxyModel.reSort();
 }
 
 Library.prototype.loadAlbums = function (idartist) {
@@ -344,6 +347,7 @@ Library.prototype.loadArtists = function() {
                 }
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].label, "poster": thumb, "selected": false});
             }
+            artistProxyModel.reSort();
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");

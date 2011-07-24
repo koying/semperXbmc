@@ -19,7 +19,6 @@ Item {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
         flickableItem: movieList
     }
 

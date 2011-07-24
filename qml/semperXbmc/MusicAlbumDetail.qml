@@ -142,8 +142,11 @@ Item {
 
     }
 
+    function refresh() {
+        $().library.loadTracks(albumId);
+    }
+
     onAlbumIdChanged: {
-        trackModel.clear();
         $().library.loadTracks(albumId);
     }
 
