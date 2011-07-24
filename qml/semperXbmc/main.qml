@@ -336,22 +336,12 @@ Window {
         id: options
     }
 
-    Loader {
-        id: splash
+    Cp.AutoDestructLoader {
+        id: splash;
+        anchors.fill: parent
+        z:5
         source: globals.showSplash ? "Splash.qml" : ""
-        anchors.fill:  parent
-        z: 5
-        onLoaded: {
-            item.state = "show"
-        }
     }
-    Connections {
-        target: splash.item
-        onHidden: {
-            splash.source = ""
-        }
-    }
-
 
     /* Globale Models */
     SortFilterModel {

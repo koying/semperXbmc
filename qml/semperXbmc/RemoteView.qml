@@ -1,8 +1,11 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
 import com.semperpax.qmlcomponents 1.0
+import "components" as Cp;
 
 Rectangle {
+    Cp.AutoDestructLoader { id: remoteMenu; anchors.fill:  parent; z:5 }
+
     BorderImage {
         id: globalKeys
         border.left: 30; border.top: 30
@@ -57,21 +60,21 @@ Rectangle {
             }
 
             RemoteButton {
-                anchors.left: parent.left
-                anchors.leftMargin: 7
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 7
-                iconSource: "img/remote/info_48.png"
-                onClicked: xbmcEventClient.keypress("i");
-            }
-
-            RemoteButton {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 7
                 anchors.rightMargin: 7
                 anchors.right: parent.right
                 iconSource: "img/remote/comment_48.png"
                 onClicked: xbmcEventClient.keypress("c");
+            }
+
+            RemoteButton {
+                anchors.left: parent.left
+                anchors.leftMargin: 7
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 7
+                iconSource: "img/remote/plus_48.png"
+                onClicked: remoteMenu.source = Qt.resolvedUrl("RemoteMenu.qml")
             }
         }
 

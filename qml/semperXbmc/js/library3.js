@@ -31,7 +31,7 @@ Library.prototype.handleMovies = function (responseText) {
         if (movies[i].streamDetails)
             duration = movies[i].streamDetails.video[0].duration;
 
-        if (movies[i].genre != "") {
+        if (movies[i].genre && movies[i].genre != "") {
             var aGenre = movies[i].genre.split("/");
             for (var j=0; j<aGenre.length; ++j) {
                 if (aGenres.indexOf(aGenre[j].trim()) == -1)
@@ -102,7 +102,7 @@ Library.prototype.loadTVShows = function () {
                 if (tvshows[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
-                if (tvshows[i].genre != "") {
+                if (tvshows[i].genre && tvshows[i].genre != "") {
                     var aGenre = tvshows[i].genre.split("/");
                     for (var j=0; j<aGenre.length; ++j) {
                         if (aGenres.indexOf(aGenre[j].trim()) == -1)
