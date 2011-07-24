@@ -95,7 +95,7 @@ Rectangle {
 
         RemoteNavigation {
             id: remotenavigationPlayer
-            scale:  0.7
+            scale:  main.inPortrait ? 0.9 : 0.8
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             textCenter: "Mute"
