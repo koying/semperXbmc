@@ -55,14 +55,12 @@ int main(int argc, char *argv[])
     delete fatHandler;
 
 #ifndef Q_OS_SYMBIAN
-//    QFat* fat = new QFat("c:/data/semperXbmcThumbs.fat");
-//    fat->open();
-//    qDebug() << fat->fileName();
-//    qDebug() << fat->status();
-//    fat->close();
-//    delete fat;
-
-//    QFile::remove("c:/data/semperXbmcThumbs.fat");
+    QFat* fat = new QFat("c:/data/semperXbmcThumbs.fat");
+    fat->open();
+    qDebug() << fat->fileName();
+    qDebug() << fat->status();
+    fat->close();
+    delete fat;
 #endif
 
     return retval;

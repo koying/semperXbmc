@@ -27,7 +27,7 @@ Item {
 
         Cp.Delegate {
             title: model.name
-            titleR: model.year
+            titleR: model.year ? model.year : ""
             subtitle: (model.genre != undefined ? model.genre : "")
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")

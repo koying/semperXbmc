@@ -9,7 +9,10 @@ CommonDialog {
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
         anchors.margins: platformStyle.paddingMedium
-        height: 250
+//        contentWidth: parent.width
+//        contentHeight: grid.height
+        boundsBehavior: Flickable.StopAtBounds
+        height: 260
 
         Grid {
             id: grid

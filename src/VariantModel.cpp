@@ -42,7 +42,7 @@ QVariant VariantModel::data(const QModelIndex &index, int role) const
     QVariant sRole = m_fields[role - Qt::UserRole];
     if (m_relatedModel) {
         if (m_relatedFields.contains(sRole)) {
-            return m_relatedModel->getIndexedKeyValue(m_data.at(index.row()).value(m_key), sRole.toString());
+            return m_relatedModel->getValue(m_data.at(index.row()).value(m_key), sRole.toString());
         }
     }
 
@@ -137,12 +137,28 @@ QVariant VariantModel::getKeyValue(int row)
     return m_data[row].value(keystring);
 }
 
-QVariant VariantModel::getIndexedKeyValue(const QVariant& key, const QString& valueField)
+QVariant VariantModel::getValue(const QVariant &keyvalue, const QString &valueField, const QVariant& defValue) const
 {
-    int row = m_index.value(key, -1);
-    if (row == -1) return QVariant();
+    int row = m_index.value(keyvalue, -1);
+    if (row == -1) return QVariant(defValue);
 
     return m_data[row].value(valueField);
+}
+
+void VariantModel::setValue(const QVariant &keyvalue, const QString &valueField, const QVariant& value)
+{
+    int row = m_index.value(keyvalue, -1);
+    if (row == -1) {
+        QVariantMap rowVal;
+        rowVal.insert(m_key, keyvalue);
+        rowVal.insert(valueField, value);
+        append(rowVal);
+    } else {
+        m_data[row][valueField] = value;
+        QModelIndex index = createIndex(row, 0, 0);
+        emit dataChanged(index, index);
+        m_dirty = true;
+    }
 }
 
 void VariantModel::append(const QVariantMap &vals)
@@ -285,6 +301,9 @@ void VariantModel::onRelatedModelRowsInserted(QModelIndex parent, int start, int
 
 void VariantModel::load()
 {
+    if (m_stream.isEmpty())
+        return;
+
     clear();
 
     QFile file(m_stream);
@@ -308,6 +327,8 @@ void VariantModel::load()
 
     beginInsertRows(QModelIndex(), 0, m_data.size()-1);
     endInsertRows();
+
+    m_dirty = false;
 }
 
 void VariantModel::save()
@@ -327,10 +348,11 @@ void VariantModel::save()
     out << m_index;
 
     file.close();
+
+    m_dirty = false;
 }
 
 void VariantModel::setstream(QString val)
 {
     m_stream = val;
-    load();
 }

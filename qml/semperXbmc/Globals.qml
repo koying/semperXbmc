@@ -1,7 +1,7 @@
 import QtQuick 1.0
-import "js/settings.js" as DbSettings
+import com.semperpax.qmlcomponents 1.0
 
-QtObject {
+Item {
     property string server: "Unspecified"
     property string jsonPort: "8080"
     property string jsonTcpPort: "9090"
@@ -26,56 +26,74 @@ QtObject {
     property string initialMovieSort:  "name"
     property string initialTvshowSort:  "name"
 
+    VariantModel {
+        id: settingsBackend
+        fields: ["key", "value"]
+        key: "key"
+
+        stream: thumbFile + "/settings.dat"
+
+        function getSetting(keyval, defval) {
+            return settingsBackend.getValue(keyval, "value", defval);
+        }
+        function setSetting(keyval, val) {
+            settingsBackend.setValue(keyval, "value", val);
+        }
+
+    }
+
     function load() {
-        DbSettings.initialize();
+        settingsBackend.load();
 
-        server = DbSettings.getSetting("server", server);
-        jsonPort = DbSettings.getSetting("jsonPort", jsonPort);
-        eventPort = DbSettings.getSetting("eventPort", eventPort);
+        server = settingsBackend.getSetting("server", server);
+        jsonPort = settingsBackend.getSetting("jsonPort", jsonPort);
+        eventPort = settingsBackend.getSetting("eventPort", eventPort);
 
-        showSplash = DbSettings.getSetting("showSplash", showSplash);
-        cacheThumbnails = DbSettings.getSetting("cacheThumbnails", cacheThumbnails);
-        showViewed = DbSettings.getSetting("showViewed", showViewed);
-        sortAscending = DbSettings.getSetting("sortAscending", sortAscending);
-        showBanners = DbSettings.getSetting("showBanners", showBanners);
+        showSplash = settingsBackend.getSetting("showSplash", showSplash);
+        cacheThumbnails = settingsBackend.getSetting("cacheThumbnails", cacheThumbnails);
+        showViewed = settingsBackend.getSetting("showViewed", showViewed);
+        sortAscending = settingsBackend.getSetting("sortAscending", sortAscending);
+        showBanners = settingsBackend.getSetting("showBanners", showBanners);
 
-        styleMovies = DbSettings.getSetting("styleMovies", styleMovies);
-        styleTvShows = DbSettings.getSetting("styleTvShows", styleTvShows);
-        styleTvShowSeasons = DbSettings.getSetting("styleTvShowSeasons", styleTvShowSeasons);
-        styleMusicArtists = DbSettings.getSetting("styleMusicArtists", styleMusicArtists);
-        styleMusicAlbums = DbSettings.getSetting("styleMusicAlbums", styleMusicAlbums);
+        styleMovies = settingsBackend.getSetting("styleMovies", styleMovies);
+        styleTvShows = settingsBackend.getSetting("styleTvShows", styleTvShows);
+        styleTvShowSeasons = settingsBackend.getSetting("styleTvShowSeasons", styleTvShowSeasons);
+        styleMusicArtists = settingsBackend.getSetting("styleMusicArtists", styleMusicArtists);
+        styleMusicAlbums = settingsBackend.getSetting("styleMusicAlbums", styleMusicAlbums);
 
-        initialMovieView = DbSettings.getSetting("initialMovieView", initialMovieView);
-        initialTvshowView = DbSettings.getSetting("initialTvshowView", initialTvshowView);
-        initialMusicView = DbSettings.getSetting("initialMusicView", initialMusicView);
+        initialMovieView = settingsBackend.getSetting("initialMovieView", initialMovieView);
+        initialTvshowView = settingsBackend.getSetting("initialTvshowView", initialTvshowView);
+        initialMusicView = settingsBackend.getSetting("initialMusicView", initialMusicView);
 
-        initialMovieSort = DbSettings.getSetting("initialMovieSort", initialMovieSort);
-        initialTvshowSort = DbSettings.getSetting("initialTvshowSort", initialTvshowSort);
+        initialMovieSort = settingsBackend.getSetting("initialMovieSort", initialMovieSort);
+        initialTvshowSort = settingsBackend.getSetting("initialTvshowSort", initialTvshowSort);
     }
 
     function save() {
-        DbSettings.setSetting("server", server);
-        DbSettings.setSetting("jsonPort", jsonPort);
-        DbSettings.setSetting("eventPort", eventPort);
+        settingsBackend.setSetting("server", server);
+        settingsBackend.setSetting("jsonPort", jsonPort);
+        settingsBackend.setSetting("eventPort", eventPort);
 
-        DbSettings.setSetting("showSplash", showSplash);
-        DbSettings.setSetting("cacheThumbnails", cacheThumbnails);
-        DbSettings.setSetting("showViewed", showViewed);
-        DbSettings.setSetting("sortAscending", sortAscending);
-        DbSettings.setSetting("showBanners", showBanners);
+        settingsBackend.setSetting("showSplash", showSplash);
+        settingsBackend.setSetting("cacheThumbnails", cacheThumbnails);
+        settingsBackend.setSetting("showViewed", showViewed);
+        settingsBackend.setSetting("sortAscending", sortAscending);
+        settingsBackend.setSetting("showBanners", showBanners);
 
-        DbSettings.setSetting("styleMovies", styleMovies);
-        DbSettings.setSetting("styleTvShows", styleTvShows);
-        DbSettings.setSetting("styleTvShowSeasons", styleTvShowSeasons);
-        DbSettings.setSetting("styleMusicArtists", styleMusicArtists);
-        DbSettings.setSetting("styleMusicAlbums", styleMusicAlbums);
+        settingsBackend.setSetting("styleMovies", styleMovies);
+        settingsBackend.setSetting("styleTvShows", styleTvShows);
+        settingsBackend.setSetting("styleTvShowSeasons", styleTvShowSeasons);
+        settingsBackend.setSetting("styleMusicArtists", styleMusicArtists);
+        settingsBackend.setSetting("styleMusicAlbums", styleMusicAlbums);
 
-        DbSettings.setSetting("initialMovieView", initialMovieView);
-        DbSettings.setSetting("initialTvshowView", initialTvshowView);
-        DbSettings.setSetting("initialMusicView", initialMusicView);
+        settingsBackend.setSetting("initialMovieView", initialMovieView);
+        settingsBackend.setSetting("initialTvshowView", initialTvshowView);
+        settingsBackend.setSetting("initialMusicView", initialMusicView);
 
-        DbSettings.setSetting("initialMovieSort", initialMovieSort);
-        DbSettings.setSetting("initialTvshowSort", initialTvshowSort);
+        settingsBackend.setSetting("initialMovieSort", initialMovieSort);
+        settingsBackend.setSetting("initialTvshowSort", initialTvshowSort);
+
+        settingsBackend.save();
     }
 
     Component.onDestruction: save()

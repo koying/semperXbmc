@@ -403,9 +403,8 @@ Window {
 
         stream: thumbFile + "/tvshowLastplayedModel.dat"
 
-        Component.onDestruction: {
-            save();
-        }
+        Component.onCompleted: load()
+        Component.onDestruction: save()
     }
 
     VariantModel {

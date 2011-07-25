@@ -90,6 +90,9 @@ public:
     Q_INVOKABLE void remove(const QVariantMap &vals);
     Q_INVOKABLE void clear();
 
+    Q_INVOKABLE QVariant getValue(const QVariant &key, const QString &valueField, const QVariant& defValue=QVariant()) const;
+    Q_INVOKABLE void setValue(const QVariant &key, const QString &valueField, const QVariant& value);
+
     Q_INVOKABLE void load();
     Q_INVOKABLE void save();
 
@@ -98,7 +101,6 @@ public:
 protected:
     QVariant getKeyValue(const QVariantMap &vals);
     QVariant getKeyValue(int row);
-    QVariant getIndexedKeyValue(const QVariant &key, const QString &valueField);
 
 signals:
 
