@@ -4,7 +4,6 @@ import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
-import "js/filter.js" as Filter
 
 Item {
     ListView {
@@ -37,11 +36,13 @@ Item {
             style: globals.styleMovies
             banner: globals.showBanners
 
+            subComponentSource: Qt.resolvedUrl("MovieDetails.qml")
+
             onSelected:  {
-                $().playlist.videoClear();
-                xbmcEventClient.actionButton("Stop");
-                $().playlist.addMovie(model.id);
-                mainTabGroup.currentTab = remoteTab
+                if (style == globals.styleMovies)
+                    style = "full"
+                else
+                    style = globals.styleMovies
             }
         }
     }

@@ -45,12 +45,3 @@ qtcAddDeployment()
 RESOURCES +=
 
 HEADERS +=
-
-
-
-
-
-
-
-
-

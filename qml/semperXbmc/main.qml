@@ -340,7 +340,7 @@ Window {
         id: splash;
         anchors.fill: parent
         z:5
-        source: globals.showSplash ? "Splash.qml" : ""
+        sourceUrl: globals.showSplash ? Qt.resolvedUrl("Splash.qml") : ""
     }
 
     /* Globale Models */
@@ -383,7 +383,7 @@ Window {
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "posterThumb" ]
         thumbDir: thumbFile
     }
 

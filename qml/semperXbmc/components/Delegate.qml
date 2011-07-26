@@ -258,7 +258,11 @@ Item {
 
         Loader {
             id: subComponent
+            property url sourceUrl
+            z:5
             anchors { top: mainRect.bottom; topMargin: 10; bottom: parent.bottom; right: parent.right; left: parent.left }
+
+            onSourceUrlChanged: source = sourceUrl
         }
 
         states: [
@@ -338,7 +342,7 @@ Item {
 
                 PropertyChanges {
                     target: subComponent
-                    source: wrapper.subComponentSource
+                    sourceUrl: wrapper.subComponentSource
                 }
 
                 ParentChange {
@@ -355,19 +359,13 @@ Item {
                 reversible: true
 
                 ParallelAnimation {
+                    ParentAnimation {
+                        //                    via: invRoot
+                        NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
+                    }
                     NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
                     AnchorAnimation { duration: 500; }
                 }
-            },
-            Transition {
-                to: "full"
-                reversible: true
-
-                ParentAnimation {
-//                    via: invRoot
-                    NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
-                }
-                AnchorAnimation { duration: 500; }
             }
         ]
 

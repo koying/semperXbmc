@@ -74,7 +74,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 7
                 iconSource: "img/remote/plus_48.png"
-                onClicked: remoteMenu.source = Qt.resolvedUrl("RemoteMenu.qml")
+                onClicked: remoteMenu.sourceUrl = Qt.resolvedUrl("RemoteMenu.qml")
             }
         }
 
