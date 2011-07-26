@@ -1,7 +1,7 @@
 import QtQuick 1.0
 
 Item {
-    property alias source: ldr.source
+    property url sourceUrl
 
     Loader {
         id: ldr
@@ -15,6 +15,14 @@ Item {
         target: ldr.item
         onHidden: {
             ldr.source = ""
+        }
+    }
+
+    onSourceUrlChanged: {
+        if (sourceUrl && sourceUrl != "") {
+            ldr.source = sourceUrl;
+        } else {
+            ldr.item.state = ""
         }
     }
 }

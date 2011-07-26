@@ -35,7 +35,7 @@ Library.prototype.handleMovies = function (responseText) {
             }
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount": movies[i].playcount});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "playcount": movies[i].playcount});
         movieProxyModel.reSort();
     }
 
@@ -54,7 +54,7 @@ Library.prototype.loadMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 
@@ -70,7 +70,7 @@ Library.prototype.recentMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 

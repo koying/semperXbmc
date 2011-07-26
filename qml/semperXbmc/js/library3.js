@@ -39,7 +39,7 @@ Library.prototype.handleMovies = function (responseText) {
             }
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "playcount":movies[i].playcount});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "playcount":movies[i].playcount});
     }
 
     aGenres.sort();
@@ -58,7 +58,7 @@ Library.prototype.loadMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 
@@ -74,7 +74,7 @@ Library.prototype.recentMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 

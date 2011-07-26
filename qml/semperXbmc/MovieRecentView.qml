@@ -4,7 +4,6 @@ import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
-import "js/filter.js" as Filter
 
 Page {
     id: page
