@@ -36,9 +36,50 @@ Item {
             style: globals.styleMovies
             banner: globals.showBanners
 
-            subComponentSource: Qt.resolvedUrl("MovieDetails.qml")
+            subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            Connections {
+                target: subComponent
+
+                onLoaded: {
+                    var url = movieSuppModel.getValue(model.id, "url", "");
+                    if (url != "")
+                        subComponent.item.url = url
+                    else {
+                        var imdb = model.imdbnumber
+                        if (imdb) {
+                            if (imdb.indexOf("tt") != 0) {
+                                imdb = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
+                            }
+
+                            subComponent.item.url = "http://m.imdb.com/title/" + imdb;
+                        } else {
+                            subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
+                        }
+                    }
+
+        //            url = "http://en.m.wikipedia.org/wiki?search=film+"+ model.originaltitle.replace(" ", "+") + "&go=Go"
+                }
+            }
+
+            Connections {
+                target:  subComponent.item
+
+                onUrlChanged: {
+                    movieSuppModel.setValue(model.id, "url", subComponent.item.url);
+                }
+            }
 
             onSelected:  {
+                if (style == globals.styleMovies) {
+                    $().playlist.videoClear();
+                    xbmcEventClient.actionButton("Stop");
+                    $().playlist.addMovie(model.id);
+                    mainTabGroup.currentTab = remoteTab
+                } else
+                    style = globals.styleMovies
+            }
+
+            onContext: {
                 if (style == globals.styleMovies)
                     style = "full"
                 else

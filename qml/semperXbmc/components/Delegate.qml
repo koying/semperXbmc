@@ -23,6 +23,7 @@ Item {
     property alias style: wrapperItem.state
 
     signal selected
+    signal context
 
     Rectangle {
         id: wrapperItem
@@ -254,6 +255,7 @@ Item {
                 }
 
                 onClicked: selected()
+                onPressAndHold: context()
             }
         }
 

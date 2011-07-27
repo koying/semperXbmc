@@ -39,7 +39,7 @@ Library.prototype.handleMovies = function (responseText) {
             }
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "playcount":movies[i].playcount});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount});
     }
 
     aGenres.sort();
@@ -58,7 +58,7 @@ Library.prototype.loadMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails", "imdbnumber"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamDetails", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 
@@ -109,8 +109,11 @@ Library.prototype.loadTVShows = function () {
                             aGenres.push(aGenre[j].trim());
                     }
                 }
+                var originaltitle = tvshows[i].originaltitle;
+                if (!originaltitle || originaltitle == "")
+                    originaltitle = tvshows[i].label
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "playcount":tvshows[i].playcount});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount});
             }
 
             aGenres.sort();
@@ -123,7 +126,7 @@ Library.prototype.loadTVShows = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     tvshowModel.clear();
 

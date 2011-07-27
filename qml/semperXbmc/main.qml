@@ -388,8 +388,18 @@ Window {
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
+        id: movieSuppModel
+        fields: [ "id", "url" ]
+        key: "id"
+
+        stream: thumbFile + "/movieSuppModel.dat"
+
+        Component.onCompleted: load()
+        Component.onDestruction: save()
+    }
+    VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb" ]
         thumbDir: thumbFile
     }
 
@@ -403,8 +413,8 @@ Window {
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
-        id: tvshowLastplayedModel
-        fields: [ "id", "lastplayed" ]
+        id: tvshowSuppModel
+        fields: [ "id", "lastplayed", "url" ]
         key: "id"
 
         stream: thumbFile + "/tvshowLastplayedModel.dat"
@@ -415,7 +425,7 @@ Window {
 
     VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "posterThumb", "lastplayed" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "imdbnumber", "originaltitle", "posterThumb", "lastplayed" ]
         key: "id"
         relatedFields: [ "lastplayed" ]
         thumbDir: thumbFile
@@ -545,7 +555,7 @@ Window {
         xbmcEventClient.initialize(globals.server, globals.eventPort);
         xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort);
 
-        tvshowModel.relatedModel = tvshowLastplayedModel
+        tvshowModel.relatedModel = tvshowSuppModel
 
         initialize();
     }

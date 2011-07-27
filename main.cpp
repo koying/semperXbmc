@@ -26,10 +26,11 @@ int main(int argc, char *argv[])
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
 //    qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
 
-    NetworkAccessManagerFactory factory;
-
+#ifdef __ING
+    QNetworkProxy myProxy(QNetworkProxy::HttpProxy, "localhost", 8888);
+    QNetworkProxy::setApplicationProxy(myProxy);
+#endif
     QmlApplicationViewer* viewer = new QmlApplicationViewer;
-    viewer->engine()->setNetworkAccessManagerFactory(&factory);
 
     QString thumbFile("fat:///c:/data/semperXbmcThumbs.fat#/");
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(thumbFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
@@ -46,22 +47,19 @@ int main(int argc, char *argv[])
 
     int retval = app.exec();
 
-    // Clear the cache at exit
-    viewer->engine()->networkAccessManager()->cache()->clear();
-
     viewer->engine()->removeImageProvider(QLatin1String("thumb"));
 
     delete viewer;
     delete fatHandler;
 
-//#ifndef Q_OS_SYMBIAN
-//    QFat* fat = new QFat("c:/data/semperXbmcThumbs.fat");
-//    fat->open();
-//    qDebug() << fat->fileName();
-//    qDebug() << fat->status();
-//    fat->close();
-//    delete fat;
-//#endif
+#ifndef Q_OS_SYMBIAN
+    QFat* fat = new QFat("c:/data/semperXbmcThumbs.fat");
+    fat->open();
+    qDebug() << fat->fileName();
+    qDebug() << fat->status();
+    fat->close();
+    delete fat;
+#endif
 
     return retval;
 }

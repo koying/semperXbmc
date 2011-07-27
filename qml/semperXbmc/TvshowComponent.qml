@@ -34,8 +34,40 @@ Item {
             banner: globals.showBanners
             style: globals.styleTvShows
 
+            subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            Connections {
+                target: subComponent
+
+                onLoaded: {
+//                    subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
+                    var url = tvshowSuppModel.getValue(model.id, "url", "");
+                    if (url != "")
+                        subComponent.item.url = url
+                    else
+                        subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.originaltitle.replace(" ", "+") + "&go=Go"
+                }
+            }
+
+            Connections {
+                target:  subComponent.item
+
+                onUrlChanged: {
+                    tvshowSuppModel.setValue(model.id, "url", subComponent.item.url);
+                }
+            }
+
             onSelected:  {
-                tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: model.id})
+                if (style == globals.styleTvShows) {
+                    tvshowStack.push(Qt.resolvedUrl("TvSeasonView.qml"), {serieId: model.id})
+                } else
+                    style = globals.styleTvShows
+            }
+
+            onContext: {
+                if (style == globals.styleTvShows)
+                    style = "full"
+                else
+                    style = globals.styleTvShows
             }
         }
     }
