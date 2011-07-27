@@ -46,15 +46,13 @@ import "components" as Cp;
 
 import "js/Utils.js" as Utils
 
-Rectangle {
+Item {
     id: wrapper
 
-    color:  "white"
-    width:  300
-    height:  300
+    anchors.fill: parent
 
     property url url
-    signal urlChanged
+    signal urlModified
 
     onUrlChanged: { webView.url = url }
 
@@ -76,7 +74,7 @@ Rectangle {
                 onClicked: webView.url = wrapper.url
                 onPlatformPressAndHold: {
                     url = webView.url
-                    urlChanged();
+                    urlModified();
                 }
             }
             ToolButton {
@@ -88,5 +86,6 @@ Rectangle {
 
     Cp.WebView {
         id: webView
+        anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
     }
 }

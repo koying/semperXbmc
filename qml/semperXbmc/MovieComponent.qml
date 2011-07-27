@@ -64,7 +64,7 @@ Item {
             Connections {
                 target:  subComponent.item
 
-                onUrlChanged: {
+                onUrlModified: {
                     movieSuppModel.setValue(model.id, "url", subComponent.item.url);
                 }
             }

@@ -12,9 +12,10 @@ Flickable {
     property alias forward: webView.forward
 
     id: flickable
-    anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
+    width: parent.width
     contentWidth: Math.max(parent.width,webView.width)
     contentHeight: Math.max(parent.height,webView.height)
+    anchors.fill: parent
     pressDelay: 200
     clip:  true
 

@@ -51,7 +51,7 @@ Item {
             Connections {
                 target:  subComponent.item
 
-                onUrlChanged: {
+                onUrlModified: {
                     tvshowSuppModel.setValue(model.id, "url", subComponent.item.url);
                 }
             }
