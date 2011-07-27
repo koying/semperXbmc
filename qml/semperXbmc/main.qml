@@ -341,6 +341,12 @@ Window {
         anchors.fill: parent
         z:5
         sourceUrl: globals.showSplash ? Qt.resolvedUrl("Splash.qml") : ""
+        duration: 5000
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: splash.sourceUrl = ""
+        }
     }
 
     /* Globale Models */
@@ -457,7 +463,7 @@ Window {
                 console.debug(Xbmc.dumpObj(error, "Error", "", 0));
                 return;
             }
-            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
+//            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
 
             var method = oJSON.method;
             console.debug(method);

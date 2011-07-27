@@ -3,15 +3,7 @@ import QtQuick 1.0
 Rectangle {
     id: bg
 
-    signal hidden
-
-    onOpacityChanged: {
-        if (opacity == 0)
-            hidden();
-    }
-
     color: "#80ffffff"
-    opacity: 0
 
     Rectangle {
         id: rectangle1
@@ -85,33 +77,4 @@ Rectangle {
         }
 
     }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: bg.state = ""
-    }
-
-    Behavior on opacity {
-        NumberAnimation { duration: 500 }
-    }
-
-    Timer {
-        id: splashTimer
-        interval: 5000
-        onTriggered: bg.state = ""
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges {
-                target: bg
-                opacity: 1
-            }
-            PropertyChanges {
-                target: splashTimer
-                running: true
-            }
-        }
-    ]
 }

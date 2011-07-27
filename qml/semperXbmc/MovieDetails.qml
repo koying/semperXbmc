@@ -51,28 +51,6 @@ Rectangle {
     color:  "white"
     width:  300
     height:  300
-    opacity:  1
-
-    signal hidden
-
-    onOpacityChanged: {
-        if (opacity == 0)
-            hidden();
-    }
-
-    Behavior on opacity {
-        NumberAnimation { duration: 300 }
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges {
-                target: bg
-                opacity: 1
-            }
-        }
-    ]
 
     ToolBar {
         id: buttons

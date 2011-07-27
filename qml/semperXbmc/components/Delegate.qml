@@ -18,7 +18,7 @@ Item {
 
     property string type: "normal"
 
-    property url subComponentSource: ""
+    property alias subComponentSource: wrapperItem.subComponentSource
     property alias subComponent: subComponent
     property alias style: wrapperItem.state
 
@@ -30,6 +30,7 @@ Item {
         height: parent.height
         color: "black"
         state:  "smallHorizontal"
+        property url subComponentSource: ""
 
         Rectangle {
             id: mainRect
@@ -256,13 +257,10 @@ Item {
             }
         }
 
-        Loader {
+        AutoDestructLoader {
             id: subComponent
-            property url sourceUrl
             z:5
             anchors { top: mainRect.bottom; topMargin: 10; bottom: parent.bottom; right: parent.right; left: parent.left }
-
-            onSourceUrlChanged: source = sourceUrl
         }
 
         states: [
@@ -335,22 +333,15 @@ Item {
             State {
                 name: "full"
 
-                PropertyChanges {
-                    target: mainRect
-                    height: 80
-                }
+                // Move the list so that this item is at the top.
+                PropertyChanges { target: wrapper.ListView.view; explicit: true; contentY: wrapper.y }
 
-                PropertyChanges {
-                    target: subComponent
-                    sourceUrl: wrapper.subComponentSource
-                }
+                // Disallow flicking while we're in detailed view
+                PropertyChanges { target: wrapper.ListView.view; interactive: false }
 
-                ParentChange {
-                    target: wrapperItem
-                    parent: page
-                    x:0; y:0
-                    width: root.width; height: root.height
-                }
+                PropertyChanges { target: wrapper; height: wrapper.ListView.view.height }
+
+                PropertyChanges { target: mainRect; height: 80 }
             }
         ]
 
@@ -359,14 +350,34 @@ Item {
                 reversible: true
 
                 ParallelAnimation {
-                    ParentAnimation {
-                        //                    via: invRoot
-                        NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
-                    }
-                    NumberAnimation { properties: "x,y, width, height, opacity"; duration: 500; }
+                    NumberAnimation { properties: "x,y, width, height, contentY"; duration: 500; }
                     AnchorAnimation { duration: 500; }
                 }
+            },
+            Transition {
+                to: "full"
+
+                SequentialAnimation {
+                    ParallelAnimation {
+                        NumberAnimation { properties: "x,y, width, height, contentY"; duration: 500; }
+                        AnchorAnimation { duration: 500; }
+                    }
+                    PropertyAction {target: subComponent; property: "sourceUrl"; value: wrapper.subComponentSource }
+                }
+            },
+            Transition {
+                from: "full"
+
+                SequentialAnimation {
+                    PropertyAction {target: subComponent; property: "sourceUrl"; value: "" }
+                    PauseAnimation { duration: 500 }
+                    ParallelAnimation {
+                        NumberAnimation { properties: "x,y, width, height, contentY"; duration: 500; }
+                        AnchorAnimation { duration: 500; }
+                    }
+                }
             }
+
         ]
 
     }

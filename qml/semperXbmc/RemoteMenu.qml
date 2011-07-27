@@ -6,35 +6,15 @@ Rectangle {
     width: 300
     height: 300
     color: "#80ffffff"
-    opacity: 0
 
-    signal hidden
-
-    onOpacityChanged: {
-        if (opacity == 0)
-            hidden();
-    }
+    signal close
 
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            root.state = ""
+            close();
         }
     }
-
-    Behavior on opacity {
-        NumberAnimation { duration: 500 }
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges {
-                target: root
-                opacity: 1
-            }
-        }
-    ]
 
     Rectangle {
         id: rectangle1

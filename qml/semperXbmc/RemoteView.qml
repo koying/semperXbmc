@@ -5,6 +5,10 @@ import "components" as Cp;
 
 Rectangle {
     Cp.AutoDestructLoader { id: remoteMenu; anchors.fill:  parent; z:5 }
+    Connections {
+        target: remoteMenu.item
+        onClose: remoteMenu.sourceUrl = ""
+    }
 
     BorderImage {
         id: globalKeys
