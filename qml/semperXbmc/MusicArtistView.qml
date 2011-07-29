@@ -123,8 +123,40 @@ Page {
             style: globals.styleMusicArtists
             banner: globals.showBanners
 
-            onSelected: {
-                musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})
+            subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            Connections {
+                target: subComponent
+
+                onLoaded: {
+//                    subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
+                    var url = artistSuppModel.getValue(model.id, "url", "");
+                    if (url != "")
+                        subComponent.item.url = url
+                    else
+                        subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.name.replace(" ", "+") + "&go=Go"
+                }
+            }
+
+            Connections {
+                target:  subComponent.item
+
+                onUrlModified: {
+                    artistSuppModel.setValue(model.id, "url", subComponent.item.url);
+                }
+            }
+
+            onSelected:  {
+                if (style == globals.styleMusicArtists) {
+                    musicStack.push(Qt.resolvedUrl("MusicAlbumView.qml"), {artistId: model.id})
+                } else
+                    style = globals.styleMusicArtists
+            }
+
+            onContext: {
+                if (style == globals.styleMusicArtists)
+                    style = "full"
+                else
+                    style = globals.styleMusicArtists
             }
         }
     }

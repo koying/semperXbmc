@@ -356,6 +356,16 @@ Window {
         sourceModel: artistModel
     }
     VariantModel {
+        id: artistSuppModel
+        fields: [ "id", "url" ]
+        key: "id"
+
+        stream: thumbFile + "/artistSuppModel.dat"
+
+        Component.onCompleted: load()
+        Component.onDestruction: save()
+    }
+    VariantModel {
         id: artistModel
         fields: [ "id", "name", "poster", "selected", "posterThumb" ]
         thumbDir: thumbFile
@@ -365,6 +375,16 @@ Window {
         id: albumProxyModel
 
         sourceModel: albumModel
+    }
+    VariantModel {
+        id: albumSuppModel
+        fields: [ "id", "url" ]
+        key: "id"
+
+        stream: thumbFile + "/albumSuppModel.dat"
+
+        Component.onCompleted: load()
+        Component.onDestruction: save()
     }
     VariantModel {
         id: albumModel
