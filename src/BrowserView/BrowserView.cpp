@@ -324,3 +324,4 @@ void BrowserView::setProgress(int progress)
     m_progress = progress;
     emit progressChanged();
 }
+

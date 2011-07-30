@@ -124,24 +124,33 @@ Page {
             banner: globals.showBanners
 
             subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            function gotoUrl(url) {
+                if (url != "") {
+                    subComponent.item.bookmark = url
+                    subComponent.item.url = url
+                } else
+                    subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.name.replace(" ", "+") + "&go=Go"
+            }
+
             Connections {
                 target: subComponent
 
                 onLoaded: {
-//                    subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
-                    var url = artistSuppModel.getValue(model.id, "url", "");
-                    if (url != "")
-                        subComponent.item.url = url
-                    else
-                        subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.name.replace(" ", "+") + "&go=Go"
+                    toolBar.tools = subComponent.item.tools
+                    gotoUrl(artistSuppModel.getValue(model.id, "url", ""));
                 }
+                onDestruction: toolBar.tools = page.tools
             }
 
             Connections {
                 target:  subComponent.item
 
-                onUrlModified: {
-                    artistSuppModel.setValue(model.id, "url", subComponent.item.url);
+                onBookmarkChanged: {
+                    if (subComponent.item.bookmark != "") {
+                        artistSuppModel.setValue(model.id, "url", subComponent.item.bookmark);
+                    } else {
+                        artistSuppModel.removeValue(model.id, "url");
+                    }
                 }
             }
 

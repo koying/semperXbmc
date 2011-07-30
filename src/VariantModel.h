@@ -92,6 +92,7 @@ public:
 
     Q_INVOKABLE QVariant getValue(const QVariant &key, const QString &valueField, const QVariant& defValue=QVariant()) const;
     Q_INVOKABLE void setValue(const QVariant &key, const QString &valueField, const QVariant& value);
+    Q_INVOKABLE void removeValue(const QVariant &keyvalue, const QString &valueField);
 
     Q_INVOKABLE void load();
     Q_INVOKABLE void save();

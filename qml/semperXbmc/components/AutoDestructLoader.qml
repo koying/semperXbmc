@@ -11,6 +11,7 @@ Item {
     opacity:  0
 
     signal loaded
+    signal destruction
 
     Loader {
         id: ldr
@@ -22,13 +23,15 @@ Item {
         }
 
         onSourceChanged: {
-            if (source == "")
-                console.debug("destroyed");
+            if (source == "") {
+//                console.debug("destroyed");
+                destruction();
+            }
         }
     }
 
     onSourceUrlChanged: {
-        console.debug("changed: "+sourceUrl);
+//        console.debug("changed: "+sourceUrl);
         if (sourceUrl && sourceUrl != "") {
             ldr.source = sourceUrl;
         } else {

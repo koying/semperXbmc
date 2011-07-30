@@ -35,24 +35,32 @@ Item {
             style: globals.styleTvShows
 
             subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            function gotoUrl(url) {
+                if (url != "") {
+                    subComponent.item.bookmark = url
+                    subComponent.item.url = url
+                } else
+                    subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.originaltitle.replace(" ", "+") + "&go=Go"
+            }
             Connections {
                 target: subComponent
 
                 onLoaded: {
-//                    subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
-                    var url = tvshowSuppModel.getValue(model.id, "url", "");
-                    if (url != "")
-                        subComponent.item.url = url
-                    else
-                        subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.originaltitle.replace(" ", "+") + "&go=Go"
+                    toolBar.tools = subComponent.item.tools
+                    gotoUrl(tvshowSuppModel.getValue(model.id, "url", ""));
                 }
+                onDestruction: toolBar.tools = page.tools
             }
 
             Connections {
                 target:  subComponent.item
 
-                onUrlModified: {
-                    tvshowSuppModel.setValue(model.id, "url", subComponent.item.url);
+                onBookmarkChanged: {
+                    if (subComponent.item.bookmark != "") {
+                        tvshowSuppModel.setValue(model.id, "url", subComponent.item.bookmark);
+                    } else {
+                        tvshowSuppModel.removeValue(model.id, "url");
+                    }
                 }
             }
 
@@ -64,9 +72,9 @@ Item {
             }
 
             onContext: {
-                if (style == globals.styleTvShows)
+                if (style == globals.styleTvShows) {
                     style = "full"
-                else
+                } else
                     style = globals.styleTvShows
             }
         }

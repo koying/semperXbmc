@@ -51,14 +51,17 @@ Xbmc.prototype.init = function() {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             if (doc.status != 200) {
-                console.log("Error " + doc.status + " connecting to XBMC: " + xbmc.server +":" + xbmc.port);
-                errorView.addError("error", "Cannot connect to JSON-RPC: " + xbmc.server +":" + xbmc.port);
-                Xbmc.prototype.inError = true;
+                if (!Xbmc.prototype.inError) {
+                    console.log("Error " + doc.status + " connecting to XBMC: " + xbmc.server +":" + xbmc.port);
+                    errorView.addError("error", "Cannot connect to JSON-RPC: " + xbmc.server +":" + xbmc.port);
+                    Xbmc.prototype.inError = true;
+                }
+                jsonRetryTimer.running = true;
                 return;
             }
 
             Xbmc.prototype.jsonRPCVer = JSON.parse(doc.responseText).result.version;
-            console.debug("JSON ver: " + Xbmc.prototype.jsonRPCVer);
+//            console.debug("JSON ver: " + Xbmc.prototype.jsonRPCVer);
 
             switch (Xbmc.prototype.jsonRPCVer) {
             case 2:
@@ -79,6 +82,7 @@ Xbmc.prototype.init = function() {
                 return;
             }
 
+            Xbmc.prototype.inError = false;
             main.jsonInitialized = true;
         }
     }

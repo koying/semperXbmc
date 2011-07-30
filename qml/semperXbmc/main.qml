@@ -475,6 +475,15 @@ Window {
         thumbDir: thumbFile
     }
 
+    Timer {
+        id: jsonRetryTimer
+        interval: 2000
+
+        onTriggered: {
+            Xbmc.xbmc.init();
+        }
+    }
+
     XbmcEventClient {
         id: xbmcEventClient
 
@@ -496,18 +505,18 @@ Window {
 //            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
 
             var method = oJSON.method;
-            console.debug(method);
+//            console.debug(method);
             if (!method) {
-                console.debug("no method");
+//                console.debug("no method");
                 return;
             }
 
             var data = oJSON.params.data;
             if (!data) {
-                console.debug("No data");
+//                console.debug("No data");
                 return;
             }
-            console.debug(Xbmc.dumpObj(data, "data", "", 0));
+//            console.debug(Xbmc.dumpObj(data, "data", "", 0));
 
             switch (method) {
             case "VideoLibrary.OnUpdate":

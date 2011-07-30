@@ -23,6 +23,7 @@ protected:
     void wheelEvent ( QGraphicsSceneWheelEvent * ev ) ;
 
     bool event(QEvent *e);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     bool sceneEvent(QEvent *e);
 
     qreal getMaxZoom();

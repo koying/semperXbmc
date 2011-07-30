@@ -21,8 +21,11 @@
 #define ZOOM_STEP 1.10
 
 MWebView::MWebView(BrowserView * parent)
-    : QGraphicsWebView(parent), m_BrowserView(parent)
-    , m_zoomedIn(false), m_zoomedOut(false), m_initZoom(1.0)
+    : QGraphicsWebView(parent)
+    , m_BrowserView(parent)
+    , m_zoomedIn(false)
+    , m_zoomedOut(false)
+    , m_initZoom(1.0)
     , m_isPinching(false)
 {
     m_copyUrlAction = new QAction(tr("Copy page URL"), this);
@@ -69,6 +72,17 @@ bool MWebView::event(QEvent *e)
         break;
     }
     return QGraphicsWebView::event(e);
+}
+
+void MWebView::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    QPointF pressPoint = event->pos();
+    QGraphicsWebView::mousePressEvent(event);
+
+    QWebHitTestResult hit = page()->mainFrame()->hitTestContent(pressPoint.toPoint());
+    if (hit.isContentEditable())
+        m_BrowserView->forceActiveFocus();
+    setFocus();
 }
 
 bool MWebView::sceneEvent(QEvent *e)

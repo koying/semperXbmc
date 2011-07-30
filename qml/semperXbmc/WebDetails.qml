@@ -10,41 +10,62 @@ Item {
     anchors.fill: parent
 
     property url url
-    signal urlModified
+    property url bookmark:  ""
+    property alias tools: webTools
 
     onUrlChanged: { webView.url = url }
 
-    ToolBar {
-        id: buttons
-        anchors { top: parent.top; left: parent.left; right: parent.right; }
+    ToolBarLayout {
+        id: webTools
 
-        tools: Row {
-            anchors.centerIn: parent
-            spacing: platformStyle.paddingMedium
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: webView.back.trigger();
+        }
 
-            ToolButton {
-                iconSource: "toolbar-back"
-                onClicked: webView.back.trigger();
+        ToolButton {
+            iconSource: (webView.progress != 0 && webView.progress != 100) ? "toolbar-mediacontrol-stop" : "toolbar-refresh"
+            onClicked: (webView.progress != 0 && webView.progress != 100) ? webView.stop.trigger() : webView.reload.trigger()
+        }
+
+        ToolButton {
+            iconSource: "toolbar-home"
+            onClicked: webView.url = wrapper.url
+        }
+        ToolButton {
+            iconSource: "toolbar-search"
+            onClicked: webView.url = "http://m.google.com/?q=" + model.originaltitle.replace(" ", "+")
+        }
+
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: webMenu.open()
+        }
+    }
+
+    Menu {
+        id: webMenu
+        content: MenuLayout {
+
+            MenuItem {
+                text:  "Set Bookmark"
+                onClicked: bookmark = webView.url
+                visible:  bookmark == ""
             }
 
-            ToolButton {
-                iconSource: "toolbar-home"
-                onClicked: webView.url = wrapper.url
-                onPlatformPressAndHold: {
-                    url = webView.url
-                    urlModified();
-                }
-            }
-            ToolButton {
-                iconSource: "toolbar-search"
-                onClicked: webView.url = "http://m.google.com/?q=" + model.originaltitle.replace(" ", "+")
+            MenuItem {
+                text:  "Clear Bookmark"
+                onClicked: bookmark = ""
+                visible:  bookmark != ""
             }
         }
     }
 
+
     BrowserView {
         id: webView
-        anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
+        anchors.fill: parent
+        focus: true
 
         ProgressBar {
             id: pb1

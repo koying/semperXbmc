@@ -37,35 +37,45 @@ Item {
             banner: globals.showBanners
 
             subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            function gotoUrl(url) {
+                if (url != "") {
+                    subComponent.item.bookmark = url
+                    subComponent.item.url = url
+                } else {
+                    var imdb = model.imdbnumber
+                    if (imdb) {
+                        if (imdb.indexOf("tt") != 0) {
+                            imdb = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
+                        }
+
+                        subComponent.item.url = "http://m.imdb.com/title/" + imdb;
+                    } else {
+                        subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
+                    }
+                }
+
+    //            url = "http://en.m.wikipedia.org/wiki?search=film+"+ model.originaltitle.replace(" ", "+") + "&go=Go"
+            }
+
             Connections {
                 target: subComponent
 
                 onLoaded: {
-                    var url = movieSuppModel.getValue(model.id, "url", "");
-                    if (url != "")
-                        subComponent.item.url = url
-                    else {
-                        var imdb = model.imdbnumber
-                        if (imdb) {
-                            if (imdb.indexOf("tt") != 0) {
-                                imdb = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
-                            }
-
-                            subComponent.item.url = "http://m.imdb.com/title/" + imdb;
-                        } else {
-                            subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
-                        }
-                    }
-
-        //            url = "http://en.m.wikipedia.org/wiki?search=film+"+ model.originaltitle.replace(" ", "+") + "&go=Go"
+                    toolBar.tools = subComponent.item.tools
+                    gotoUrl(movieSuppModel.getValue(model.id, "url", ""));
                 }
+                onDestruction: toolBar.tools = page.tools
             }
 
             Connections {
                 target:  subComponent.item
 
-                onUrlModified: {
-                    movieSuppModel.setValue(model.id, "url", subComponent.item.url);
+                onBookmarkChanged: {
+                    if (subComponent.item.bookmark != "") {
+                        movieSuppModel.setValue(model.id, "url", subComponent.item.bookmark);
+                    } else {
+                        movieSuppModel.removeValue(model.id, "url");
+                    }
                 }
             }
 

@@ -76,14 +76,13 @@ QString MWebPage::userAgentForUrl ( const QUrl & url ) const
     if (!BrowserView::instance()->userAgent().isEmpty())
         return BrowserView::instance()->userAgent();
 
-#ifdef Q_OS_SYMBIAN
-    if (QSysInfo::symbianVersion() == QSysInfo::SV_SF_3)
-        return SYMBIAN3_AGENT;
-    else
-        return SYMBIAN1_AGENT;
-#else
+//#ifdef Q_OS_SYMBIAN
+//    if (QSysInfo::symbianVersion() == QSysInfo::SV_SF_3)
+//        return SYMBIAN3_AGENT;
+//    else
+//        return SYMBIAN1_AGENT;
+//#endif
     return QWebPage::userAgentForUrl(url);
-#endif
 }
 
 bool MWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type)

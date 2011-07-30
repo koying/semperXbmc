@@ -140,25 +140,45 @@ QVariant VariantModel::getKeyValue(int row)
 QVariant VariantModel::getValue(const QVariant &keyvalue, const QString &valueField, const QVariant& defValue) const
 {
     int row = m_index.value(keyvalue, -1);
-    if (row == -1) return QVariant(defValue);
+    if (row == -1 || row >= m_data.size()) return QVariant(defValue);
 
-    return m_data[row].value(valueField);
+    QVariant ret =  m_data[row].value(valueField);
+    if (!ret.isValid()) return QVariant(defValue);
+
+    return ret;
 }
 
 void VariantModel::setValue(const QVariant &keyvalue, const QString &valueField, const QVariant& value)
 {
     int row = m_index.value(keyvalue, -1);
-    if (row == -1) {
+    if (row == -1 || row >= m_data.size()) {
         QVariantMap rowVal;
         rowVal.insert(m_key, keyvalue);
         rowVal.insert(valueField, value);
-        append(rowVal);
+        return append(rowVal);
     } else {
         m_data[row][valueField] = value;
         QModelIndex index = createIndex(row, 0, 0);
         emit dataChanged(index, index);
         m_dirty = true;
     }
+}
+
+void VariantModel::removeValue(const QVariant &keyvalue, const QString &valueField)
+{
+    int row = m_index.value(keyvalue, -1);
+    if (row == -1 || row >= m_data.size())
+        return;
+
+    m_data[row].remove(valueField);
+    if (m_data[row].count() == 1) {
+        QVariantMap rowVal;
+        rowVal.insert(m_key, keyvalue);
+        return remove(rowVal);
+    }
+    QModelIndex index = createIndex(row, 0, 0);
+    emit dataChanged(index, index);
+    m_dirty = true;
 }
 
 void VariantModel::append(const QVariantMap &vals)
@@ -238,6 +258,9 @@ void VariantModel::remove(const QVariantMap &vals)
         if (getKeyValue(row) == keyVal)
             break;
     if (row == m_data.size()) return;
+
+    if (!m_key.isEmpty())
+        m_index.remove(keyVal);
 
     beginRemoveRows(QModelIndex(), row, row);
     m_data.removeAt(row);
