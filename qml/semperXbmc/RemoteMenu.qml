@@ -88,6 +88,9 @@ Rectangle {
                                 xbmcEventClient.actionBuiltin(model.builtin);
                             else if (model.shortcut)
                                 xbmcEventClient.keypress(model.shortcut);
+
+                            if (model.close)
+                                root.close();
                         }
                     }
                 }
@@ -156,11 +159,19 @@ Rectangle {
             ListElement { label: "Toggle Watched"; button: "togglewatched"; section: "Buttons" }
             ListElement { label: "Toggle fullscreen"; button: "fullscreen"; section: "Buttons" }
             ListElement { label: "XBMC fullscreen"; button: "togglefullscreen"; section: "Buttons" }
-            ListElement { label: "Toggle CPU"; shortcut: "o"; section: "Buttons" }
+//            ListElement { label: "Toggle CPU"; shortcut: "o"; section: "Buttons" }
+
+            ListElement { label: "Favorites"; builtin: "ActivateWindow(favourites)"; section: "Shortcuts"; close: true }
+            ListElement { label: "Video files"; builtin: "ActivateWindow(video)"; section: "Shortcuts"; close: true }
+            ListElement { label: "Music files"; builtin: "ActivateWindow(music)"; section: "Shortcuts"; close: true }
+            ListElement { label: "Programs"; builtin: "ActivateWindow(programs)"; section: "Shortcuts"; close: true }
+            ListElement { label: "Addons"; builtin: "ActivateWindow(addonbrowser)"; section: "Shortcuts"; close: true }
+            ListElement { label: "Settings"; builtin: "ActivateWindow(settings)"; section: "Shortcuts"; close: true }
 
             ListElement { label: "Play"; builtin: "PlayDVD"; section: "CD/DVD" }
             ListElement { label: "Rip"; builtin: "RipCD"; section: "CD/DVD" }
             ListElement { label: "Eject"; builtin: "EjectTray"; section: "CD/DVD" }
+
 
             ListElement { label: "Update"; builtin: "UpdateLibrary(video)"; section: "Video Library" }
             ListElement { label: "Clean"; builtin: "CleanLibrary(video)"; section: "Video Library" }

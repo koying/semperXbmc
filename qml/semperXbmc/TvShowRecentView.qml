@@ -62,7 +62,8 @@ Page {
                 onClicked: {
                     tvshowProxyModel.clear();
                     globals.initialTvshowView = "TvShowView.qml"
-                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                 }
             }
             MenuItem {
@@ -73,7 +74,8 @@ Page {
                 onClicked: {
                     tvshowProxyModel.clear();
                     globals.initialTvshowView = "TvShowGenreView.qml"
-                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                 }
             }
 //            MenuItem {

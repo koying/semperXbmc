@@ -59,14 +59,16 @@ Page {
                 text:  "Recent Albums"
                 onClicked: {
                     globals.initialMusicView = "MusicRecentAlbumView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                    musicStack.clear();
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
                 }
             }
             MenuItem {
                 text:  "All Albums"
                 onClicked: {
                     globals.initialMusicView = "MusicAlbumView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})
+                    musicStack.clear();
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})
                 }
             }
         }

@@ -64,10 +64,19 @@ Page {
             MenuItem {
                 text:  "All"
                 onClicked: {
+                    globals.initialTvshowView = "TvShowView.qml"
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                     tvshowProxyModel.filterRole = ""
                     tvshowProxyModel.filterRegExp = ""
-                    globals.initialTvshowView = "TvShowView.qml"
-                    tvshowStack.replace(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+            }
+            MenuItem {
+                text:  "Recent episodes"
+                onClicked: {
+                    globals.initialTvshowView = "TvShowRecentView.qml"
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                 }
             }
             MenuItem {

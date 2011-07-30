@@ -60,23 +60,25 @@ Page {
                 text:  "Artists"
                 onClicked: {
                     globals.initialMusicView = "MusicArtistView.qml"
-                    if (musicStack.depth < 1) {
-                        musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
-                    } else {
-                        musicStack.clear();
-                        musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
-                    }
+                    musicStack.clear();
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
                 }
             }
             MenuItem {
                 text:  "Recent Albums"
                 onClicked: {
                     globals.initialMusicView = "MusicRecentAlbumView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
+                    musicStack.clear();
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
                 }
             }
             MenuItem {
                 text:  "All Albums"
+                onClicked: {
+                    globals.initialMusicView = "MusicAlbumView.qml"
+                    musicStack.clear();
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
+                }
             }
         }
     }
@@ -177,7 +179,7 @@ Page {
     }
 
     Component.onCompleted: {
-        if (musicStack.depth < 1 || albumModel.count == 0) {
+        if (musicStack.depth < 1) {
             $().library.loadAllAlbums();
         }
     }

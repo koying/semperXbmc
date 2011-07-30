@@ -70,7 +70,7 @@ Library.prototype.recentMovies = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
 
@@ -257,7 +257,7 @@ Library.prototype.loadTracks = function (idalbum) {
 }
 
 Library.prototype.handleAlbums = function (responseText) {
-    var oJSON = JSON.parse(doc.responseText);
+    var oJSON = JSON.parse(responseText);
 
     var error = oJSON.error;
     if (error) {

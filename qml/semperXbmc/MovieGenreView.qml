@@ -64,10 +64,10 @@ Page {
             MenuItem {
                 text:  "All"
                 onClicked: {
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
                     globals.initialMovieView = "MovieView.qml"
                     movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
+                    movieProxyModel.filterRole = ""
+                    movieProxyModel.filterRegExp = ""
                 }
             }
             MenuItem {
