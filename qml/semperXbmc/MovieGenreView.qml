@@ -167,15 +167,24 @@ Page {
 
             subComponentSource: "MovieComponent.qml"
 
+            Connections {
+                target: subComponent
+
+                onLoaded: {
+                    movieProxyModel.filterRole = "genre"
+                    movieProxyModel.filterRegExp = model.name
+                }
+                onDestruction: {
+                    movieProxyModel.filterRole = ""
+                    movieProxyModel.filterRegExp = ""
+                }
+            }
+
             onSelected:  {
                 if (style == "smallHorizontal") {
                     style = "full"
-                    movieProxyModel.filterRole = "genre"
-                    movieProxyModel.filterRegExp = model.name
                 } else {
                     style = "smallHorizontal"
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
                 }
             }
         }

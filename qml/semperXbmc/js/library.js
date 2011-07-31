@@ -57,6 +57,7 @@ Library.prototype.loadMovies = function () {
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
+    movieGenreModel.clear();
 
     return;
 }
@@ -73,6 +74,7 @@ Library.prototype.recentMovies = function () {
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "fields": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "duration", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
+    movieGenreModel.clear();
 
     return;
 }
@@ -125,6 +127,7 @@ Library.prototype.loadTVShows = function () {
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "start": 0, "sort": {"method":"sorttitle", "order":"ascending"}, "fields": ["genre", "director", "trailer", "tagline", "plot", "plotoutline", "title", "originaltitle", "showtitle", "firstaired", "duration", "season", "episode", "runtime", "year", "playcount", "rating", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     tvshowModel.clear();
+    tvshowGenreModel.clear();
 
     return;
 }

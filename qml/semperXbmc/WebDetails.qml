@@ -34,7 +34,7 @@ Item {
         }
         ToolButton {
             iconSource: "toolbar-search"
-            onClicked: webView.url = "http://m.google.com/?q=" + model.originaltitle.replace(" ", "+")
+            onClicked: webView.url = "http://www.google.com/m"
         }
 
         ToolButton {

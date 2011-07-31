@@ -82,6 +82,9 @@ QString MWebPage::userAgentForUrl ( const QUrl & url ) const
 //    else
 //        return SYMBIAN1_AGENT;
 //#endif
+#ifdef Q_WS_SIMULATOR
+    return SYMBIAN3_AGENT;
+#endif
     return QWebPage::userAgentForUrl(url);
 }
 

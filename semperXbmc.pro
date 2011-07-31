@@ -23,7 +23,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
 
 QT += webkit
 
-VERSION = 0.9.2
+VERSION = 0.9.3
 DEFINES += APP_VERSION=$$VERSION
 TARGET.EPOCHEAPSIZE = 0x200000  0x5000000
 ICON = semperXbmc_Anna_converted.svg
