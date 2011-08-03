@@ -134,6 +134,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 7
             iconSource: "img/remote/volume_up_48.png"
+            autoRepeat: true
             onClicked: xbmcEventClient.actionButton("VolumeUp");
         }
 
@@ -152,6 +153,7 @@ Rectangle {
             anchors.rightMargin: 7
             anchors.right: parent.right
             iconSource: "img/remote/volume_down_48.png"
+            autoRepeat: true
             onClicked: xbmcEventClient.actionButton("VolumeDown");
         }
     }

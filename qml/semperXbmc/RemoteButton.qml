@@ -6,24 +6,55 @@ Item {
 
     signal clicked
 
+    // Symbian specific signals and properties
+    signal platformReleased
+    signal platformPressAndHold
+
     property string imageSourceRoot: "img/remote/remote_button"
     property string text
     property string iconSource: ""
+    property bool autoRepeat: false
 
-    width:  buttonImage.width; height:  buttonImage.height
+    width:  btUp.width; height:  btUp.height
+
+    Timer {
+        id: tapRepeatTimer
+
+        interval: 60; running: false; repeat: true
+        onTriggered: container.repeat()
+    }
+
+    function press() {
+        btDn.visible = true;
+    }
+
+    function repeat() {
+        haptics.sensitiveButtonClick();
+        container.clicked();
+    }
+
+    function release() {
+        if (tapRepeatTimer.running)
+            tapRepeatTimer.stop()
+        btDn.visible = false;
+        container.platformReleased()
+    }
+
+    function click() {
+        haptics.basicButtonClick();
+        container.clicked();
+    }
 
     Image {
-        id: buttonImage
+        id: btUp
         source: imageSourceRoot + "_up.png"
-        //visible: (container.imageSource=="")
         smooth: true
     }
     Image {
-        id: pressed
-        opacity: 0
+        id: btDn
+        visible:  false
         source: imageSourceRoot + "_dn.png"
         width: container.width; height: container.height
-        //visible: (container.imageSource=="")
         smooth: true
     }
     Image {
@@ -31,29 +62,76 @@ Item {
         source: container.iconSource
         fillMode: Image.PreserveAspectFit
         smooth: true
-        anchors.centerIn: buttonImage;
+        anchors.centerIn: btUp;
         width: container.width-40; height: container.height-40
     }
-    MouseArea {
-        id: mouseRegion
-        anchors.fill: buttonImage
-        onClicked: {
-            haptics.basicButtonClick();
-            container.clicked();
-        }
-    }
+
     Text {
         color: "#aaaaaa"
-        anchors.centerIn: buttonImage; font.bold: true
+        anchors.centerIn: btUp; font.bold: true
         text: container.text; /*style: Text.Raised; styleColor: "black"*/
         font.pointSize: 10
         visible: (container.iconSource=="")
     }
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed == true
-            PropertyChanges { target: pressed; opacity: 1 }
+
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: btUp
+
+        onPressed: stateGroup.state = "Pressed"
+
+        onReleased: stateGroup.state = ""
+
+        onCanceled: {
+            // Mark as canceled
+            stateGroup.state = "Canceled"
+            // Reset state. Can't expect a release since mouse was ungrabbed
+            stateGroup.state = ""
         }
-    ]
+
+        onPressAndHold: {
+            if (stateGroup.state != "Canceled" && autoRepeat)
+                stateGroup.state = "AutoRepeating"
+            container.platformPressAndHold()
+        }
+
+        onExited: stateGroup.state = "Canceled"
+    }
+
+    StateGroup {
+        id: stateGroup
+
+        states: [
+            State { name: "Pressed" },
+            State { name: "AutoRepeating" },
+            State { name: "Canceled" }
+        ]
+
+        transitions: [
+            Transition {
+                to: "Pressed"
+                ScriptAction { script: container.press() }
+            },
+            Transition {
+                from: "Pressed"
+                to: "AutoRepeating"
+                ScriptAction { script: tapRepeatTimer.start() }
+            },
+            Transition {
+                from: "Pressed"
+                to: ""
+                ScriptAction { script: container.release() }
+                ScriptAction { script: container.click() }
+            },
+            Transition {
+                from: "Pressed"
+                to: "Canceled"
+                ScriptAction { script: container.release() }
+            },
+            Transition {
+                from: "AutoRepeating"
+                ScriptAction { script: container.release() }
+            }
+        ]
+    }
 }

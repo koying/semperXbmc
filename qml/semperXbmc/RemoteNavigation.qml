@@ -26,6 +26,7 @@ Item {
             anchors.verticalCenterOffset: -80
             imageSourceRoot: "img/remote/remote_cross_top"
             iconSource: container.iconTop
+            autoRepeat: true
             onClicked: container.upClicked()
         }
 
@@ -36,6 +37,7 @@ Item {
             anchors.verticalCenterOffset: 80
             imageSourceRoot: "img/remote/remote_cross_bottom"
             iconSource: container.iconBottom
+            autoRepeat: true
             onClicked: container.downClicked()
         }
 
@@ -46,6 +48,7 @@ Item {
             anchors.horizontalCenterOffset: -80
             imageSourceRoot: "img/remote/remote_cross_left"
             iconSource: container.iconLeft
+            autoRepeat: true
             onClicked: container.leftClicked()
         }
 
@@ -56,6 +59,7 @@ Item {
             anchors.horizontalCenterOffset: 80
             imageSourceRoot: "img/remote/remote_cross_right"
             iconSource: container.iconRight
+            autoRepeat: true
             onClicked: container.rightClicked()
         }
 
