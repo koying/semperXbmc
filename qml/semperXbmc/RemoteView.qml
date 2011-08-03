@@ -10,6 +10,10 @@ Rectangle {
         onClose: remoteMenu.sourceUrl = ""
     }
 
+    Haptics {
+        id: haptics
+    }
+
     BorderImage {
         id: globalKeys
         border.left: 30; border.top: 30

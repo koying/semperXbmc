@@ -12,6 +12,7 @@
 #include "VariantModel.h"
 #include "SortFilterModel.h"
 #include "BrowserView.h"
+#include "Haptics.h"
 
 #define QUOTE_(x) #x
 #define QUOTE(x) QUOTE_(x)
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
 //    qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
     qmlRegisterType<BrowserView>("com.semperpax.qmlcomponents", 1, 0, "BrowserView");
+    qmlRegisterType<Haptics>("com.semperpax.qmlcomponents", 1, 0, "Haptics");
 
 #ifdef __ING
     QNetworkProxy myProxy(QNetworkProxy::HttpProxy, "localhost", 8888);

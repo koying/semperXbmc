@@ -1,4 +1,5 @@
 import Qt 4.7
+import com.semperpax.qmlcomponents 1.0
 
 Item {
     id: container
@@ -36,7 +37,10 @@ Item {
     MouseArea {
         id: mouseRegion
         anchors.fill: buttonImage
-        onClicked: { container.clicked(); }
+        onClicked: {
+            haptics.basicButtonClick();
+            container.clicked();
+        }
     }
     Text {
         color: "#aaaaaa"
