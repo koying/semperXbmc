@@ -90,8 +90,13 @@ Item {
                                         $().playlist.videoClear();
                                         xbmcEventClient.actionButton("Stop");
                                         mainTabGroup.currentTab = remoteTab
+                                        $().playlist.onVideoStarted =
+                                                function() {
+                                                    $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
+                                                    $().playlist.onVideoStarted = undefined;
+                                                }
+
                                         $().playlist.addMovie(model.id);
-                                        $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
                                     }
                                     );
                         dialogPlaceholder.item.rejected.connect(

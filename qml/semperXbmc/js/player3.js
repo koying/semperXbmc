@@ -4,7 +4,7 @@
  */
 
 function Player(typ) {
-    this.type="Audio";
+    this.type=typ;
 }
 
 Player.prototype.skipPrevious = function() {
@@ -24,7 +24,7 @@ Player.prototype.skipNext = function() {
 }
 
 Player.prototype.seekPercentage = function(percent) {
-    this.cmd("SeekPercentage", "value:"+percent);
+    this.cmd("SeekPercentage", '"value":'+Utils.fixedDecimals(percent,1));
 }
 
 Player.prototype.cmd = function(cmd, param) {
@@ -43,10 +43,10 @@ Player.prototype.cmd = function(cmd, param) {
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "'+this.type+'Player.'+cmd+'",';
     if (param) {
-        str += param + ","
+        str += '"params": {' + param + "},"
     }
     str += ' "id": 1}';
-//	console.log(str);
+    console.log(str);
     doc.send(str);
     return;
 }

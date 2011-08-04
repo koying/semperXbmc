@@ -3,8 +3,8 @@
  *
  */
 
-function Player() {
-    this.type="Audio";
+function Player(typ) {
+    this.type=typ;
 }
 
 Player.prototype.skipPrevious = function() {
@@ -24,7 +24,7 @@ Player.prototype.skipNext = function() {
 }
 
 Player.prototype.seekPercentage = function(percent) {
-    this.cmd("SeekPercentage", "value:"+percent);
+    this.cmd("SeekPercentage", '"value":'+percent);
 }
 
 Player.prototype.cmd = function(cmd, param) {

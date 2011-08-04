@@ -5,6 +5,7 @@ import "components" as Cp;
 
 import "js/xbmc.js" as Xbmc
 import "js/json.js" as Json
+import "js/Utils.js" as Utils
 
 import "js/general.js" as General
 import "js/player.js" as Player

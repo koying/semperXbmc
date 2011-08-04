@@ -130,7 +130,7 @@ Playlist.prototype.addMovie = function(idmovie){
 
             if (!Playlist.prototype.playing) {
                 console.log("play");
-                Playlist.prototype.cmd("Play", "Video");
+                Playlist.prototype.playVideo();
             }
         }
     }
@@ -156,7 +156,7 @@ Playlist.prototype.addEpisode = function(idepisode){
 
             if (!Playlist.prototype.playing) {
 //                console.log("play");
-                Playlist.prototype.cmd("Play", "Video");
+                Playlist.prototype.playVideo();
             }
         }
     }
@@ -229,6 +229,31 @@ Playlist.prototype.update = function(playlistModel){
     doc.send(str);
     return;
 
+}
+
+Playlist.prototype.playVideo = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "VideoPlaylist.Play error: ", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+            console.log("playvideo ok");
+            if (this.onVideoStarted != undefined) {
+                console.log("onVideoStarted");
+                this.onVideoStarted();
+            }
+        }
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Play", "id": 1}';
+    doc.send(str);
+    return;
 }
 
 Playlist.prototype.cmd = function(cmd, media, param) {
