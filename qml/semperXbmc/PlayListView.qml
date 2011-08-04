@@ -16,17 +16,17 @@ Page {
         ButtonRow {
             ToolButton {
                 iconSource: "img/back1.svg"
-                onClicked: $().player.skipPrevious()
+                onClicked: $().audioplayer.skipPrevious()
             }
             ToolButton {
                 iconSource: "toolbar-mediacontrol-stop"
-                onClicked: $().player.stop()
+                onClicked: $().audioplayer.stop()
             }
             ToolButton {
                 id: btPause
                 iconSource: "toolbar-mediacontrol-pause"
                 onClicked:  {
-                    $().player.playPause()
+                    $().audioplayer.playPause()
                     $().playlist.paused = true;
                     visible = false;
                     btPlay.visible = true;
@@ -41,14 +41,14 @@ Page {
                         $().playlist.cmd("Play", "Audio");
                         $().playlist.playing = true;
                     } else
-                        $().player.playPause();
+                        $().audioplayer.playPause();
                     visible = false;
                     btPause.visible = true;
                 }
             }
             ToolButton {
                 iconSource: "img/skip.svg"
-                onClicked: $().player.skipNext()
+                onClicked: $().audioplayer.skipNext()
             }
         }
 
@@ -56,7 +56,7 @@ Page {
             iconSource: "toolbar-delete"
             onClicked: {
                 if ($().playlist.playing)
-                    $().player.stop()
+                    $().audioplayer.stop()
                 $().playlist.audioClear();
             }
             visible: playlistModel.count > 0

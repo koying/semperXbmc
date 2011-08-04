@@ -81,10 +81,34 @@ Item {
 
             onSelected:  {
                 if (style == globals.styleMovies) {
-                    $().playlist.videoClear();
-                    xbmcEventClient.actionButton("Stop");
-                    $().playlist.addMovie(model.id);
-                    mainTabGroup.currentTab = remoteTab
+                    if (model.resume && model.resume != 0) {
+                        dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
+                        dialogPlaceholder.item.position = model.resume.position
+                        dialogPlaceholder.item.total = model.resume.total
+                        dialogPlaceholder.item.accepted.connect(
+                                    function () {
+                                        $().playlist.videoClear();
+                                        xbmcEventClient.actionButton("Stop");
+                                        mainTabGroup.currentTab = remoteTab
+                                        $().playlist.addMovie(model.id);
+                                        $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
+                                    }
+                                    );
+                        dialogPlaceholder.item.rejected.connect(
+                                    function () {
+                                        $().playlist.videoClear();
+                                        xbmcEventClient.actionButton("Stop");
+                                        mainTabGroup.currentTab = remoteTab
+                                        $().playlist.addMovie(model.id);
+                                    }
+                                    );
+                        dialogPlaceholder.item.open();
+                    } else {
+                        $().playlist.videoClear();
+                        xbmcEventClient.actionButton("Stop");
+                        mainTabGroup.currentTab = remoteTab
+                        $().playlist.addMovie(model.id);
+                    }
                 } else
                     style = globals.styleMovies
             }

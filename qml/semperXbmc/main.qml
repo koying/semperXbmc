@@ -167,16 +167,16 @@ Window {
             MenuItem {
                 text:  "Display options"
                 onClicked: {
-                    options.source = "Options.qml"
-                    options.item.open()
+                    dialogPlaceholder.source = "Options.qml"
+                    dialogPlaceholder.item.open()
                 }
             }
 
             MenuItem {
                 text:  "Connection settings"
                 onClicked: {
-                    settings.source = "Settings.qml"
-                    settings.item.open()
+                    dialogPlaceholder.source = "Settings.qml"
+                    dialogPlaceholder.item.open()
                 }
             }
         }
@@ -322,18 +322,20 @@ Window {
     }
 
     Loader {
-        id: settings
-    }
-    Connections {
-        target: settings.item
-        onSettingsChanged: {
-            xbmcEventClient.initialize(globals.server, globals.eventPort);
-            main.initialize();
-        }
+        id: dialogPlaceholder
     }
 
-    Loader {
-        id: options
+    Connections {
+        id: dialogPlaceholderConnections
+        target: dialogPlaceholder.item
+
+        onAccepted: {
+            dialogPlaceholder.source = ""
+        }
+
+        onRejected: {
+            dialogPlaceholder.source = ""
+        }
     }
 
     Cp.AutoDestructLoader {
@@ -419,7 +421,7 @@ Window {
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb", "resume" ]
         thumbDir: thumbFile
     }
 
@@ -471,7 +473,7 @@ Window {
     }
     VariantModel {
         id: episodeModel
-        fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount" ]
+        fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount", "resume" ]
         thumbDir: thumbFile
     }
 
@@ -577,8 +579,14 @@ Window {
     Component.onCompleted: {
         globals.load();
         if (globals.server == "Unspecified") {
-            settings.source = "Settings.qml"
-            settings.item.open()
+            dialogPlaceholder.source = "Settings.qml"
+            dialogPlaceholder.item.accepted.connect(
+                        function () {
+                            xbmcEventClient.initialize(globals.server, globals.eventPort);
+                            main.initialize();
+                        }
+                        );
+            dialogPlaceholder.item.open()
             return;
         }
         xbmcEventClient.initialize(globals.server, globals.eventPort);

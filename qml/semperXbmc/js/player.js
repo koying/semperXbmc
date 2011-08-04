@@ -23,6 +23,9 @@ Player.prototype.skipNext = function() {
     this.cmd("SkipNext");
 }
 
+Player.prototype.seekPercentage = function(percent) {
+    this.cmd("SeekPercentage", "value:"+percent);
+}
 
 Player.prototype.cmd = function(cmd, param) {
     var doc = new XMLHttpRequest();

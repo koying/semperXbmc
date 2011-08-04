@@ -4,8 +4,6 @@ import com.nokia.symbian 1.0
 CommonDialog {
     id: dialog
 
-    signal settingsChanged();
-
     titleText: "CONNECTION SETTINGS"
 
     content: Flickable {
@@ -111,7 +109,6 @@ CommonDialog {
         globals.eventPort = inpEventPort.text;
 
         globals.save();
-        dialog.settingsChanged();
     }
 
     Component.onCompleted: setup()
