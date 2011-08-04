@@ -42,10 +42,9 @@ bool QFatFile::open(QIODevice::OpenMode mode)
         m_toc.startCluster = FAT_FAT_TYPE_NOVALUE;
 
         if (m_fat->addToc(m_path, m_name, m_toc) != FatNoError) {
-            qDebug() << "QFatFile::open: Error adding toc";
+            qDebug() << "QFatFile::open: Error as-dding toc";
             return false;
         }
-
     } else if (ret == FatNoError){
         buffer() = m_fat->readData(m_toc.startCluster, m_toc.size);
     } else

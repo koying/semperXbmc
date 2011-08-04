@@ -62,10 +62,12 @@ FatIterator::FatIterator(QDir::Filters filters, const QStringList &nameFilters, 
 int FatIterator::getNextIndex() const
 {
     for (int i=m_curIndex+1; i<m_tocs.size(); ++i) {
-        if (filters() & (QDir::Dirs | QDir::AllEntries)) {
+        if (filters() & QDir::AllEntries)
+            return i;
+        else if (filters() & QDir::Dirs) {
             if (m_tocs[i].flags & FLAG_FOLDER)
                 return i;
-        } else if (filters() & (QDir::Files | QDir::AllEntries)) {
+        } else if (filters() & QDir::Files) {
             if (m_tocs[i].flags & FLAG_FILE)
                 return i;
         }
@@ -81,12 +83,14 @@ bool FatIterator::hasNext() const
 QString FatIterator::next()
 {
     m_curIndex = getNextIndex();
-    return "fat:///" + m_fatpath + "#" + m_name + m_tocs[m_curIndex].name;
+    QString path = "fat:///" + m_fatpath + "#" + m_name;
+    if(!path.endsWith("/")) path += "/";
+    return path + m_tocs[m_curIndex].name;
 }
 
 QString FatIterator::currentFileName() const
 {
-    return "fat:///" + m_fatpath + "#" + m_name + m_tocs[m_curIndex].name;
+    return m_tocs[m_curIndex].name;
 }
 
 /**************************/
@@ -101,20 +105,27 @@ QFatEngine::QFatEngine(QFat* fat, const QString& path, const QString& name)
 
 {
     m_flags &= (int)m_fat->m_fatFile->permissions();
-    if(m_name.endsWith('/')) {
-        m_flags|= DirectoryType;
-        if (m_name.isEmpty() || m_name == "/")
-            m_flags |= RootFlag;
-    } else {
-        m_flags |= FileType;
-    }
-    if (m_name.isEmpty() || m_name == "/")
+    if (m_name.isEmpty() || m_name == "/") {
+        m_flags |= RootFlag;
         m_flags |= ExistsFlag;
-    else {
+        m_flags |= DirectoryType;
+    } else {
         QMutexLocker locker(&glob_mutex);
         FatError ret = m_fat->getToc(m_name, m_toc);
-        if (ret == FatNoError && m_toc.flags)
+        if (ret == FatNoError && m_toc.flags) {
             m_flags |= ExistsFlag;
+            if (m_toc.flags & FLAG_FILE)
+                m_flags |= FileType;
+            else if (m_toc.flags & FLAG_FOLDER) {
+                m_flags |= DirectoryType;
+            }
+        } else {
+            if(m_name.endsWith('/')) {
+                m_flags|= DirectoryType;
+            } else {
+                m_flags |= FileType;
+            }
+        }
     }
 }
 
@@ -226,8 +237,11 @@ bool QFatEngine::extension(QAbstractFileEngine::Extension extension, const QAbst
 bool QFatEngine::remove()
 {
     QMutexLocker locker(&glob_mutex);
-    m_fat->removeFile(m_name);
+    if (m_fat->removeFile(m_name) != FatNoError)
+        return false;
     m_fat->writeFat();
+
+    return true;
 }
 
 QString QFatEngine::fileName(QAbstractFileEngine::FileName file) const
