@@ -58,22 +58,23 @@ int main(int argc, char *argv[])
     QmlApplicationViewer* viewer = new QmlApplicationViewer;
 
     //Find FAT file
-    QString fatFilename;
-    if (QFile::exists("e:/semperXbmc.fat"))
-        fatFilename = "e:/semperXbmc.fat";
-    else if (QFile::exists("c/data:/semperXbmc.fat"))
-        fatFilename = "c/data:/semperXbmc.fat";
-    else if (QFile::exists("c/data:/semperXbmcThumbs.fat"))
-        fatFilename = "c/data:/semperXbmcThumbs.fat";
+    QString fatPath;
+    QString fatName = app.applicationName() + ".fat";
+    if (QFile::exists("e:/"+fatName))
+        fatPath = "e:/"+fatName;
+    else if (QFile::exists("c:/data/"+fatName))
+        fatPath = "c:/data/"+fatName;
+    else if (QFile::exists("c:/data/semperXbmcThumbs.fat"))
+        fatPath = "c:/data/semperXbmcThumbs.fat";
 
     //Not found? create one...
-    if (fatFilename.isEmpty()) {
+    if (fatPath.isEmpty()) {
         if (QDir("e:/").exists())
-            fatFilename = "e:/semperXbmc.fat";
+            fatPath = "e:/"+fatName;
         else
-            fatFilename = "c/data:/semperXbmc.fat";
+            fatPath = "c:/data/"+fatName;
     }
-    QString fatFile = QString("fat:///%1#/").arg(fatFilename);
+    QString fatFile = QString("fat:///%1#/").arg(fatPath);
 
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(fatFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
