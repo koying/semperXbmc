@@ -21,8 +21,6 @@ symbian:TARGET.CAPABILITY += NetworkServices
  CONFIG += mobility
  MOBILITY += feedback
 
-QT += webkit
-
 VERSION = 0.9.3
 DEFINES += APP_VERSION=$$VERSION
 TARGET.EPOCHEAPSIZE = 0x200000  0x5000000
@@ -40,16 +38,27 @@ include(src/QFatFs/QFatFs.pri)
 #DEPENDPATH += ../QFatFs/QFatFs
 #include(../QFatFs/QFatFs/QFatFs.pri)
 
-INCLUDEPATH +=src/BrowserView
-DEPENDPATH += src/BrowserView
-include(src/BrowserView/BrowserView.pri)
-
-simulator {
-    QTSCROLLER_OUT = ../qtscroller-build-simulator
-} else {
-    win32:QTSCROLLER_OUT = ../qtscroller-build-desktop
+symbian {
+    contains(S60_VERSION, 5.0): __NOWEBKIT=1
 }
-include(../qtscroller/qtscroller.pri)
+
+contains(__NOWEBKIT,1) {
+    DEFINES += __NOWEBKIT
+} else {
+    QT += webkit
+
+    INCLUDEPATH +=src/BrowserView
+    DEPENDPATH += src/BrowserView
+    include(src/BrowserView/BrowserView.pri)
+
+    simulator {
+        QTSCROLLER_OUT = ../qtscroller-build-simulator
+    } else {
+        win32:QTSCROLLER_OUT = ../qtscroller-build-desktop
+    }
+
+    include(../qtscroller/qtscroller.pri)
+}
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

@@ -363,7 +363,7 @@ Window {
         fields: [ "id", "url" ]
         key: "id"
 
-        stream: thumbFile + "/artistSuppModel.dat"
+        stream: ctxFatFile + "/artistSuppModel.dat"
 
         Component.onCompleted: load()
         Component.onDestruction: save()
@@ -371,7 +371,7 @@ Window {
     VariantModel {
         id: artistModel
         fields: [ "id", "name", "poster", "selected", "posterThumb" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
 
     SortFilterModel {
@@ -384,7 +384,7 @@ Window {
         fields: [ "id", "url" ]
         key: "id"
 
-        stream: thumbFile + "/albumSuppModel.dat"
+        stream: ctxFatFile + "/albumSuppModel.dat"
 
         Component.onCompleted: load()
         Component.onDestruction: save()
@@ -392,7 +392,7 @@ Window {
     VariantModel {
         id: albumModel
         fields: [ "idalbum", "name", "artist", "genre", "rating", "cover", "coverThumb" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
     ListModel {
         id: trackModel
@@ -415,7 +415,7 @@ Window {
         fields: [ "id", "url" ]
         key: "id"
 
-        stream: thumbFile + "/movieSuppModel.dat"
+        stream: ctxFatFile + "/movieSuppModel.dat"
 
         Component.onCompleted: load()
         Component.onDestruction: save()
@@ -423,7 +423,7 @@ Window {
     VariantModel {
         id: movieModel
         fields: [ "id", "name", "poster", "genre", "duration", "runtime", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb", "resume" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
 
     ListModel {
@@ -440,7 +440,7 @@ Window {
         fields: [ "id", "lastplayed", "url" ]
         key: "id"
 
-        stream: thumbFile + "/tvshowLastplayedModel.dat"
+        stream: ctxFatFile + "/tvshowLastplayedModel.dat"
 
         Component.onCompleted: load()
         Component.onDestruction: save()
@@ -451,7 +451,7 @@ Window {
         fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "imdbnumber", "originaltitle", "posterThumb", "lastplayed" ]
         key: "id"
         relatedFields: [ "lastplayed" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
 
     SortFilterModel {
@@ -463,7 +463,7 @@ Window {
     VariantModel {
         id: seasonModel
         fields: [ "id", "name", "showtitle", "poster", "episodes", "genre", "duration", "rating", "playcount" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
 
     SortFilterModel {
@@ -475,7 +475,7 @@ Window {
     VariantModel {
         id: episodeModel
         fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount", "resume" ]
-        thumbDir: thumbFile
+        thumbDir: ctxFatFile
     }
 
     Timer {

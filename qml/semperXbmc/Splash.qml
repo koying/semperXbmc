@@ -47,7 +47,7 @@ Rectangle {
             Text {
                 id: txVersion
                 color: "#ffffff"
-                text: "v" + appVersion
+                text: "v" + ctxAppVersion
                 anchors.top: lbBy.bottom
                 anchors.topMargin: 15
                 anchors.horizontalCenter: parent.horizontalCenter

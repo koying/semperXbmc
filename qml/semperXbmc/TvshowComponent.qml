@@ -34,7 +34,7 @@ Item {
             banner: globals.showBanners
             style: globals.styleTvShows
 
-            subComponentSource: Qt.resolvedUrl("WebDetails.qml")
+            subComponentSource: ctxHasWebkit ? Qt.resolvedUrl("WebDetails.qml") : ""
             function gotoUrl(url) {
                 if (url != "") {
                     subComponent.item.bookmark = url

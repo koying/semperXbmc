@@ -11,7 +11,9 @@
 #include "ThumbImageProvider.h"
 #include "VariantModel.h"
 #include "SortFilterModel.h"
+#ifndef __NOWEBKIT
 #include "BrowserView.h"
+#endif
 #include "Haptics.h"
 
 #define QUOTE_(x) #x
@@ -30,6 +32,7 @@ int main(int argc, char *argv[])
 
     QFatFsHandler* fatHandler = new QFatFsHandler(50000, 8192);
 
+#ifndef __NOWEBKIT
     //    QWebSettings::globalSettings()->setObjectCacheCapacities(128*1024, 1024*1024, 1024*1024);
     QWebSettings::globalSettings()->setMaximumPagesInCache(3);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::JavascriptEnabled, true);
@@ -39,12 +42,13 @@ int main(int argc, char *argv[])
     QWebSettings::globalSettings()->setFontSize(QWebSettings::MinimumFontSize, 10);
     QWebSettings::globalSettings()->enablePersistentStorage();
 
+    qmlRegisterType<BrowserView>("com.semperpax.qmlcomponents", 1, 0, "BrowserView");
+#else
+#endif
     qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcEventClient");
     qmlRegisterType<XbmcTcpTransport>("com.semperpax.qmlcomponents", 1, 0, "XbmcJsonTcpClient");
     qmlRegisterType<VariantModel>("com.semperpax.qmlcomponents", 1, 0, "VariantModel");
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
-//    qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
-    qmlRegisterType<BrowserView>("com.semperpax.qmlcomponents", 1, 0, "BrowserView");
     qmlRegisterType<Haptics>("com.semperpax.qmlcomponents", 1, 0, "Haptics");
 
 #ifdef __ING
@@ -53,12 +57,34 @@ int main(int argc, char *argv[])
 #endif
     QmlApplicationViewer* viewer = new QmlApplicationViewer;
 
-    QString thumbFile("fat:///c:/data/semperXbmcThumbs.fat#/");
-    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(thumbFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
-//    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
-    viewer->rootContext()->setContextProperty("thumbFile", thumbFile);
+    //Find FAT file
+    QString fatFilename;
+    if (QFile::exists("e:/semperXbmc.fat"))
+        fatFilename = "e:/semperXbmc.fat";
+    else if (QFile::exists("c/data:/semperXbmc.fat"))
+        fatFilename = "c/data:/semperXbmc.fat";
+    else if (QFile::exists("c/data:/semperXbmcThumbs.fat"))
+        fatFilename = "c/data:/semperXbmcThumbs.fat";
 
-    viewer->rootContext()->setContextProperty("appVersion", appVersion);
+    //Not found? create one...
+    if (fatFilename.isEmpty()) {
+        if (QDir("e:/").exists())
+            fatFilename = "e:/semperXbmc.fat";
+        else
+            fatFilename = "c/data:/semperXbmc.fat";
+    }
+    QString fatFile = QString("fat:///%1#/").arg(fatFilename);
+
+    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(fatFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
+//    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
+
+    viewer->rootContext()->setContextProperty("ctxFatFile", fatFile);
+    viewer->rootContext()->setContextProperty("ctxAppVersion", appVersion);
+#ifndef __NOWEBKIT
+    viewer->rootContext()->setContextProperty("ctxHasBrowser", true);
+#else
+    viewer->rootContext()->setContextProperty("ctxHasBrowser", false);
+#endif
 
     viewer->engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 

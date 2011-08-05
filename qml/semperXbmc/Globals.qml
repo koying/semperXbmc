@@ -31,7 +31,7 @@ Item {
         fields: ["key", "value"]
         key: "key"
 
-        stream: thumbFile + "/settings.dat"
+        stream: ctxFatFile + "/settings.dat"
 
         function getSetting(keyval, defval) {
             return settingsBackend.getValue(keyval, "value", defval);
