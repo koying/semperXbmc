@@ -125,7 +125,7 @@ Page {
             style: globals.styleMusicArtists
             banner: globals.showBanners
 
-            subComponentSource: ctxHasWebkit ? Qt.resolvedUrl("WebDetails.qml") : ""
+            subComponentSource: ctxHasBrowser ? Qt.resolvedUrl("WebDetails.qml") : ""
             function gotoUrl(url) {
                 if (url != "") {
                     subComponent.item.bookmark = url

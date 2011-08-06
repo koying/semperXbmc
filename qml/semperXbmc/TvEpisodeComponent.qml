@@ -33,8 +33,7 @@ Item {
             style: globals.styleTvShowSeasons
             banner: globals.showBanners
 
-            onSelected: {
-//                console.log("episode clicked" + id);
+            function playEpisode() {
                 $().playlist.videoClear();
                 xbmcEventClient.actionButton("Stop");
                 $().playlist.addEpisode(id);
@@ -42,6 +41,33 @@ Item {
                 if (tvshowProxyModel.sortRole == "lastplayed")
                     tvshowProxyModel.reSort();
                 mainTabGroup.currentTab = remoteTab
+            }
+
+            onSelected: {
+                if (model.resume && model.resume.position != 0) {
+                    dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
+                    dialogPlaceholder.item.position = model.resume.position
+                    dialogPlaceholder.item.total = model.resume.total
+                    dialogPlaceholder.item.accepted.connect(
+                                function () {
+                                    $().playlist.onVideoStarted =
+                                            function() {
+                                                $().videoplayer.seekTime(model.resume.position);
+                                                $().playlist.onVideoStarted = null;
+                                            }
+
+                                    playEpisode();
+                                }
+                                );
+                    dialogPlaceholder.item.rejected.connect(
+                                function () {
+                                    playEpisode();
+                                }
+                                );
+                    dialogPlaceholder.item.open();
+                } else {
+                    playEpisode();
+                }
             }
         }
 

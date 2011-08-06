@@ -5,11 +5,12 @@
 
 
 function Playlist() {
+    this.previousItems = {}
+    this.playing = false;
+    this.paused = false;
+    this.onVideoStarted = null
 }
 
-Playlist.prototype.previousItems = {}
-Playlist.prototype.playing = false;
-Playlist.prototype.paused = false;
 
 Playlist.prototype.insertTrack = function(idTrack){
     var doc = new XMLHttpRequest();
@@ -23,9 +24,9 @@ Playlist.prototype.insertTrack = function(idTrack){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
+            if (!$().playlist.playing) {
 //                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
+                $().playlist.cmd("Play", "Audio");
             }
         }
     }
@@ -48,9 +49,9 @@ Playlist.prototype.addTrack = function(idTrack){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
+            if (!$().playlist.playing) {
 //                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
+                $().playlist.cmd("Play", "Audio");
             }
         }
     }
@@ -74,9 +75,9 @@ Playlist.prototype.insertAlbum = function(idalbum){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
+            if (!$().playlist.playing) {
 //                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
+                $().playlist.cmd("Play", "Audio");
             }
         }
     }
@@ -101,9 +102,9 @@ Playlist.prototype.addAlbum = function(idalbum){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
+            if (!$().playlist.playing) {
 //                console.log("play");
-                Playlist.prototype.cmd("Play", "Audio");
+                $().playlist.cmd("Play", "Audio");
             }
         }
     }
@@ -128,9 +129,9 @@ Playlist.prototype.addMovie = function(idmovie){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
-                console.log("play");
-                Playlist.prototype.playVideo();
+            if (!$().playlist.playing) {
+//                console.log("play");
+                $().playlist.playVideo();
             }
         }
     }
@@ -154,25 +155,27 @@ Playlist.prototype.addEpisode = function(idepisode){
                 return;
             }
 
-            if (!Playlist.prototype.playing) {
+            if (!$().playlist.playing) {
 //                console.log("play");
-                Playlist.prototype.playVideo();
+                $().playlist.playVideo();
             }
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "item": { "episodeid": '+idepisode+'} }, "id": 1}';
-    console.log(str);
+//    console.log(str);
     doc.send(str);
     return;
 }
 
 Playlist.prototype.videoClear = function(){
     Playlist.prototype.cmd("Clear", "Video");
+    this.previousItems = {}
 }
 
 Playlist.prototype.audioClear = function(){
     Playlist.prototype.cmd("Clear", "Audio");
+    this.previousItems = {}
 }
 
 Playlist.prototype.update = function(playlistModel){
@@ -192,9 +195,9 @@ Playlist.prototype.update = function(playlistModel){
             if ( result && result.items) {
                 var items = result.items;
 
-                if (!Playlist.prototype.previousItems || !isEqual(Playlist.prototype.previousItems,items)) {
+                if (!$().playlist.previousItems || !isEqual($().playlist.previousItems,items)) {
 //                    console.log("new playlist");
-                    Playlist.prototype.previousItems = items;
+                    $().playlist.previousItems = items;
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
@@ -207,8 +210,8 @@ Playlist.prototype.update = function(playlistModel){
                 }
             } else {
                 playlistModel.clear();
-                Playlist.prototype.playing = false;
-                Playlist.prototype.paused = false;
+                $().playlist.playing = false;
+                $().playlist.paused = false;
             }
 
             if (result.state && playlistModel.count > 0) {
@@ -217,8 +220,8 @@ Playlist.prototype.update = function(playlistModel){
                 }
                 if (result.state.current >= 0)
                     playlistModel.setProperty(result.state.current, "select", true);
-                Playlist.prototype.playing = result.state.playing == true ? true : false;
-                Playlist.prototype.paused = result.state.paused == true ? true : false;
+                $().playlist.playing = result.state.playing == true ? true : false;
+                $().playlist.paused = result.state.paused == true ? true : false;
             }
         }
     }
@@ -242,10 +245,9 @@ Playlist.prototype.playVideo = function() {
                 errorView.addError("error", error.message, error.code);
                 return;
             }
-            console.log("playvideo ok");
-            if (this.onVideoStarted != undefined) {
+            if ($().playlist.onVideoStarted) {
                 console.log("onVideoStarted");
-                this.onVideoStarted();
+                $().playlist.onVideoStarted();
             }
         }
     }

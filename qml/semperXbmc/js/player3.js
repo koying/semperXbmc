@@ -24,7 +24,11 @@ Player.prototype.skipNext = function() {
 }
 
 Player.prototype.seekPercentage = function(percent) {
-    this.cmd("SeekPercentage", '"value":'+Utils.fixedDecimals(percent,1));
+    this.cmd("SeekPercentage", '"value":'+percent.toFixed(0));
+}
+
+Player.prototype.seekTime = function(position) {
+    this.cmd("SeekTime", '"value":'+position.toFixed(0));
 }
 
 Player.prototype.cmd = function(cmd, param) {

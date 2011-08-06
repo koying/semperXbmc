@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
     QWebSettings::globalSettings()->enablePersistentStorage();
 
     qmlRegisterType<BrowserView>("com.semperpax.qmlcomponents", 1, 0, "BrowserView");
-#else
 #endif
     qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcEventClient");
     qmlRegisterType<XbmcTcpTransport>("com.semperpax.qmlcomponents", 1, 0, "XbmcJsonTcpClient");

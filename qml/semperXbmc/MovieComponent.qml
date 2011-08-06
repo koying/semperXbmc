@@ -36,7 +36,7 @@ Item {
             style: globals.styleMovies
             banner: globals.showBanners
 
-            subComponentSource: ctxHasWebkit ? Qt.resolvedUrl("WebDetails.qml") : ""
+            subComponentSource: ctxHasBrowser ? Qt.resolvedUrl("WebDetails.qml") : ""
             function gotoUrl(url) {
                 if (url != "") {
                     subComponent.item.bookmark = url
@@ -79,40 +79,38 @@ Item {
                 }
             }
 
+            function playMovie() {
+                $().playlist.videoClear();
+                xbmcEventClient.actionButton("Stop");
+                $().playlist.addMovie(model.id);
+                mainTabGroup.currentTab = remoteTab
+            }
+
             onSelected:  {
                 if (style == globals.styleMovies) {
-                    if (model.resume && model.resume != 0) {
+                    if (model.resume && model.resume.position != 0) {
                         dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
                         dialogPlaceholder.item.position = model.resume.position
                         dialogPlaceholder.item.total = model.resume.total
                         dialogPlaceholder.item.accepted.connect(
                                     function () {
-                                        $().playlist.videoClear();
-                                        xbmcEventClient.actionButton("Stop");
-                                        mainTabGroup.currentTab = remoteTab
                                         $().playlist.onVideoStarted =
                                                 function() {
-                                                    $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
-                                                    $().playlist.onVideoStarted = undefined;
+                                                    $().videoplayer.seekTime(model.resume.position);
+                                                    $().playlist.onVideoStarted = null;
                                                 }
 
-                                        $().playlist.addMovie(model.id);
+                                        playMovie();
                                     }
                                     );
                         dialogPlaceholder.item.rejected.connect(
                                     function () {
-                                        $().playlist.videoClear();
-                                        xbmcEventClient.actionButton("Stop");
-                                        mainTabGroup.currentTab = remoteTab
-                                        $().playlist.addMovie(model.id);
+                                        playMovie();
                                     }
                                     );
                         dialogPlaceholder.item.open();
                     } else {
-                        $().playlist.videoClear();
-                        xbmcEventClient.actionButton("Stop");
-                        mainTabGroup.currentTab = remoteTab
-                        $().playlist.addMovie(model.id);
+                        playMovie();
                     }
                 } else
                     style = globals.styleMovies

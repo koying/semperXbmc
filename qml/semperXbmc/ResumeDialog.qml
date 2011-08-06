@@ -10,7 +10,7 @@ QueryDialog {
     anchors.centerIn: parent
 
     titleText: "BOOKMARK FOUND"
-    message: "Resume at " + Utils.fixedDecimals(position/total*100, 1) + "%?"
+    message: "Resume at " + (position/total*100).toFixed(0) + "%?"
     acceptButtonText: "Yes"
     rejectButtonText: "No"
 }

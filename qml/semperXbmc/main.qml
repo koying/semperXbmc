@@ -487,6 +487,10 @@ Window {
         }
     }
 
+    Timer {
+        id: utilTimer
+    }
+
     XbmcEventClient {
         id: xbmcEventClient
 
@@ -505,7 +509,7 @@ Window {
                 console.debug(Xbmc.dumpObj(error, "Error", "", 0));
                 return;
             }
-//            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
+            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
 
             var method = oJSON.method;
 //            console.debug(method);

@@ -222,12 +222,6 @@ function secToMinutes(secs)
     return sprintf("%d", minutes) + " min";
 }
 
-
-function fixedDecimals(val, num) {
-    var div = Math.pow(10, num);
-    return parseInt(val*div)/div;
-}
-
 function dateToString(d) {
     var curr_date = d.getDate();
     var curr_month = d.getMonth() + 1; //months are zero based
