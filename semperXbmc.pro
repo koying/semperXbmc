@@ -21,7 +21,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
  CONFIG += mobility
  MOBILITY += feedback
 
-VERSION = 0.9.3
+VERSION = 0.9.4
 DEFINES += APP_VERSION=$$VERSION
 TARGET.EPOCHEAPSIZE = 0x200000  0x5000000
 ICON = semperXbmc_Anna_converted.svg

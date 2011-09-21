@@ -37,7 +37,7 @@ General.prototype.setVolume = function(i) {
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "XBMC.SetVolume", "params": ' + i + ', "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "Application.SetVolume", "params": ' + i + ', "id": 1}';
     doc.send(str);
     General.prototype.volume = i;
     return;
@@ -49,6 +49,7 @@ General.prototype.getVolume = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            console.log(doc.responseText);
             var oJSON = JSON.parse(doc.responseText);
 
             var error = oJSON.error;
@@ -57,11 +58,11 @@ General.prototype.getVolume = function() {
                 errorView.addError("error", error.message, error.code);
                 return;
             }
-            General.prototype.volume = oJSON.result;
+            General.prototype.volume = oJSON.result.volume;
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "XBMC.GetVolume","id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "Application.GetProperties", "params": { "properties": ["volume"] }, "id": 1}';
     doc.send(str);
 
     return;
