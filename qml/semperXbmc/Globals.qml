@@ -18,6 +18,7 @@ Item {
     property string styleTvShowSeasons: "bigHorizontal"
     property string styleMusicArtists: "smallHorizontal"
     property string styleMusicAlbums: "bigHorizontal"
+    property string styleFiles: "smallHorizontal"
 
     property string initialMovieView: "MovieView.qml"
     property string initialTvshowView: "TvShowView.qml"

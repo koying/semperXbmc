@@ -376,3 +376,57 @@ Library.prototype.loadArtists = function() {
     doc.send(str);
     artistModel.clear();
 }
+
+Library.prototype.loadSources = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "loadSources error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var sources = result.sources;
+            for (var i = 0; i < sources.length; i++){
+                fileModel.append({"name": sources[i].label, "path": sources[i].file, "filetype": "directory"});
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "video" }, "id": 1}';
+    doc.send(str);
+    fileModel.clear();
+}
+
+Library.prototype.loadFiles = function(directory) {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            console.debug(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "loadFiles error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var files = result.files;
+            for (var i = 0; i < files.length; i++){
+                fileModel.append({"name": files[i].label, "path": files[i].file, "filetype": files[i].filetype});
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": { "directory": "' + directory +'" }, "id": 1}';
+    console.debug(str);
+    doc.send(str);
+    fileModel.clear();
+}

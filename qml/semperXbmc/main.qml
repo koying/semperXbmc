@@ -136,6 +136,17 @@ Window {
                     }
                 }
 
+                TabButton {
+                    iconSource: "img/folder.png"
+                    tab:  fileTab
+                    onClicked: {
+                        main.state = "file"
+                        if (fileStack.depth == 0) {
+                            fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
+                        }
+                    }
+                }
+
                 Behavior on opacity {
                     NumberAnimation {
                         easing.type: Easing.InOutQuad
@@ -320,6 +331,31 @@ Window {
                 }
             }
         }
+
+        Item {
+            id: fileTab
+
+            PageStack {
+                id: fileStack
+
+                property string title: "FILES"
+
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: fileToolbar.top }
+                toolBar: fileToolbar
+
+            }
+
+            ToolBar {
+                id: fileToolbar
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+        }
     }
 
     Loader {
@@ -476,6 +512,10 @@ Window {
         id: episodeModel
         fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount", "resume" ]
         thumbDir: ctxFatFile
+    }
+    VariantModel {
+        id: fileModel
+        fields: [ "name", "path", "filetype" ]
     }
 
     Timer {

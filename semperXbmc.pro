@@ -42,6 +42,10 @@ symbian {
     contains(S60_VERSION, 5.0): __NOWEBKIT=1
 }
 
+contains(__ING,1) {
+   DEFINES += __ING
+}
+
 contains(__NOWEBKIT,1) {
     DEFINES += __NOWEBKIT
 } else {
@@ -63,3 +67,4 @@ contains(__NOWEBKIT,1) {
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
+
