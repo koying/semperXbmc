@@ -513,10 +513,6 @@ Window {
         fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount", "resume" ]
         thumbDir: ctxFatFile
     }
-    VariantModel {
-        id: fileModel
-        fields: [ "name", "path", "filetype" ]
-    }
 
     Timer {
         id: jsonRetryTimer

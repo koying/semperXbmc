@@ -377,7 +377,7 @@ Library.prototype.loadArtists = function() {
     artistModel.clear();
 }
 
-Library.prototype.loadSources = function() {
+Library.prototype.loadSources = function(fileModel) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -403,7 +403,7 @@ Library.prototype.loadSources = function() {
     fileModel.clear();
 }
 
-Library.prototype.loadFiles = function(directory) {
+Library.prototype.loadFiles = function(fileModel, directory) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -425,7 +425,8 @@ Library.prototype.loadFiles = function(directory) {
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": { "directory": "' + directory +'" }, "id": 1}';
+    var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory }, id: 1};
+    var str = JSON.stringify(o);
     console.debug(str);
     doc.send(str);
     fileModel.clear();

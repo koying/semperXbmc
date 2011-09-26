@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
+import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
 import "js/Utils.js" as Utils
@@ -83,12 +84,17 @@ Page {
         }
     }
 
+    VariantModel {
+        id: fileModel
+        fields: [ "name", "path", "filetype" ]
+    }
+
     onCurDirChanged: {
         albumModel.clear();
         console.debug(curDir);
         if (curDir != "/")
-            $().library.loadFiles(curDir);
+            $().library.loadFiles(fileModel, curDir);
         else
-            $().library.loadSources();
+            $().library.loadSources(fileModel);
     }
 }
