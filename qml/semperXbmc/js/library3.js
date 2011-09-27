@@ -425,7 +425,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory }, id: 1};
+    var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video" }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
     doc.send(str);
