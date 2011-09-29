@@ -4,7 +4,6 @@
  */
 
 function Player(typ) {
-    this.type=typ;
 }
 
 Player.prototype.skipPrevious = function() {
@@ -45,7 +44,7 @@ Player.prototype.cmd = function(cmd, param) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "'+this.type+'Player.'+cmd+'",';
+    var str = '{"jsonrpc": "2.0", "method": "Player.'+cmd+'",';
     if (param) {
         str += '"params": {' + param + "},"
     }

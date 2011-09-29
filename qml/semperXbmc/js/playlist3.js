@@ -9,8 +9,43 @@ function Playlist() {
     this.playing = false;
     this.paused = false;
     this.onVideoStarted = null
+
+    this.videoPlId = -1;
+    this.audioPlId = -1;
+    this.picturePlId = -1;
+
+    Playlist.prototype.getPlaylists();
 }
 
+Playlist.prototype.getPlaylists = function(){
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            console.debug(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var results = oJSON.result;
+            for (var i = 0; i < results.length; i++){
+                if (results[i].type == "audio")
+                    $().playlist.audioPlId = results[i].playlistid;
+                else if (results[i].type == "video")
+                    $().playlist.videoPlId = results[i].playlistid;
+                else if (results[i].type == "picture")
+                    $().playlist.picturePlId = results[i].playlistid;
+            }
+        }
+    }
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "Playlist.GetPlaylists", "id": 1}';
+    doc.send(str);
+    return;
+}
 
 Playlist.prototype.insertTrack = function(idTrack){
     var doc = new XMLHttpRequest();
@@ -31,8 +66,8 @@ Playlist.prototype.insertTrack = function(idTrack){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { "songid": '+idTrack+'}, "index": 0 }, "id": 1}';
-//    console.log(str);
+    var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.audioPlId, item: { songid: idTrack }, position: 0 }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
@@ -56,8 +91,8 @@ Playlist.prototype.addTrack = function(idTrack){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { "songid": '+idTrack+'} }, "id": 1}';
-//    console.log(str);
+    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.audioPlId, item: { songid: idTrack } }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
@@ -82,8 +117,8 @@ Playlist.prototype.insertAlbum = function(idalbum){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Insert", "params": { "item": { "albumid": '+idalbum+'}, "index": 0 }, "id": 1}';
-//    console.log(str);
+    var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.audioPlId, item: { albumid: idalbum }, position: 0 }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
@@ -109,8 +144,8 @@ Playlist.prototype.addAlbum = function(idalbum){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "item": { "albumid": '+idalbum+'} }, "id": 1}';
-//    console.log(str);
+    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.audioPlId, item: { albumid: idalbum } }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
@@ -136,7 +171,8 @@ Playlist.prototype.addMovie = function(idmovie){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "item": { "movieid": '+idmovie+'} }, "id": 1}';
+    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: idmovie } }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
@@ -162,20 +198,45 @@ Playlist.prototype.addEpisode = function(idepisode){
         }
     }
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "item": { "episodeid": '+idepisode+'} }, "id": 1}';
-//    console.log(str);
+    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: idepisode } }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
     return;
 }
 
 Playlist.prototype.videoClear = function(){
-    Playlist.prototype.cmd("Clear", "Video");
+    Playlist.prototype.cmd("Clear", $().playlist.videoPlId);
     this.previousItems = {}
 }
 
 Playlist.prototype.audioClear = function(){
-    Playlist.prototype.cmd("Clear", "Audio");
+    Playlist.prototype.cmd("Clear", $().playlist.audioPlId);
     this.previousItems = {}
+}
+
+Playlist.prototype.playVideo = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "VideoPlaylist.Play error: ", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+            if ($().playlist.onVideoStarted) {
+                console.log("onVideoStarted");
+                $().playlist.onVideoStarted();
+            }
+        }
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var o = { jsonrpc: "2.0", method: "Playlist.Play", params: { playlistid: $().playlist.videoPlId }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+    return;
 }
 
 Playlist.prototype.update = function(playlistModel){
@@ -227,35 +288,11 @@ Playlist.prototype.update = function(playlistModel){
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"playlist", "order":"ascending"}, "fields": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + $().playlist.audioPlId + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
 
-}
-
-Playlist.prototype.playVideo = function() {
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-            var error = oJSON.error;
-            if (error) {
-                console.log(Xbmc.dumpObj(error, "VideoPlaylist.Play error: ", "", 0));
-                errorView.addError("error", error.message, error.code);
-                return;
-            }
-            if ($().playlist.onVideoStarted) {
-                console.log("onVideoStarted");
-                $().playlist.onVideoStarted();
-            }
-        }
-    }
-
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Play", "id": 1}';
-    doc.send(str);
-    return;
 }
 
 Playlist.prototype.cmd = function(cmd, media, param) {
@@ -273,11 +310,11 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "'+ media + 'Playlist.'+cmd+'", ';
+    var str = '{"jsonrpc": "2.0", "method": "Playlist.'+cmd+'", "params": {';
     if (param) {
         str += param + ","
     }
-    str += '"id": 1}';
+    str += '"playlistid":'+ media + '}, "id": 1}';
     doc.send(str);
     return;
 }
