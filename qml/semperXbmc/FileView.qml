@@ -78,8 +78,12 @@ Page {
             style: globals.styleFiles
 
             onSelected:  {
-                console.debug(model.path);
-                fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: model.path})
+                if (model.filetype == "directory")
+                    fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: model.path})
+                else {
+                    $().videoplayer.playFile(model.path);
+                    mainTabGroup.currentTab = remoteTab
+                }
             }
         }
     }

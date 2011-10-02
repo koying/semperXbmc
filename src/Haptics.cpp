@@ -2,6 +2,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include <QFeedbackEffect>
+
 QTM_USE_NAMESPACE
 #endif
 

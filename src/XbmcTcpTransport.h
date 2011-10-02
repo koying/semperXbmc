@@ -11,7 +11,7 @@ public:
     explicit XbmcTcpTransport(QObject *parent = 0);
 
 public:
-    Q_INVOKABLE void initialize(const QString& ip, const QString& port);
+    Q_INVOKABLE void initialize(const QString& ip, const QString& port, const int version);
 
 signals:
     void notificationReceived(QString jsonMsg);
@@ -24,6 +24,7 @@ public slots:
 
 protected:
     QTcpSocket* m_socket;
+    int m_version;
 };
 
 #endif // XBMCTCPTRANSPORT_H

@@ -38,7 +38,7 @@ Page {
                 iconSource: "toolbar-mediacontrol-play"
                 onClicked: {
                     if (!$().playlist.playing) {
-                        $().playlist.cmd("Play", "Audio");
+                        $().playlist.playAudio();
                         $().playlist.playing = true;
                     } else
                         $().audioplayer.playPause();

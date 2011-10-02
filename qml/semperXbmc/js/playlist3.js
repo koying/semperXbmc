@@ -3,6 +3,17 @@
  *
  */
 
+function isEqual(a, b) {
+    if (a.length == b.length){
+        for (var i = 0; i < a.length; i++){
+            if (a[i].label != b[i].label) {
+                return false
+            }
+        }
+        return true;
+    }
+    return false;
+}
 
 function Playlist() {
     this.previousItems = {}
@@ -61,7 +72,7 @@ Playlist.prototype.insertTrack = function(idTrack){
 
             if (!$().playlist.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Audio");
+                $().playlist.playAudio();
             }
         }
     }
@@ -86,7 +97,7 @@ Playlist.prototype.addTrack = function(idTrack){
 
             if (!$().playlist.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Audio");
+                $().playlist.playAudio();
             }
         }
     }
@@ -112,7 +123,7 @@ Playlist.prototype.insertAlbum = function(idalbum){
 
             if (!$().playlist.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Audio");
+                $().playlist.playAudio();
             }
         }
     }
@@ -139,7 +150,7 @@ Playlist.prototype.addAlbum = function(idalbum){
 
             if (!$().playlist.playing) {
 //                console.log("play");
-                $().playlist.cmd("Play", "Audio");
+                $().playlist.playAudio();
             }
         }
     }
@@ -212,31 +223,6 @@ Playlist.prototype.videoClear = function(){
 Playlist.prototype.audioClear = function(){
     Playlist.prototype.cmd("Clear", $().playlist.audioPlId);
     this.previousItems = {}
-}
-
-Playlist.prototype.playVideo = function() {
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-            var error = oJSON.error;
-            if (error) {
-                console.log(Xbmc.dumpObj(error, "VideoPlaylist.Play error: ", "", 0));
-                errorView.addError("error", error.message, error.code);
-                return;
-            }
-            if ($().playlist.onVideoStarted) {
-                console.log("onVideoStarted");
-                $().playlist.onVideoStarted();
-            }
-        }
-    }
-
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var o = { jsonrpc: "2.0", method: "Playlist.Play", params: { playlistid: $().playlist.videoPlId }, id: 1};
-    var str = JSON.stringify(o);
-    doc.send(str);
-    return;
 }
 
 Playlist.prototype.update = function(playlistModel){
@@ -319,15 +305,49 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     return;
 }
 
-
-function isEqual(a, b) {
-    if (a.length == b.length){
-        for (var i = 0; i < a.length; i++){
-            if (a[i].label != b[i].label) {
-                return false
+Playlist.prototype.playVideo = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "playVideo error: ", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+            if ($().playlist.onVideoStarted) {
+                console.log("onVideoStarted");
+                $().playlist.onVideoStarted();
             }
         }
-        return true;
     }
-    return false;
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+    return;
 }
+
+Playlist.prototype.playAudio = function() {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "playAudio error: ", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.audioPlId } }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+    return;
+}
+

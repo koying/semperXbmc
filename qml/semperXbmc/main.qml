@@ -631,7 +631,6 @@ Window {
             return;
         }
         xbmcEventClient.initialize(globals.server, globals.eventPort);
-        xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort);
 
         tvshowModel.relatedModel = tvshowSuppModel
 
