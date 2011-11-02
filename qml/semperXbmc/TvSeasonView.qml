@@ -30,6 +30,11 @@ Page {
         content: MenuLayout {
 
             MenuItem {
+                text:  "View"
+                platformSubItemIndicator: true
+                onClicked: viewMenu.open()
+            }
+            MenuItem {
                 text:  "Style"
                 platformSubItemIndicator: true
                 onClicked: styleMenu.open()
@@ -38,6 +43,36 @@ Page {
                 text:  "Refresh"
                 onClicked: refresh()
             }
+        }
+    }
+
+    ContextMenu {
+        id: viewMenu
+        MenuLayout {
+            MenuItem {
+                text:  "All"
+            }
+            MenuItem {
+                text:  "Recent episodes"
+                onClicked: {
+                    globals.initialTvshowView = "TvShowRecentView.qml"
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+            }
+            MenuItem {
+                text:  "By Genre"
+                onClicked: {
+                    tvshowProxyModel.clear();
+                    globals.initialTvshowView = "TvShowGenreView.qml"
+                    tvshowStack.clear();
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+            }
+//            MenuItem {
+//                text:  "Coverflow view"
+//                onClicked: movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
+//            }
         }
     }
 
@@ -86,7 +121,7 @@ Page {
             title: model.name
             subtitle:  model.showtitle
             subtitleR: model.episodes + " ep"
-            image: model.poster
+            image: model.poster != "" ? model.poster : "qrc:/defaultImages/movie"
             watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons

@@ -510,7 +510,7 @@ Window {
     }
     VariantModel {
         id: episodeModel
-        fields: [ "id", "name", "poster", "tvshowId", "number", "duration", "rating", "playcount", "resume" ]
+        fields: [ "id", "name", "poster", "tvshowId", "showtitle", "season", "number", "duration", "rating", "playcount", "resume" ]
         thumbDir: ctxFatFile
     }
 

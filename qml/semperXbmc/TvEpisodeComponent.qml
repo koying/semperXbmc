@@ -25,9 +25,9 @@ Item {
 
         Cp.Delegate {
             title: (model.number > 0 ? model.number + ". " : "") + model.name
-            subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
-            subtitleR: Utils.sprintf("%.1f", model.rating)
-            image: model.poster
+            subtitle: (seasonId >= 0) ? (model.duration > 0 ? Utils.secToMinutes(model.duration) : "") : model.showtitle
+            subtitleR: (seasonId >= 0) ? Utils.sprintf("%.1f", model.rating) : "S" + model.season
+            image: model.poster != "" ? model.poster : "qrc:/defaultImages/movie"
             watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons
@@ -67,6 +67,11 @@ Item {
                     dialogPlaceholder.item.open();
                 } else {
                     playEpisode();
+                }
+            }
+
+            onContext: {
+                if (seasonId >= 0) {
                 }
             }
         }

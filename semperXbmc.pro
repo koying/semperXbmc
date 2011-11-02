@@ -68,3 +68,4 @@ contains(__NOWEBKIT,1) {
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
+

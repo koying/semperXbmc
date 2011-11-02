@@ -23,7 +23,7 @@ Library.prototype.handleMovies = function (responseText) {
 
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
-        var thumb = "qrc:/defaultImages/movie";
+        var thumb = "";
         if (movies[i].thumbnail) {
             thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
         }
@@ -103,7 +103,7 @@ Library.prototype.loadTVShows = function () {
             var result = oJSON.result;
             var tvshows = result.tvshows;
             for (var i = 0; i < tvshows.length; i++){
-                var thumb = "qrc:/defaultImages/tvshow";
+                var thumb = "";
                 if (tvshows[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
@@ -157,7 +157,7 @@ Library.prototype.loadSeasons = function (id) {
             var seasons = result.seasons;
             if (!seasons) return;
             for (var i = 0; i < seasons.length; i++){
-                var thumb = "qrc:/defaultImages/tvshow";
+                var thumb = "";
                 if (seasons[i].thumbnail) {
                     thumb = "http://"+$().server+":" + $().port + "/vfs/" + seasons[i].thumbnail;
                 }
@@ -194,7 +194,7 @@ Library.prototype.handleEpisodes = function (responseText) {
     if (!episodes) return;
     for (var i = 0; i < episodes.length; i++){
 
-        var thumb = "qrc:/defaultImages/tvshow";
+        var thumb = "";
         if (episodes[i].thumbnail) {
             thumb = "http://"+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
         }
@@ -203,7 +203,7 @@ Library.prototype.handleEpisodes = function (responseText) {
         if (episodes[i].streamdetails)
             duration = episodes[i].streamdetails.video[0].duration;
 
-        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "tvshowId": Library.prototype.tvshowId, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume});
+        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "tvshowId": Library.prototype.tvshowId, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume});
         if (episodes[i].resume && episodes[i].resume.position!=0) {
             console.debug("resume " + episodes[i].label + " @ " + episodes[i].resume.position + "/" + episodes[i].resume.total );
         }
@@ -220,7 +220,7 @@ Library.prototype.loadEpisodes = function (id) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["thumbnail", "showtitle", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["thumbnail", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
     doc.send(str);
     episodeModel.clear();
 
@@ -236,7 +236,7 @@ Library.prototype.recentEpisodes = function () {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["thumbnail", "showtitle", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["thumbnail", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
     doc.send(str);
     episodeModel.clear();
 

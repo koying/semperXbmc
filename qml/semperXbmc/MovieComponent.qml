@@ -30,7 +30,7 @@ Item {
             subtitle: (model.genre != undefined ? model.genre : "")
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            image: globals.cacheThumbnails ? model.posterThumb : model.poster
+            image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/movie"
             watched: model.playcount > 0
 
             style: globals.styleMovies
