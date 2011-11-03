@@ -559,6 +559,11 @@ Window {
 //                console.debug("No data");
                 return;
             }
+            var item = data.item;
+            if (item) {
+                for (var attrname in item) { data[attrname] = item[attrname]; }
+            }
+
 //            console.debug(Xbmc.dumpObj(data, "data", "", 0));
 
             switch (method) {

@@ -100,6 +100,7 @@ public:
     /********** END METHODS *************/
 
 protected:
+    QString getKey();
     QVariant getKeyValue(const QVariantMap &vals);
     QVariant getKeyValue(int row);
 

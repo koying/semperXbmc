@@ -115,26 +115,22 @@ void VariantModel::setthumbDir(QString val)
     m_cacheThread->start(QThread::LowPriority);
 }
 
+QString VariantModel::getKey()
+{
+    if (!m_key.isEmpty())
+        return m_key;
+    else
+        return m_fields[0].toString();
+}
+
 QVariant VariantModel::getKeyValue(const QVariantMap &vals)
 {
-    QString keystring;
-    if (!m_key.isEmpty())
-        keystring = m_key;
-    else
-        keystring = m_fields[0].toString();
-
-    return vals[keystring];
+    return vals[getKey()];
 }
 
 QVariant VariantModel::getKeyValue(int row)
 {
-    QString keystring;
-    if (!m_key.isEmpty())
-        keystring = m_key;
-    else
-        keystring = m_fields[0].toString();
-
-    return m_data[row].value(keystring);
+    return m_data[row].value(getKey());
 }
 
 QVariant VariantModel::getValue(const QVariant &keyvalue, const QString &valueField, const QVariant& defValue) const
@@ -200,25 +196,37 @@ void VariantModel::update(const QVariantMap &vals)
     if (!m_initialised) return;
 
     QVariant keyVal = getKeyValue(vals);
-    if (!keyVal.isValid()) return;
+    if (!keyVal.isValid()) {
+        qDebug() << "VariantModel::update: invalid key: ";
+        return;
+    }
 
     int row = 0;
     for (; row < m_data.size(); ++row)
         if (getKeyValue(row) == keyVal)
             break;
-    if (row == m_data.size()) return;
+    if (row == m_data.size()) {
+        qDebug() << "VariantModel::update: key not found";
+        return;
+    }
 
+    bool updated = false;
     QMapIterator<QString, QVariant> it(vals);
     while (it.hasNext()) {
         it.next();
 
-        if (m_fields.contains(it.key()))
+        if (m_fields.contains(it.key()) && it.key() != getKey()) {
             m_data[row][it.key()] = it.value();
+            qDebug() << "VariantModel::update: " << m_data[row][it.key()] << " = " << it.value();
+            updated = true;
+        }
     }
 
-    QModelIndex index = createIndex(row, 0, 0);
-    emit dataChanged(index, index);
-    m_dirty = true;
+    if (updated) {
+        QModelIndex index = createIndex(row, 0, 0);
+        emit dataChanged(index, index);
+        m_dirty = true;
+    }
 }
 
 void VariantModel::keyUpdate(const QVariantMap &vals)
@@ -232,17 +240,22 @@ void VariantModel::keyUpdate(const QVariantMap &vals)
     if (row == -1)
         append(vals);
     else {
+        bool updated = false;
         QMapIterator<QString, QVariant> it(vals);
         while (it.hasNext()) {
             it.next();
 
-            if (m_fields.contains(it.key()))
+            if (m_fields.contains(it.key()) && it.key() != getKey()) {
                 m_data[row][it.key()] = it.value();
+                updated = true;
+            }
         }
 
-        QModelIndex index = createIndex(row, 0, 0);
-        emit dataChanged(index, index);
-        m_dirty = true;
+        if (updated) {
+            QModelIndex index = createIndex(row, 0, 0);
+            emit dataChanged(index, index);
+            m_dirty = true;
+        }
     }
 }
 
