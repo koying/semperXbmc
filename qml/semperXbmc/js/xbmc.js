@@ -66,7 +66,7 @@ Xbmc.prototype.init = function() {
             xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort, Xbmc.prototype.jsonRPCVer);
 
             switch (Xbmc.prototype.jsonRPCVer) {
-            case 2:
+            case 2:  // Dharma
                 xbmc.general = new General.General();
                 xbmc.library = new Library.Library();
                 xbmc.playlist = new Playlist.Playlist();
@@ -74,7 +74,8 @@ Xbmc.prototype.init = function() {
                 xbmc.videoplayer = new Player.Player("Video");
                 break;
 
-            case 3:
+            case 3:  // Eden
+            case 4:
                 xbmc.general = new General3.General();
                 xbmc.library = new Library3.Library();
                 xbmc.playlist = new Playlist3.Playlist();
