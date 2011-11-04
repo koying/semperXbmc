@@ -28,4 +28,4 @@ HEADERS += \
 }
 
 RESOURCES += \
-    src/resource.qrc
+    qml/semperXbmc/img/resource.qrc

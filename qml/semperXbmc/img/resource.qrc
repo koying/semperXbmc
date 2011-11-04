@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/defaultImages">
+        <file alias="tvshow">tv.svg</file>
+        <file alias="movie">filmstrip.svg</file>
+        <file alias="album">music_album.svg</file>
+        <file alias="artist">contacts.svg</file>
+    </qresource>
+</RCC>

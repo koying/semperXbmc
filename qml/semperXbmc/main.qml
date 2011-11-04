@@ -93,7 +93,7 @@ Window {
                 }
 
                 TabButton {
-                    iconSource: "img/filmstrip.png"
+                    iconSource: "img/filmstripBg.png"
                     tab: movieTab
                     onClicked: {
                         main.state = "movies"
@@ -104,7 +104,7 @@ Window {
                 }
 
                 TabButton {
-                    iconSource: "img/tv.png"
+                    iconSource: "img/tvBg.png"
                     tab: tvTab
                     onClicked: {
                         main.state = "tvshows"
@@ -115,7 +115,7 @@ Window {
                 }
 
                 TabButton {
-                    iconSource: "img/music.png"
+                    iconSource: "img/musicBg.png"
                     tab: musicTab
                     onClicked: {
                         main.state = "music"
@@ -126,7 +126,7 @@ Window {
                 }
 
                 TabButton {
-                    iconSource: "img/playlist.png"
+                    iconSource: "img/playlistBg.png"
                     tab:  playlistTab
                     onClicked: {
                         main.state = "playlist"
@@ -137,7 +137,7 @@ Window {
                 }
 
                 TabButton {
-                    iconSource: "img/folder.png"
+                    iconSource: "img/folderBg.png"
                     tab:  fileTab
                     onClicked: {
                         main.state = "file"

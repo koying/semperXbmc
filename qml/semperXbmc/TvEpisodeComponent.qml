@@ -27,7 +27,7 @@ Item {
             title: (model.number > 0 ? model.number + ". " : "") + model.name
             subtitle: (seasonId >= 0) ? (model.duration > 0 ? Utils.secToMinutes(model.duration) : "") : model.showtitle
             subtitleR: (seasonId >= 0) ? Utils.sprintf("%.1f", model.rating) : "S" + model.season
-            image: model.poster != "" ? model.poster : "qrc:/defaultImages/movie"
+            image: model.poster != "" ? model.poster : "qrc:/defaultImages/tvshow"
             watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons

@@ -121,7 +121,7 @@ Page {
             title: model.name
             subtitle:  model.showtitle
             subtitleR: model.episodes + " ep"
-            image: model.poster != "" ? model.poster : "qrc:/defaultImages/movie"
+            image: model.poster != "" ? model.poster : "qrc:/defaultImages/tvshow"
             watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons
