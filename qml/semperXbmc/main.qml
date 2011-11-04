@@ -147,6 +147,15 @@ Window {
                     }
                 }
 
+                TabButton {
+                    iconSource: "img/download.png"
+                    tab: downloadTab
+                    visible: (downloadTab.count > 0)
+                    onClicked: {
+                        main.state = "download"
+                    }
+                }
+
                 Behavior on opacity {
                     NumberAnimation {
                         easing.type: Easing.InOutQuad
@@ -355,6 +364,11 @@ Window {
                     }
                 }
             }
+        }
+
+        DownloadView {
+            id: downloadTab
+            property string title: "DOWNLOADS"
         }
     }
 

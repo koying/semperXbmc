@@ -32,7 +32,7 @@ Playlist.prototype.getPlaylists = function(){
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText);
+//            console.debug(doc.responseText);
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {

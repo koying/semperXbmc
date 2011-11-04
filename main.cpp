@@ -15,6 +15,7 @@
 #include "BrowserView.h"
 #endif
 #include "Haptics.h"
+#include "Download.h"
 
 #define QUOTE_(x) #x
 #define QUOTE(x) QUOTE_(x)
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<VariantModel>("com.semperpax.qmlcomponents", 1, 0, "VariantModel");
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
     qmlRegisterType<Haptics>("com.semperpax.qmlcomponents", 1, 0, "Haptics");
+    qmlRegisterType<Download>("com.semperpax.qmlcomponents", 1, 0, "Download");
 
 #ifdef __ING
     QNetworkProxy myProxy(QNetworkProxy::HttpProxy, "localhost", 8888);
@@ -74,6 +76,47 @@ int main(int argc, char *argv[])
             fatPath = "c:/data/"+fatName;
     }
     QString fatFile = QString("fat:///%1#/").arg(fatPath);
+
+    //Set default download dirs
+    QDir d;
+    d.setPath("f:/");
+    if (d.exists()) {
+        d.setPath("f:/Music");
+        if (!d.exists()) {
+            d.mkpath("f:/Music");
+            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "f:/Music");
+        }
+        d.setPath("f:/Video");
+        if (!d.exists()) {
+            d.mkpath("f:/Video");
+            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "f:/Video");
+        }
+    } else {
+        d.setPath("e:/");
+        if (d.exists()) {
+            d.setPath("e:/Music");
+            if (!d.exists()) {
+                d.mkpath("e:/Music");
+                viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "e:/Music");
+            }
+            d.setPath("e:/Video");
+            if (!d.exists()) {
+                d.mkpath("e:/Video");
+                viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "e:/Video");
+            }
+        } else {
+            d.setPath("c:/data/Music");
+            if (!d.exists()) {
+                d.mkpath("c:/data/Music");
+                viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
+            }
+            d.setPath("c:/data/Video");
+            if (!d.exists()) {
+                d.mkpath("c:/data/Video");
+                viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
+            }
+        }
+    }
 
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(fatFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);

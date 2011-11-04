@@ -260,13 +260,13 @@ Library.prototype.loadTracks = function (idalbum) {
             var songs = result.songs;
             trackModel.clear();
             for (var i = 0; i < songs.length; i++){
-                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "number": songs[i].track, "duration": songs[i].duration});
+                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "number": songs[i].track, "duration": songs[i].duration, "path": songs[i].file});
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration"], "albumid" : '+idalbum+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration", "file"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
     trackModel.clear();
 
@@ -408,7 +408,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-            console.debug(doc.responseText);
+//            console.debug(doc.responseText);
 
             var error = oJSON.error;
             if (error) {
@@ -428,6 +428,20 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video" }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
-    doc.send(str);
+//    doc.send(str);
     fileModel.clear();
+}
+
+Library.prototype.downloadFile = function(path) {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        console.debug(doc.responseText);
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var o = { jsonrpc: "2.0", method: "Files.PrepareDownload", params: { path: path }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+
+    return;
 }

@@ -11,7 +11,8 @@ SOURCES += \
     src/ThumbnailCache.cpp \
     src/SortFilterModel.cpp \
     src/XbmcTcpTransport.cpp \
-    src/Haptics.cpp
+    src/Haptics.cpp \
+    src/Download.cpp
 
 HEADERS += \
     XbmcEventClient.h \
@@ -21,7 +22,8 @@ HEADERS += \
     src/ThumbnailCache.h \
     src/SortFilterModel.h \
     src/XbmcTcpTransport.h \
-    src/Haptics.h
+    src/Haptics.h \
+    src/Download.h
 
 !symbian {
     LIBS += -lws2_32
@@ -29,3 +31,5 @@ HEADERS += \
 
 RESOURCES += \
     qml/semperXbmc/img/resource.qrc
+
+

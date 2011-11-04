@@ -10,7 +10,7 @@ Player.prototype.getPlayers = function() {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText);
+//            console.debug(doc.responseText);
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
@@ -101,7 +101,7 @@ Player.prototype.playFile = function(path) {
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { file: path } }, id: 1};
     var str = JSON.stringify(o);
-    console.debug(str);
+//    console.debug(str);
     doc.send(str);
     return;
 }

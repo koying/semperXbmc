@@ -134,6 +134,11 @@ Item {
                             visible: $().jsonRPCVer > 2
                             onClicked: $().playlist.insertTrack(model.idtrack)
                         }
+                        MenuItem {
+                            text: "Download"
+                            visible: $().jsonRPCVer > 2
+                            onClicked: $().library.downloadFile(model.path)
+                        }
                     }
                 }
 
