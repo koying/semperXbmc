@@ -79,44 +79,61 @@ int main(int argc, char *argv[])
 
     //Set default download dirs
     QDir d;
+#ifdef Q_OS_SYMBIAN
     d.setPath("f:/");
     if (d.exists()) {
         d.setPath("f:/Music");
         if (!d.exists()) {
             d.mkpath("f:/Music");
-            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "f:/Music");
         }
+        viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "f:/Music");
+
         d.setPath("f:/Video");
         if (!d.exists()) {
             d.mkpath("f:/Video");
-            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "f:/Video");
         }
+        viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "f:/Video");
     } else {
         d.setPath("e:/");
         if (d.exists()) {
             d.setPath("e:/Music");
             if (!d.exists()) {
                 d.mkpath("e:/Music");
-                viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "e:/Music");
             }
+            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "e:/Music");
+
             d.setPath("e:/Video");
             if (!d.exists()) {
                 d.mkpath("e:/Video");
-                viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "e:/Video");
             }
+            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "e:/Video");
         } else {
             d.setPath("c:/data/Music");
             if (!d.exists()) {
                 d.mkpath("c:/data/Music");
-                viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
             }
+            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
+
             d.setPath("c:/data/Video");
             if (!d.exists()) {
                 d.mkpath("c:/data/Video");
-                viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
             }
+            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
         }
     }
+#else
+    d.setPath("c:/data/Music");
+    if (!d.exists()) {
+        d.mkpath("c:/data/Music");
+    }
+    viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
+
+    d.setPath("c:/data/Video");
+    if (!d.exists()) {
+        d.mkpath("c:/data/Video");
+    }
+    viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
+#endif
 
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(fatFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);

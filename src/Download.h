@@ -36,23 +36,16 @@ public:
     Q_PROPERTY(QString inputPath READ inputPath WRITE setInputPath)
 public:
     QString inputPath() { return m_inputPath; }
-    void setInputPath(QString val) { m_inputPath = val; }
+    void setInputPath(QString val);
 private:
     QString m_inputPath;
 
     Q_PROPERTY(QString outputPath READ outputPath WRITE setOutputPath)
 public:
     QString outputPath() { return m_outputPath; }
-    void setOutputPath(QString val) { m_outputPath = val; }
+    void setOutputPath(QString val);
 private:
     QString m_outputPath;
-
-    Q_PROPERTY(QString outputFilename READ outputFilename WRITE setoutputFilename)
-public:
-    QString outputFilename() { return m_outputFilename; }
-    void setoutputFilename(QString val) { m_outputFilename = val; }
-private:
-    QString m_outputFilename;
 
     Q_PROPERTY(QString title READ title NOTIFY TitleChanged)
 public:

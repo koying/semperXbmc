@@ -14,40 +14,7 @@ Download::Download(QObject *parent)
 
 void Download::go()
 {
-    m_errorCode = 0;
-    m_isFinished = false;
-    m_progress = 0;
-
-    if (m_inputPath.isEmpty() || m_outputPath.isEmpty()) {
-        m_errorCode = 1;
-        m_isFinished = true;
-        emit finished();
-        return;
-    }
-
-    if (!m_inputPath.startsWith("http://")) {
-        m_errorCode = 2;
-        m_isFinished = true;
-        emit finished();
-        return;
-    }
-
-    QUrl u(m_inputPath);
-    if (!u.isValid()) {
-        m_errorCode = 3;
-        m_isFinished = true;
-        emit finished();
-        return;
-    }
-    m_title = u.path().section('/', -1);
-    emit TitleChanged();
-
-    QDir d(m_outputPath);
-    if (!d.exists()) {
-        d.mkpath(m_outputPath);
-    }
-
-    m_outputFile = new QFile(m_outputPath+"/"+m_outputFilename);
+    m_outputFile = new QFile(m_outputPath+"/"+m_title);
     if (!m_outputFile) {
         m_errorCode = 4;
         m_isFinished = true;
@@ -61,7 +28,8 @@ void Download::go()
         return;
     }
 
-    QNetworkReply* m_reply = m_netmanager->get(QNetworkRequest(u));
+    QUrl u(m_inputPath);
+    m_reply = m_netmanager->get(QNetworkRequest(u));
     if (!m_reply) {
         m_errorCode = 6;
         m_isFinished = true;
@@ -74,6 +42,7 @@ void Download::go()
     connect(m_reply, SIGNAL(finished()), this, SLOT(onFinished()));
 
     m_isActive = true;
+    m_isFinished = false;
     emit activated();
 }
 
@@ -98,7 +67,7 @@ void Download::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
         return;
     }
 
-    qreal p = bytesReceived / bytesTotal;
+    qreal p = (qreal)bytesReceived / bytesTotal * 100;
     if (p != m_progress) {
         m_progress = p;
         emit progressChanged();
@@ -108,4 +77,45 @@ void Download::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 void Download::onError(QNetworkReply::NetworkError code)
 {
     m_errorCode = 500 + code;
+}
+
+void Download::setInputPath(QString val)
+{
+    m_inputPath = val;
+    m_isFinished = false;
+
+    if (m_inputPath.isEmpty() || m_outputPath.isEmpty()) {
+        m_errorCode = 1;
+        m_isFinished = true;
+        emit finished();
+        return;
+    }
+
+    if (!m_inputPath.startsWith("http://")) {
+        m_errorCode = 2;
+        m_isFinished = true;
+        emit finished();
+        return;
+    }
+
+    QUrl u(m_inputPath);
+    if (!u.isValid()) {
+        m_errorCode = 3;
+        m_isFinished = true;
+        emit finished();
+        return;
+    }
+    m_title = u.path().section('/', -1);
+    emit TitleChanged();
+}
+
+void Download::setOutputPath(QString val)
+{
+    m_outputPath = val;
+    m_isFinished = false;
+
+    QDir d(m_outputPath);
+    if (!d.exists()) {
+        d.mkpath(m_outputPath);
+    }
 }

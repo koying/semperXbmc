@@ -528,6 +528,10 @@ Window {
         thumbDir: ctxFatFile
     }
 
+    ListModel {
+        id: downloadsModel
+    }
+
     Timer {
         id: jsonRetryTimer
         interval: 2000

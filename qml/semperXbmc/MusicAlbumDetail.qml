@@ -137,7 +137,7 @@ Item {
                         MenuItem {
                             text: "Download"
                             visible: $().jsonRPCVer > 2
-                            onClicked: $().library.downloadFile(model.path)
+                            onClicked: $().library.downloadFile("music", model.path)
                         }
                     }
                 }

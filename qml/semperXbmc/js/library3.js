@@ -432,15 +432,32 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     fileModel.clear();
 }
 
-Library.prototype.downloadFile = function(path) {
+Library.prototype.downloadFile = function(type, path) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
-        console.debug(doc.responseText);
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "downloadFile error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+            var result = oJSON.result;
+            var details = result.details;
+            if (details) {
+                if (result.mode == "redirect") {
+                    downloadsModel.append({"inputPath": "http://"+$().server+":" + $().port + "/" + details.path, "outputPath": (type == "music" ? ctxDownloadMusicFolder : ctxDownloadVideoFolder), "activate":false});
+                }
+            }
+        }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
     var o = { jsonrpc: "2.0", method: "Files.PrepareDownload", params: { path: path }, id: 1};
     var str = JSON.stringify(o);
+    console.debug(str);
     doc.send(str);
 
     return;

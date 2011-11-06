@@ -9,6 +9,7 @@ ListItem {
     property string outputPath
     property alias isActive: download.isActive
     property alias isFinished: download.isFinished
+    property bool activate
 
     Item  {
         anchors.fill: liDownload.paddingItem
@@ -23,6 +24,7 @@ ListItem {
 
         ProgressBar {
             id: pb1
+            anchors { top: txItemTitle.bottom; right: parent.right; left: parent.left }
             minimumValue: 0
             maximumValue: 100
             value: 0
@@ -41,7 +43,9 @@ ListItem {
         }
     }
 
-    function go() {
-        download.go();
+    onActivateChanged: {
+        console.debug("activate changed: " + activate);
+        if (activate)
+            download.go();
     }
 }
