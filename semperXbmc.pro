@@ -1,5 +1,5 @@
 # Add more folders to ship with the application, here
-folder_01.source = qml/semperXbmc
+folder_01.source = qml
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
@@ -63,6 +63,10 @@ contains(__NOWEBKIT,1) {
 
     include(../qtscroller/qtscroller.pri)
 }
+
+RESOURCES += \
+    qml/resource.qrc
+
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

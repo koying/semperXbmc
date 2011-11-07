@@ -29,7 +29,3 @@ HEADERS += \
     LIBS += -lws2_32
 }
 
-RESOURCES += \
-    qml/semperXbmc/img/resource.qrc
-
-

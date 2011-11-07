@@ -59,81 +59,69 @@ int main(int argc, char *argv[])
     QmlApplicationViewer* viewer = new QmlApplicationViewer;
 
     //Find FAT file
+    QString dataDir;
     QString fatPath;
     QString fatName = app.applicationName() + ".fat";
-    if (QFile::exists("e:/"+fatName))
+#ifdef __ANDROID__
+    if (QFile::exists("/sdcard/"+fatName)) {
+        dataDir = "/sdcard";
+        fatPath = "/sdcard/"+fatName;
+    }
+#else
+    if (QFile::exists("e:/"+fatName)) {
+        dataDir = "e:/";
         fatPath = "e:/"+fatName;
-    else if (QFile::exists("c:/data/"+fatName))
+    } else if (QFile::exists("c:/data/"+fatName)) {
+        dataDir = "c:/data/";
         fatPath = "c:/data/"+fatName;
-    else if (QFile::exists("c:/data/semperXbmcThumbs.fat"))
+    } else if (QFile::exists("c:/data/semperXbmcThumbs.fat")) {
+        dataDir = "c:/data";
         fatPath = "c:/data/semperXbmcThumbs.fat";
+    }
+#endif
 
     //Not found? create one...
     if (fatPath.isEmpty()) {
-        if (QDir("e:/").exists())
+#ifdef __ANDROID__
+        if (QDir("/sdcard").exists()) {
+            dataDir = "/sdcard";
+            fatPath = "/sdcard/"+fatName;
+        } else {
+            qDebug() << "sdcard not found";
+            exit (1);
+        }
+#else
+        if (QDir("e:/").exists()) {
+            dataDir = "e:/";
             fatPath = "e:/"+fatName;
-        else
+        } else {
+            dataDir = "c:/data/";
             fatPath = "c:/data/"+fatName;
+        }
+#endif
     }
     QString fatFile = QString("fat:///%1#/").arg(fatPath);
 
     //Set default download dirs
     QDir d;
+
 #ifdef Q_OS_SYMBIAN
     d.setPath("f:/");
     if (d.exists()) {
-        d.setPath("f:/Music");
-        if (!d.exists()) {
-            d.mkpath("f:/Music");
-        }
-        viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "f:/Music");
-
-        d.setPath("f:/Video");
-        if (!d.exists()) {
-            d.mkpath("f:/Video");
-        }
-        viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "f:/Video");
-    } else {
-        d.setPath("e:/");
-        if (d.exists()) {
-            d.setPath("e:/Music");
-            if (!d.exists()) {
-                d.mkpath("e:/Music");
-            }
-            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "e:/Music");
-
-            d.setPath("e:/Video");
-            if (!d.exists()) {
-                d.mkpath("e:/Video");
-            }
-            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "e:/Video");
-        } else {
-            d.setPath("c:/data/Music");
-            if (!d.exists()) {
-                d.mkpath("c:/data/Music");
-            }
-            viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
-
-            d.setPath("c:/data/Video");
-            if (!d.exists()) {
-                d.mkpath("c:/data/Video");
-            }
-            viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
-        }
+        dataDir = "f:/";
     }
-#else
-    d.setPath("c:/data/Music");
-    if (!d.exists()) {
-        d.mkpath("c:/data/Music");
-    }
-    viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", "c:/data/Music");
-
-    d.setPath("c:/data/Video");
-    if (!d.exists()) {
-        d.mkpath("c:/data/Video");
-    }
-    viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", "c:/data/Video");
 #endif
+    d.setPath(dataDir + "/Music");
+    if (!d.exists()) {
+        d.mkpath(dataDir + "/Music");
+    }
+    viewer->rootContext()->setContextProperty("ctxDownloadMusicFolder", dataDir + "/Music");
+
+    d.setPath(dataDir + "/Video");
+    if (!d.exists()) {
+        d.mkpath(dataDir + "/Video");
+    }
+    viewer->rootContext()->setContextProperty("ctxDownloadVideoFolder", dataDir + "/Video");
 
     ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir(fatFile), QSize(150, 150), Qt::KeepAspectRatioByExpanding);
 //    ThumbImageProvider* thumbProvider = new ThumbImageProvider(QDir("fat:///" + QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/semperXbmcThumbs.fat#/"), QSize(100, 100), Qt::KeepAspectRatioByExpanding);
@@ -148,7 +136,7 @@ int main(int argc, char *argv[])
 
     viewer->engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 
-    viewer->setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
+    viewer->setSource(QUrl(QLatin1String("qrc:/qml/main.qml")));
     viewer->showExpanded();
 
     int retval = app.exec();
