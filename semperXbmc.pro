@@ -71,18 +71,3 @@ RESOURCES += \
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
-
-OTHER_FILES += \
-    android/src/eu/licentia/necessitas/industrius/QtActivity.java \
-    android/src/eu/licentia/necessitas/industrius/QtApplication.java \
-    android/src/eu/licentia/necessitas/industrius/QtLayout.java \
-    android/src/eu/licentia/necessitas/industrius/QtSurface.java \
-    android/src/eu/licentia/necessitas/ministro/IMinistro.aidl \
-    android/src/eu/licentia/necessitas/ministro/IMinistroCallback.aidl \
-    android/src/eu/licentia/necessitas/mobile/QtAndroidContacts.java \
-    android/src/eu/licentia/necessitas/mobile/QtCamera.java \
-    android/src/eu/licentia/necessitas/mobile/QtFeedback.java \
-    android/src/eu/licentia/necessitas/mobile/QtLocation.java \
-    android/src/eu/licentia/necessitas/mobile/QtMediaPlayer.java \
-    android/src/eu/licentia/necessitas/mobile/QtSensors.java \
-    android/src/eu/licentia/necessitas/mobile/QtSystemInfo.java
