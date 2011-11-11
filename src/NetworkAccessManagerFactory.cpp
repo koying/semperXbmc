@@ -1,4 +1,4 @@
-#include "networkaccessmanagerfactory.h"
+#include "NetworkAccessManagerFactory.h"
 #include <QtNetwork>
 #include <QDesktopServices>
 
