@@ -19,7 +19,8 @@ Rectangle {
         border.left: 30; border.top: 30
         border.right: 30; border.bottom: 30
         source: "img/remote/remote_background.png"
-        height: 300
+        height: main.inPortrait ? parent.height / 2 * 1.1 : parent.height
+        width: main.inPortrait ? parent.width : parent.width / 2 * 1.1
 
         anchors {
             left: parent.left
@@ -165,7 +166,7 @@ Rectangle {
             PropertyChanges {
                 target: globalKeys
                 height: undefined
-                width: 360
+                width: parent.width / 2 * 1.1
             }
             AnchorChanges {
                 target: globalKeys

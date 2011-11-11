@@ -49,6 +49,7 @@ Item {
         id: btUp
         source: imageSourceRoot + "_up.png"
         smooth: true
+        width: sourceSize.width * main.scaling; height: sourceSize.height * main.scaling
     }
     Image {
         id: btDn
@@ -63,7 +64,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         smooth: true
         anchors.centerIn: btUp;
-        width: container.width-40; height: container.height-40
+        width: container.width/2; height: container.height/2
     }
 
     Text {

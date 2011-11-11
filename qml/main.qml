@@ -19,10 +19,9 @@ import "js/player3.js" as Player3
 
 Window {
     id: main
-    width: 360
-    height: 640
 
     property bool jsonInitialized: false
+    property real scaling: inPortrait ? main.height / 640 : main.height / 360
 
     Globals {
         id: globals
@@ -35,40 +34,40 @@ Window {
        anchors.fill: parent
     }
 
-//    StatusBar {
-//        id: statusBar
-//        property alias text: txTitle.text
+    StatusBar {
+        id: statusBar
+        property alias text: txTitle.text
 
-//        anchors { top: parent.top; left: parent.left; right: parent.right }
+        anchors { top: parent.top; left: parent.left; right: parent.right }
 
-//        Behavior on opacity {
-//            NumberAnimation {
-//                easing.type: Easing.InOutQuad
-//            }
-//        }
+        Behavior on opacity {
+            NumberAnimation {
+                easing.type: Easing.InOutQuad
+            }
+        }
 
-//        Text {
-//            id: txTitle
-//            anchors { left: parent.left; leftMargin: 10 }
+        Text {
+            id: txTitle
+            anchors { left: parent.left; leftMargin: 10 }
 
-//            color: "#2cb729"
-//            font {
-//                family: "Helvetica";
-//                pixelSize: parent.height -5
-//            }
+            color: "#2cb729"
+            font {
+                family: "Helvetica";
+                pixelSize: parent.height -5
+            }
 
-//            text: mainTabGroup.currentTab.title
-//        }
+            text: mainTabGroup.currentTab.title
+        }
 
-//        MouseArea {
-//            id: statusArea
-//            anchors.fill: parent
-//        }
-//    }
+        MouseArea {
+            id: statusArea
+            anchors.fill: parent
+        }
+    }
 
     ToolBar {
         id: toolBar
-        anchors { left: parent.left; right: parent.right; top: parent.top }
+        anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
 
         tools: ToolBarLayout {
 

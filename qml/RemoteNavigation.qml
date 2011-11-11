@@ -23,7 +23,7 @@ Item {
             id: btUp
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -80
+            anchors.verticalCenterOffset: -80 * main.scaling
             imageSourceRoot: "img/remote/remote_cross_top"
             iconSource: container.iconTop
             autoRepeat: true
@@ -34,7 +34,7 @@ Item {
             id: btDown
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 80
+            anchors.verticalCenterOffset: 80 * main.scaling
             imageSourceRoot: "img/remote/remote_cross_bottom"
             iconSource: container.iconBottom
             autoRepeat: true
@@ -45,7 +45,7 @@ Item {
             id: btLeft
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: -80
+            anchors.horizontalCenterOffset: -80 * main.scaling
             imageSourceRoot: "img/remote/remote_cross_left"
             iconSource: container.iconLeft
             autoRepeat: true
@@ -56,7 +56,7 @@ Item {
             id: btRight
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: 80
+            anchors.horizontalCenterOffset: 80 * main.scaling
             imageSourceRoot: "img/remote/remote_cross_right"
             iconSource: container.iconRight
             autoRepeat: true

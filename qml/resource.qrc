@@ -135,5 +135,11 @@
         <file>img/remote/video_stop_48.png</file>
         <file>img/remote/volume_down_48.png</file>
         <file>img/remote/volume_up_48.png</file>
+        <file>components/img/checkmark_24.png</file>
+        <file>components/img/dialog-error.png</file>
+        <file>components/img/dialog-information.png</file>
+        <file>components/img/dialog-warning.png</file>
+        <file>components/img/emblem-unreadable.png</file>
+        <file>components/img/stop_24.png</file>
     </qresource>
 </RCC>
