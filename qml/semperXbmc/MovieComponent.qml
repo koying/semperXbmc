@@ -96,7 +96,7 @@ Item {
                                     function () {
                                         $().playlist.onVideoStarted =
                                                 function() {
-                                                    $().videoplayer.seekTime(model.resume.position);
+                                                    $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
                                                     $().playlist.onVideoStarted = null;
                                                 }
 

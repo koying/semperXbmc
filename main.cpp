@@ -136,7 +136,8 @@ int main(int argc, char *argv[])
 
     viewer->engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 
-    viewer->setSource(QUrl(QLatin1String("qrc:/qml/main.qml")));
+    viewer->setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
+    viewer->engine()->setBaseUrl(QUrl::fromLocalFile("/"));
     viewer->showExpanded();
 
     int retval = app.exec();

@@ -4,7 +4,17 @@
  */
 
 function Player(typ) {
+    this.playerId = -1;
+    if (typ == "Audio")
+        this.playerId = 0;
+    else if (typ == "Video")
+        this.playerId = 1;
+    else if (typ == "Picture")
+        this.playerId = 2;
+
 }
+
+Player.prototype.playerId = -1;
 
 Player.prototype.getPlayers = function() {
     var doc = new XMLHttpRequest();
@@ -53,7 +63,24 @@ Player.prototype.skipNext = function() {
 }
 
 Player.prototype.seekPercentage = function(percent) {
-    this.cmd("SeekPercentage", { value: percent.toFixed(0) } );
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var error = JSON.parse(doc.responseText).error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Player.prototype.seekPercentage error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var o = { jsonrpc: "2.0", method: "Player.Seek", params: { playerid:this.playerId, value:percent }, id: 1};
+    var str = JSON.stringify(o);
+    console.log(str);
+    doc.send(str);
+    return;
 }
 
 Player.prototype.seekTime = function(position) {
@@ -74,7 +101,7 @@ Player.prototype.cmd = function(cmd, param) {
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:0 }, id: 1};
+    var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:this.playerId }, id: 1};
     if (param) {
         o.params += param;
     }
