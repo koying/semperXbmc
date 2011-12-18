@@ -20,7 +20,7 @@ VariantModel::VariantModel(QObject *parent)
 VariantModel::~VariantModel()
 {
     if (m_cacheThread) {
-        m_cacheThread->terminate();
+        m_cacheThread->quit();
         m_cacheThread->wait(5000);
     }
 }

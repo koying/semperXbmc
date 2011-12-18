@@ -428,7 +428,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video" }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
-//    doc.send(str);
+    doc.send(str);
     fileModel.clear();
 }
 
