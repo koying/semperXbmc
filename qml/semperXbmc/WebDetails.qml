@@ -61,7 +61,6 @@ Item {
         }
     }
 
-
     BrowserView {
         id: webView
         anchors.fill: parent
