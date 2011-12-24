@@ -260,7 +260,7 @@ Library.prototype.loadTracks = function (idalbum) {
             var songs = result.songs;
             trackModel.clear();
             for (var i = 0; i < songs.length; i++){
-                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "number": songs[i].track, "duration": songs[i].duration, "path": songs[i].file});
+                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "artist": songs[i].artist, "number": songs[i].track, "duration": songs[i].duration, "path": songs[i].file});
             }
         }
     }
@@ -432,7 +432,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     fileModel.clear();
 }
 
-Library.prototype.downloadFile = function(type, path) {
+Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -448,17 +448,53 @@ Library.prototype.downloadFile = function(type, path) {
             var details = result.details;
             if (details) {
                 if (result.mode == "redirect") {
-                    downloadsModel.append({"inputPath": "http://"+$().server+":" + $().port + "/" + details.path, "outputPath": (type == "music" ? ctxDownloadMusicFolder : ctxDownloadVideoFolder), "activate":false});
+                    var o = Qt.createQmlObject(
+                            'import QtQuick 1.0; import com.semperpax.qmlcomponents 1.0; Download { onIsActiveChanged: downloadTab.checkQueue(); onIsFinishedChanged: downloadTab.checkQueue(); }',
+                            downloadsModel, "download");
+                    o.inputPath = "http://"+$().server+":" + $().port + "/" + details.path
+                    o.outputPath = outputPath
+                    o.filename = filename
+                    console.debug(details.path)
+                    downloadsModel.append({"inputPath": "http://"+$().server+":" + $().port + "/" + details.path, "outputPath": outputPath, "filename": filename, "downloadObject":o });
                 }
             }
         }
     }
 
     doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
-    var o = { jsonrpc: "2.0", method: "Files.PrepareDownload", params: { path: path }, id: 1};
+    var o = { jsonrpc: "2.0", method: "Files.PrepareDownload", params: { path: inputPath }, id: 1};
     var str = JSON.stringify(o);
-    console.debug(str);
     doc.send(str);
+
+    return;
+}
+
+Library.prototype.downloadAlbum = function(idalbum) {
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "downloadAlbum error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var songs = result.songs;
+            trackModel.clear();
+            for (var i = 0; i < songs.length; i++){
+                Library.prototype.downloadFile(songs[i].file, ctxDownloadMusicFolder+"/"+songs[i].artist+"/"+songs[i].album, Utils.sprintf("%.2d", songs[i].track)+"-"+songs[i].artist+"-"+songs[i].label)
+            }
+        }
+    }
+
+    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "album", "track", "file"], "albumid" : '+idalbum+' }, "id": 1}';
+    doc.send(str);
+    trackModel.clear();
 
     return;
 }

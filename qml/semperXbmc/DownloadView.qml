@@ -1,4 +1,5 @@
 import QtQuick 1.0
+import com.nokia.symbian 1.0
 import "components" as Cp;
 
 Item {
@@ -7,9 +8,32 @@ Item {
     property int count: downloadsModel.count
     property int activeCount: 0
 
+    ToolBar {
+        id: buttons
+        anchors { top: parent.top; left: parent.left; right: parent.right; }
+
+        tools: Row {
+            anchors.centerIn: parent
+            spacing: platformStyle.paddingMedium
+
+            ToolButton {
+                id: tbClearFinished
+                text: "Clear Finished"
+                onClicked: clearFinished()
+            }
+
+            ToolButton {
+                id: tbClearAll
+                text: "Clear All"
+                onClicked: clearAll()
+            }
+
+        }
+    }
+
     ListView {
         id: downloadsView
-        anchors.fill: parent
+        anchors { top: buttons.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
         //            anchors.margins: 10
         clip: true
 
@@ -21,36 +45,39 @@ Item {
         id: downloadsDelegate
 
         Cp.DownloadComponent {
-            inputPath: model.inputPath
-            outputPath: model.outputPath
-            activate: model.activate
-
-            onIsActiveChanged: {
-                if (isActive)
-                    container.activeCount = container.activeCount + 1;
-                else
-                    container.activeCount = container.activeCount - 1;
-                checkQueue();
-            }
-
-            ListView.onAdd: { checkQueue(); }
-            ListView.onRemove: { checkQueue(); }
+            downloadObject: model.downloadObject
         }
     }
 
+    onCountChanged: checkQueue()
+
     function checkQueue() {
-        if (container.activeCount == 0) {
-            var i=0;
-            for (; i<downloadsModel.count; ++i) {
-                if (!downloadsModel.get(i).isActive && !downloadsModel.get(i).isFinished) {
-                    downloadsModel.get(i).activate = true;
-                    console.debug("activated: " + i);
-                    break;
-                }
+        var i=0;
+        for (; i<downloadsModel.count; ++i) {
+            var o = downloadsModel.get(i).downloadObject
+            if (o.isActive)
+                break
+            else if (!o.isFinished) {
+                o.go()
+                console.debug("activated: " + i);
+                break;
             }
-            if (i == downloadsModel.count)
-                console.debug("nothing activated: " + i);
         }
+    }
+
+    function clearFinished() {
+        var i=0;
+        for (; i<downloadsModel.count; ++i) {
+            var o = downloadsModel.get(i).downloadObject
+            if (o.isFinished) {
+                downloadsModel.remove(i);
+                i--;
+            }
+        }
+    }
+
+    function clearAll() {
+        downloadsModel.clear()
     }
 }
 

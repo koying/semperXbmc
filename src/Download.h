@@ -16,10 +16,10 @@ public:
     Q_INVOKABLE void go();
 
 signals:
-    void TitleChanged();
+    void FilenameChanged();
     void progressChanged();
-    void activated();
-    void finished();
+    void activeChanged();
+    void finishedChanged();
 
 protected:
     QNetworkAccessManager *m_netmanager;
@@ -47,11 +47,12 @@ public:
 private:
     QString m_outputPath;
 
-    Q_PROPERTY(QString title READ title NOTIFY TitleChanged)
+    Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY FilenameChanged)
 public:
-    QString title() { return m_title; }
+    QString filename() { return m_filename; }
+    void setFilename(QString val);
 private:
-    QString m_title;
+    QString m_filename;
 
 
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
@@ -66,20 +67,18 @@ public:
 private:
     int m_errorCode;
 
-    Q_PROPERTY(bool isActive READ isActive NOTIFY activated)
+    Q_PROPERTY(bool isActive READ isActive NOTIFY activeChanged)
 public:
     bool isActive() { return m_isActive; }
 private:
     bool m_isActive;
 
 
-    Q_PROPERTY(bool isFinished READ isFinished NOTIFY finished)
+    Q_PROPERTY(bool isFinished READ isFinished NOTIFY finishedChanged)
 public:
     bool isFinished() { return m_isFinished; }
 private:
     bool m_isFinished;
-
-
 
 };
 

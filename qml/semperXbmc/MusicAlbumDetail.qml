@@ -8,46 +8,8 @@ Item {
 
     property int albumId: -99
 
-    ToolBar {
-        id: buttons
-        anchors { top: parent.top; left: parent.left; right: parent.right; }
-
-        tools: Row {
-            anchors.centerIn: parent
-            spacing: platformStyle.paddingMedium
-
-            ToolButton {
-                id: tbAdd
-                //                    iconSource: "img/add.svg"
-                text: "Append"
-                //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: $().playlist.addAlbum(albumId)
-            }
-
-            ToolButton {
-                id: tbInsert
-                visible: $().jsonRPCVer > 2
-                //                    iconSource: "img/add.svg"
-                text: "Insert"
-                //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: $().playlist.insertAlbum(albumId)
-            }
-
-            ToolButton {
-                id: tbReplace
-                //                    iconSource: "img/switch_windows.svg"
-                text: "Replace"
-                //                    width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: {
-                    $().playlist.audioClear();
-                    $().playlist.addAlbum(albumId)
-                }
-            }
-        }
-    }
-
     Item {
-        anchors { top: buttons.bottom; left: parent.left; right: parent.right; bottom: parent.bottom}
+        anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom}
 
 //        color: "black"
 //        border { color: "white"; width:  2 }
@@ -137,7 +99,7 @@ Item {
                         MenuItem {
                             text: "Download"
                             visible: $().jsonRPCVer > 2
-                            onClicked: $().library.downloadFile("music", model.path)
+                            onClicked: $().library.downloadFile(model.path, ctxDownloadMusicFolder, Utils.sprintf("%.2d", model.number)+"-"+model.artist+"-"+model.name)
                         }
                     }
                 }

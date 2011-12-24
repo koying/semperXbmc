@@ -244,11 +244,10 @@ Window {
 
         Item {
             id: movieTab
+            property string title: "MOVIES"
 
             PageStack {
                 id: movieStack
-
-                property string title: "MOVIES"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: movieToolbar.top }
                 toolBar: movieToolbar
@@ -268,10 +267,10 @@ Window {
 
         Item {
             id: tvTab
+            property string title: "TV"
+
             PageStack {
                 id: tvshowStack
-
-                property string title: "TV"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: tvToolbar.top }
                 toolBar: tvToolbar
@@ -292,11 +291,10 @@ Window {
 
         Item {
             id: musicTab
+            property string title: "MUSIC"
 
             PageStack {
                 id: musicStack
-
-                property string title: "MUSIC"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: musicToolbar.top }
                 toolBar: musicToolbar
@@ -317,11 +315,10 @@ Window {
 
         Item {
             id: playlistTab
+            property string title: "PLAYLIST"
 
             PageStack {
                 id: playListStack
-
-                property string title: "PLAYLIST"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playListToolbar.top }
                 toolBar: playListToolbar
@@ -342,11 +339,10 @@ Window {
 
         Item {
             id: fileTab
+            property string title: "FILES"
 
             PageStack {
                 id: fileStack
-
-                property string title: "FILES"
 
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: fileToolbar.top }
                 toolBar: fileToolbar

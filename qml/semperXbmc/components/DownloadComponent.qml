@@ -5,11 +5,7 @@ import com.semperpax.qmlcomponents 1.0
 ListItem {
     id: liDownload
 
-    property string inputPath
-    property string outputPath
-    property alias isActive: download.isActive
-    property alias isFinished: download.isFinished
-    property bool activate
+    property variant downloadObject
 
     Item  {
         anchors.fill: liDownload.paddingItem
@@ -19,7 +15,7 @@ ListItem {
 
             mode: liDownload.mode
             role: "Title"
-            text: download.title
+            text: downloadObject.filename
         }
 
         ProgressBar {
@@ -27,25 +23,14 @@ ListItem {
             anchors { top: txItemTitle.bottom; right: parent.right; left: parent.left }
             minimumValue: 0
             maximumValue: 100
-            value: 0
-        }
-
-        Download {
-            id: download
-            inputPath: liDownload.inputPath
-            outputPath: liDownload.outputPath
-
-            onFinished: {
-            }
-            onProgressChanged: {
-                pb1.value = download.progress
-            }
+            value: downloadObject.progress
         }
     }
 
-    onActivateChanged: {
-        console.debug("activate changed: " + activate);
-        if (activate)
-            download.go();
+    Connections {
+        target: downloadObject
+        onProgressChanged: {
+            pb1.value = downloadObject.progress
+        }
     }
 }
