@@ -55,11 +55,9 @@ contains(__NOWEBKIT,1) {
     DEPENDPATH += src/BrowserView
     include(src/BrowserView/BrowserView.pri)
 
-    simulator {
-        QTSCROLLER_OUT = ../qtscroller-build-simulator
-    } else {
-        win32:QTSCROLLER_OUT = ../qtscroller-build-desktop
-    }
+    simulator:QTSCROLLER_OUT = ../qtscroller-build-simulator
+    win32:QTSCROLLER_OUT = ../qtscroller-build-desktop
+    android:QTSCROLLER_OUT = ../qtscroller-build-android
 
     include(../qtscroller/qtscroller.pri)
 }
