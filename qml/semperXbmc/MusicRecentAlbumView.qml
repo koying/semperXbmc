@@ -149,6 +149,35 @@ Page {
                 else
                     style = globals.styleMusicAlbums
             }
+
+            onContext: albumMenu.open()
+
+            ContextMenu {
+                id: albumMenu
+                MenuLayout {
+                    MenuItem {
+                        text: "Append"
+                        onClicked: $().playlist.addAlbum(model.idalbum)
+                    }
+                    MenuItem {
+                        text: "Insert"
+                        visible: $().jsonRPCVer > 2
+                        onClicked: $().playlist.insertAlbum(model.idalbum)
+                    }
+                    MenuItem {
+                        text: "Replace"
+                        onClicked: {
+                            $().playlist.audioClear();
+                            $().playlist.addAlbum(model.idalbum)
+                        }
+                    }
+                    MenuItem {
+                        text: "Download"
+                        visible: $().jsonRPCVer > 2
+                        onClicked: $().library.downloadAlbum(model.idalbum)
+                    }
+                }
+            }
         }
     }
 
