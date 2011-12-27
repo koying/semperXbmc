@@ -408,7 +408,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-//            console.debug(doc.responseText);
+            console.debug(doc.responseText);
 
             var error = oJSON.error;
             if (error) {

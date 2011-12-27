@@ -1,6 +1,6 @@
 import QtQuick 1.0
 import com.semperpax.qmlcomponents 1.0
-import com.nokia.symbian 1.0
+import com.nokia.symbian 1.1
 
 import "js/Utils.js" as Utils
 
