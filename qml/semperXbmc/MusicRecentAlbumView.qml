@@ -138,8 +138,6 @@ Page {
                 target: subComponent
                 onLoaded: {
                     subComponent.item.albumId = model.idalbum
-                    subComponent.item.albumArtist = model.artist
-                    subComponent.item.albumName = model.name
                 }
             }
 

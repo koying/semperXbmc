@@ -109,7 +109,7 @@ QString ThumbnailCache::thumbnail(const QUrl &url, const QModelIndex& index)
         return url.toString();
 
     if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
-        fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
+        fn = u.toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo).replace(":", "/");
     } else {
         fn = url.toString();
     }
@@ -135,7 +135,7 @@ bool ThumbnailCache::saveThumb(const QUrl& url, const QImage& image)
         QString fn;
         QUrl u(thumbnail->url);
         if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
-            fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
+            fn = u.toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo).replace(":", "/");
         } else {
             fn = u.toString();
         }
