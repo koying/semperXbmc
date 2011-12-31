@@ -3,103 +3,103 @@ import com.nokia.symbian 1.1
 
 CommonDialog {
     id: dialog
+    height: platformContentMaximumHeight
 
     titleText: "CONNECTION SETTINGS"
     buttonTexts: ["OK", "Cancel"]
     content: Flickable {
-        anchors { left: parent.left; right: parent.right; top: parent.top; }
+        anchors.fill: parent
         anchors.margins: platformStyle.paddingMedium
-        height: 250
 
-        Column {
-            spacing: 10
+        contentHeight: grid.height
+        boundsBehavior: Flickable.StopAtBounds
 
-            Grid {
-                id: grid
-                anchors.horizontalCenter: parent.horizontalCenter
+        Grid {
+            id: grid
+            property int lineWidth: (width - platformStyle.paddingMedium*2)
 
-                columns: 2
-                spacing: platformStyle.paddingMedium
+            width: parent.width
+            spacing: platformStyle.paddingMedium
+            columns: 2
 
-                Text {
-                    font.family: platformStyle.fontFamilyRegular
-                    font.pixelSize: platformStyle.fontSizeLarge
-                    color: platformStyle.colorNormalLight
-                    height: inpServer.height
-                    verticalAlignment: Text.AlignVCenter
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpServer.height
+                verticalAlignment: Text.AlignVCenter
 
-                    text: "Server:"
-                }
-
-                TextField {
-                    id: inpServer
-                    width: 200
-                }
-
-                Text {
-                    font.family: platformStyle.fontFamilyRegular
-                    font.pixelSize: platformStyle.fontSizeLarge
-                    color: platformStyle.colorNormalLight
-                    height: inpJsonPort.height
-                    verticalAlignment: Text.AlignVCenter
-
-                    text: "HTTP port:"
-                }
-
-                TextField {
-                    id: inpJsonPort
-                    width: 100
-                }
-
-                Text {
-                    font.family: platformStyle.fontFamilyRegular
-                    font.pixelSize: platformStyle.fontSizeLarge
-                    color: platformStyle.colorNormalLight
-                    height: inpJsonPort.height
-                    verticalAlignment: Text.AlignVCenter
-
-                    text: "HTTP User:"
-                }
-
-                TextField {
-                    id: inpJsonUser
-                    width: 200
-                }
-
-                Text {
-                    font.family: platformStyle.fontFamilyRegular
-                    font.pixelSize: platformStyle.fontSizeLarge
-                    color: platformStyle.colorNormalLight
-                    height: inpJsonPort.height
-                    verticalAlignment: Text.AlignVCenter
-
-                    text: "HTTP Password:"
-                }
-
-                TextField {
-                    id: inpJsonPassword
-                    width: 200
-                    echoMode: TextInput.Password
-                }
-
-                Text {
-                    font.family: platformStyle.fontFamilyRegular
-                    font.pixelSize: platformStyle.fontSizeLarge
-                    color: platformStyle.colorNormalLight
-                    height: inpEventPort.height
-                    verticalAlignment: Text.AlignVCenter
-
-                    text: "Event port:"
-                }
-
-                TextField {
-                    id: inpEventPort
-                    width: 100
-                }
-
+                text: "Server:"
             }
-        }
 
+            TextField {
+                id: inpServer
+                width: grid.lineWidth - (lblMax.width + platformStyle.paddingMedium)
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "HTTP port:"
+            }
+
+            TextField {
+                id: inpJsonPort
+                width: 100
+            }
+
+            Text {
+                id: lblMax
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "HTTP User:"
+            }
+
+            TextField {
+                id: inpJsonUser
+                width: grid.lineWidth - (lblMax.width + platformStyle.paddingMedium)
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "HTTP Pwd:"
+            }
+
+            TextField {
+                id: inpJsonPassword
+                width: grid.lineWidth - (lblMax.width + platformStyle.paddingMedium)
+                echoMode: TextInput.Password
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpEventPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Event port:"
+            }
+
+            TextField {
+                id: inpEventPort
+                width: 100
+            }
+
+        }
     }
 
     function setup() {
@@ -108,8 +108,8 @@ CommonDialog {
         else
             inpServer.text = globals.server;
         inpJsonPort.text = globals.jsonPort;
-        inpJsonUser = globals.jsonUser
-        inpJsonPassword = globals.jsonPassword
+        inpJsonUser.text = globals.jsonUser
+        inpJsonPassword.text = globals.jsonPassword
         inpEventPort.text = globals.eventPort;
     }
 

@@ -3,23 +3,25 @@ import com.nokia.symbian 1.1
 
 CommonDialog {
     id: dialog
+    height: platformContentMaximumHeight
 
     titleText: "DISPLAY OPTIONS"
+    buttonTexts: ["OK", "Cancel"]
 
     content: Flickable {
-        anchors { left: parent.left; right: parent.right; top: parent.top; }
+        anchors.fill: parent
         anchors.margins: platformStyle.paddingMedium
-//        contentWidth: parent.width
-//        contentHeight: grid.height
+
+        contentHeight: grid.height
         boundsBehavior: Flickable.StopAtBounds
-        height: 260
 
         Grid {
             id: grid
-            anchors.horizontalCenter: parent.horizontalCenter
+            property int lineWidth: (width - platformStyle.paddingMedium*2)
 
-            columns: 2
+            anchors.horizontalCenter: parent.horizontalCenter
             spacing: platformStyle.paddingMedium
+            columns: 2
 
             Text {
                 font.family: platformStyle.fontFamilyRegular
@@ -94,29 +96,6 @@ CommonDialog {
 
     }
 
-    buttons: ToolBar {
-        id: buttons
-        width: parent.width
-        height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
-
-        tools: Row {
-            anchors.centerIn: parent
-            spacing: platformStyle.paddingMedium
-
-            ToolButton {
-                text: "Ok"
-                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: dialog.accept()
-            }
-
-            ToolButton {
-                text: "Cancel"
-                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: dialog.reject()
-            }
-        }
-    }
-
     function setup() {
         swShowSplash.checked = globals.showSplash
         swShowViewd.checked = globals.showViewed
@@ -133,6 +112,17 @@ CommonDialog {
         globals.showBanners = swShowBanners.checked
 
         globals.save();
+    }
+
+    onButtonClicked: {
+        switch (index) {
+        case 0: //OK
+            dialog.accept()
+            break;
+        case 1: // Cancel
+            dialog.reject()
+            break;
+        }
     }
 
     Component.onCompleted: setup()
