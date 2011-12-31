@@ -21,7 +21,7 @@ General.prototype.volumeDown = function() {
 }
 
 General.prototype.setVolume = function(i) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -36,7 +36,7 @@ General.prototype.setVolume = function(i) {
             General.prototype.volume = oJSON.result;
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var str = '{"jsonrpc": "2.0", "method": "Application.SetVolume", "params": ' + i + ', "id": 1}';
     doc.send(str);
     General.prototype.volume = i;
@@ -46,7 +46,7 @@ General.prototype.setVolume = function(i) {
 
 
 General.prototype.getVolume = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             console.log(doc.responseText);
@@ -61,7 +61,7 @@ General.prototype.getVolume = function() {
             General.prototype.volume = oJSON.result.volume;
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var str = '{"jsonrpc": "2.0", "method": "Application.GetProperties", "params": { "properties": ["volume"] }, "id": 1}';
     doc.send(str);
 

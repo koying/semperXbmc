@@ -1,12 +1,12 @@
 function playerCmd(cmd, param) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             //console.log(doc.responseText);
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var str = '{"jsonrpc": "2.0", "method": "AudioPlayer.'+cmd+'",';
     if (param) {
         str += param + ","

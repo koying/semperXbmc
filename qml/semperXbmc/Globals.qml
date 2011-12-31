@@ -4,6 +4,8 @@ import com.semperpax.qmlcomponents 1.0
 Item {
     property string server: "Unspecified"
     property string jsonPort: "8080"
+    property string jsonUser: ""
+    property string jsonPassword: ""
     property string jsonTcpPort: "9090"
     property string eventPort: "9777"
 
@@ -48,6 +50,8 @@ Item {
 
         server = settingsBackend.getSetting("server", server);
         jsonPort = settingsBackend.getSetting("jsonPort", jsonPort);
+        jsonUser = settingsBackend.getSetting("jsonUser", jsonUser);
+        jsonPassword = settingsBackend.getSetting("jsonPassword", jsonPassword);
         eventPort = settingsBackend.getSetting("eventPort", eventPort);
 
         showSplash = settingsBackend.getSetting("showSplash", showSplash);
@@ -73,6 +77,8 @@ Item {
     function save() {
         settingsBackend.setSetting("server", server);
         settingsBackend.setSetting("jsonPort", jsonPort);
+        settingsBackend.setSetting("jsonUser", jsonUser);
+        settingsBackend.setSetting("jsonPassword", jsonPassword);
         settingsBackend.setSetting("eventPort", eventPort);
 
         settingsBackend.setSetting("showSplash", showSplash);
@@ -95,6 +101,22 @@ Item {
         settingsBackend.setSetting("initialTvshowSort", initialTvshowSort);
 
         settingsBackend.save();
+    }
+
+    function getJsonAuthString() {
+        if (jsonUser != "") {
+            return (jsonUser + ":" + jsonPassword + "@")
+        } else
+            return "";
+    }
+
+    function getJsonXMLHttpRequest() {
+        var request = new XMLHttpRequest();
+        request.open("POST", "http://"+server+":" + jsonPort + "/jsonrpc");
+        if (jsonUser != "") {
+            request.setRequestHeader("Authorization", "Basic "+Qt.btoa(jsonUser+":"+jsonPassword))
+        }
+        return request;
     }
 
     Component.onDestruction: save()

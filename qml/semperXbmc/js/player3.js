@@ -17,7 +17,7 @@ function Player(typ) {
 Player.prototype.playerId = -1;
 
 Player.prototype.getPlayers = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 //            console.debug(doc.responseText);
@@ -40,7 +40,7 @@ Player.prototype.getPlayers = function() {
 //            }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var str = '{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}';
     doc.send(str);
     return;
@@ -63,7 +63,7 @@ Player.prototype.skipNext = function() {
 }
 
 Player.prototype.seekPercentage = function(percent) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var error = JSON.parse(doc.responseText).error;
@@ -75,7 +75,7 @@ Player.prototype.seekPercentage = function(percent) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var o = { jsonrpc: "2.0", method: "Player.Seek", params: { playerid:this.playerId, value:percent }, id: 1};
     var str = JSON.stringify(o);
     console.log(str);
@@ -88,7 +88,7 @@ Player.prototype.seekTime = function(position) {
 }
 
 Player.prototype.cmd = function(cmd, param) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var error = JSON.parse(doc.responseText).error;
@@ -100,7 +100,7 @@ Player.prototype.cmd = function(cmd, param) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:this.playerId }, id: 1};
     if (param) {
         o.params += param;
@@ -112,7 +112,7 @@ Player.prototype.cmd = function(cmd, param) {
 }
 
 Player.prototype.playFile = function(path) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -125,7 +125,7 @@ Player.prototype.playFile = function(path) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { file: path } }, id: 1};
     var str = JSON.stringify(o);
 //    console.debug(str);

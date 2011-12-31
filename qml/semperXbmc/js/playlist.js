@@ -11,7 +11,7 @@ function Playlist() {
 }
 
 Playlist.prototype.addTrack = function(idTrack){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -27,7 +27,7 @@ Playlist.prototype.addTrack = function(idTrack){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "songid": '+idTrack+' }, "id": 1}';
     console.log(str);
     doc.send(str);
@@ -36,7 +36,7 @@ Playlist.prototype.addTrack = function(idTrack){
 
 Playlist.prototype.addAlbum = function(idalbum){
 //    console.log("add");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -53,7 +53,7 @@ Playlist.prototype.addAlbum = function(idalbum){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.Add", "params": { "albumid": '+idalbum+' }, "id": 1}';
 //    console.log(str);
     doc.send(str);
@@ -62,7 +62,7 @@ Playlist.prototype.addAlbum = function(idalbum){
 
 Playlist.prototype.addMovie = function(idmovie){
 //    console.log("add movie");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -79,7 +79,7 @@ Playlist.prototype.addMovie = function(idmovie){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "movieid": '+idmovie+' }, "id": 1}';
     doc.send(str);
     return;
@@ -87,7 +87,7 @@ Playlist.prototype.addMovie = function(idmovie){
 
 Playlist.prototype.addEpisode = function(idepisode){
     console.log("add episode");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -104,7 +104,7 @@ Playlist.prototype.addEpisode = function(idepisode){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoPlaylist.Add", "params": { "episodeid": '+idepisode+' }, "id": 1}';
     console.log(str);
     doc.send(str);
@@ -122,7 +122,7 @@ Playlist.prototype.audioClear = function(){
 }
 
 Playlist.prototype.update = function(playlistModel){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -137,9 +137,9 @@ Playlist.prototype.update = function(playlistModel){
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
-                        var thumb = "qrc:/defaultImages/album";
-                        if (items[i].thumbnail && items[i].thumbnail != "DefaultAlbumCover.png") {
-                            thumb = "http://"+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
+                        var thumb = "";
+                        if (items[i].thumbnail && items[i].thumbnail != "" && items[i].thumbnail != "DefaultAlbumCover.png") {
+                            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
                         playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
                     }
@@ -162,7 +162,7 @@ Playlist.prototype.update = function(playlistModel){
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioPlaylist.GetItems", "params": { "sort": {"method":"playlist", "order":"ascending"}, "fields": ["title", "album", "artist", "duration"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
@@ -171,7 +171,7 @@ Playlist.prototype.update = function(playlistModel){
 }
 
 Playlist.prototype.cmd = function(cmd, media, param) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 
@@ -185,7 +185,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "'+ media + 'Playlist.'+cmd+'", ';
     if (param) {
         str += param + ","

@@ -79,7 +79,7 @@ Page {
             title: model.name
             subtitle: model.artist + "  -  " + model.album
 //            duration:  model.duration > 0 ? Utils.secToMMSS(model.duration) : (model.runtime != undefined ? model.runtime : "")
-            image: model.thumb
+            image: model.thumb != "" ? model.thumb : "qrc:/defaultImages/artist"
             current: model.select
 
             onSelected:  {

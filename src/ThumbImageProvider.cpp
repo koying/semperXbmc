@@ -31,7 +31,7 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
     QString fn;
     QUrl u(id);
     if (u.isValid() && !u.scheme().isEmpty() && u.scheme()!= "file") {
-        fn = u.toString(QUrl::RemoveScheme).replace(":", "/");
+        fn = u.toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo).replace(":", "/");
         fromNetwork = true;
     } else {
         fn = id;

@@ -5,7 +5,7 @@ CommonDialog {
     id: dialog
 
     titleText: "CONNECTION SETTINGS"
-
+    buttonTexts: ["OK", "Cancel"]
     content: Flickable {
         anchors { left: parent.left; right: parent.right; top: parent.top; }
         anchors.margins: platformStyle.paddingMedium
@@ -43,12 +43,43 @@ CommonDialog {
                     height: inpJsonPort.height
                     verticalAlignment: Text.AlignVCenter
 
-                    text: "JSON port:"
+                    text: "HTTP port:"
                 }
 
                 TextField {
                     id: inpJsonPort
+                    width: 100
+                }
+
+                Text {
+                    font.family: platformStyle.fontFamilyRegular
+                    font.pixelSize: platformStyle.fontSizeLarge
+                    color: platformStyle.colorNormalLight
+                    height: inpJsonPort.height
+                    verticalAlignment: Text.AlignVCenter
+
+                    text: "HTTP User:"
+                }
+
+                TextField {
+                    id: inpJsonUser
                     width: 200
+                }
+
+                Text {
+                    font.family: platformStyle.fontFamilyRegular
+                    font.pixelSize: platformStyle.fontSizeLarge
+                    color: platformStyle.colorNormalLight
+                    height: inpJsonPort.height
+                    verticalAlignment: Text.AlignVCenter
+
+                    text: "HTTP Password:"
+                }
+
+                TextField {
+                    id: inpJsonPassword
+                    width: 200
+                    echoMode: TextInput.Password
                 }
 
                 Text {
@@ -63,35 +94,12 @@ CommonDialog {
 
                 TextField {
                     id: inpEventPort
-                    width: 200
+                    width: 100
                 }
 
             }
         }
 
-    }
-
-    buttons: ToolBar {
-        id: buttons
-        width: parent.width
-        height: privateStyle.toolBarHeightLandscape + 2 * platformStyle.paddingSmall
-
-        tools: Row {
-            anchors.centerIn: parent
-            spacing: platformStyle.paddingMedium
-
-            ToolButton {
-                text: "Ok"
-                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: dialog.accept()
-            }
-
-            ToolButton {
-                text: "Cancel"
-                width: (buttons.width - 3 * platformStyle.paddingMedium) / 2
-                onClicked: dialog.reject()
-            }
-        }
     }
 
     function setup() {
@@ -100,15 +108,30 @@ CommonDialog {
         else
             inpServer.text = globals.server;
         inpJsonPort.text = globals.jsonPort;
+        inpJsonUser = globals.jsonUser
+        inpJsonPassword = globals.jsonPassword
         inpEventPort.text = globals.eventPort;
     }
 
     onAccepted: {
         globals.server = inpServer.text;
         globals.jsonPort = inpJsonPort.text;
+        globals.jsonUser = inpJsonUser.text
+        globals.jsonPassword = inpJsonPassword.text
         globals.eventPort = inpEventPort.text;
 
         globals.save();
+    }
+
+    onButtonClicked: {
+        switch (index) {
+        case 0: //OK
+            dialog.accept()
+            break;
+        case 1: // Cancel
+            dialog.reject()
+            break;
+        }
     }
 
     Component.onCompleted: setup()

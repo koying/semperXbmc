@@ -130,7 +130,7 @@ Page {
         Cp.Delegate {
             title: model.name
             subtitle: model.artist
-            image: globals.cacheThumbnails ? model.coverThumb : model.cover
+            image: model.cover != "" ? (globals.cacheThumbnails ? model.coverThumb : model.cover) : "qrc:/defaultImages/album"
 
             style: globals.styleMusicAlbums
             banner: globals.showBanners

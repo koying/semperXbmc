@@ -28,7 +28,7 @@ Player.prototype.seekPercentage = function(percent) {
 }
 
 Player.prototype.cmd = function(cmd, param) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var error = JSON.parse(doc.responseText).error;
@@ -40,7 +40,7 @@ Player.prototype.cmd = function(cmd, param) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+    
     var str = '{"jsonrpc": "2.0", "method": "'+this.type+'Player.'+cmd+'",';
     if (param) {
         str += param + ","

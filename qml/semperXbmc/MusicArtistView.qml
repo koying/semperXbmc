@@ -120,7 +120,7 @@ Page {
 
         Cp.Delegate {
             title: model.name
-            image: globals.cacheThumbnails ? model.posterThumb : model.poster
+            image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/artist"
 
             style: globals.styleMusicArtists
             banner: globals.showBanners

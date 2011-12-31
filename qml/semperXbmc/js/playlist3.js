@@ -29,7 +29,7 @@ function Playlist() {
 }
 
 Playlist.prototype.getPlaylists = function(){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 //            console.debug(doc.responseText);
@@ -52,14 +52,14 @@ Playlist.prototype.getPlaylists = function(){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "Playlist.GetPlaylists", "id": 1}';
     doc.send(str);
     return;
 }
 
 Playlist.prototype.insertTrack = function(idTrack){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -76,7 +76,7 @@ Playlist.prototype.insertTrack = function(idTrack){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.audioPlId, item: { songid: idTrack }, position: 0 }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -84,7 +84,7 @@ Playlist.prototype.insertTrack = function(idTrack){
 }
 
 Playlist.prototype.addTrack = function(idTrack){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -101,7 +101,7 @@ Playlist.prototype.addTrack = function(idTrack){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.audioPlId, item: { songid: idTrack } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -110,7 +110,7 @@ Playlist.prototype.addTrack = function(idTrack){
 
 Playlist.prototype.insertAlbum = function(idalbum){
 //    console.log("add");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -127,7 +127,7 @@ Playlist.prototype.insertAlbum = function(idalbum){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.audioPlId, item: { albumid: idalbum }, position: 0 }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -137,7 +137,7 @@ Playlist.prototype.insertAlbum = function(idalbum){
 
 Playlist.prototype.addAlbum = function(idalbum){
 //    console.log("add");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -154,7 +154,7 @@ Playlist.prototype.addAlbum = function(idalbum){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.audioPlId, item: { albumid: idalbum } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -163,7 +163,7 @@ Playlist.prototype.addAlbum = function(idalbum){
 
 Playlist.prototype.addMovie = function(idmovie){
 //    console.log("add movie");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 
@@ -181,7 +181,7 @@ Playlist.prototype.addMovie = function(idmovie){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: idmovie } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -190,7 +190,7 @@ Playlist.prototype.addMovie = function(idmovie){
 
 Playlist.prototype.addEpisode = function(idepisode){
     console.log("add episode");
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 
@@ -208,7 +208,7 @@ Playlist.prototype.addEpisode = function(idepisode){
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: idepisode } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -226,7 +226,7 @@ Playlist.prototype.audioClear = function(){
 }
 
 Playlist.prototype.update = function(playlistModel){
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 //            console.debug(doc.responseText)
@@ -248,9 +248,9 @@ Playlist.prototype.update = function(playlistModel){
                     playlistModel.clear();
                     for (var i = 0; i < items.length; i++){
 
-                        var thumb = "qrc:/defaultImages/album";
-                        if (items[i].thumbnail && items[i].thumbnail != "DefaultAlbumCover.png") {
-                            thumb = "http://"+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
+                        var thumb = "";
+                        if (items[i].thumbnail && items[i].thumbnail != "" && items[i].thumbnail != "DefaultAlbumCover.png") {
+                            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
                         playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
                     }
@@ -273,7 +273,7 @@ Playlist.prototype.update = function(playlistModel){
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + $().playlist.audioPlId + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
@@ -282,7 +282,7 @@ Playlist.prototype.update = function(playlistModel){
 }
 
 Playlist.prototype.cmd = function(cmd, media, param) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -295,7 +295,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "Playlist.'+cmd+'", "params": {';
     if (param) {
         str += param + ","
@@ -306,7 +306,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
 }
 
 Playlist.prototype.playVideo = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -323,7 +323,7 @@ Playlist.prototype.playVideo = function() {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -331,7 +331,7 @@ Playlist.prototype.playVideo = function() {
 }
 
 Playlist.prototype.playAudio = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -344,7 +344,7 @@ Playlist.prototype.playAudio = function() {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.audioPlId } }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);

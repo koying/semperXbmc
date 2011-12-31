@@ -47,7 +47,7 @@ Xbmc.prototype.jsonRPCVer = "-1"
 Xbmc.prototype.inError = false
 
 Xbmc.prototype.init = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             if (doc.status != 200) {
@@ -91,7 +91,6 @@ Xbmc.prototype.init = function() {
             main.jsonInitialized = true;
         }
     }
-    doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Version","id": 1}';
     doc.send(str);
 
@@ -116,7 +115,7 @@ Xbmc.prototype.init = function() {
 }
 
 Xbmc.prototype.introspect = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
 //            console.debug(doc.responseText);
@@ -131,7 +130,6 @@ Xbmc.prototype.introspect = function() {
             console.debug(dumpObj(oJSON, "JSON introspect", "", 0));
         }
     }
-    doc.open("POST", "http://"+xbmc.server+":" + xbmc.port + "/jsonrpc");
     var str = '{"jsonrpc": "2.0", "method": "JSONRPC.Introspect","id": 1}';
     doc.send(str);
 }

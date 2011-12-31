@@ -24,8 +24,8 @@ Library.prototype.handleMovies = function (responseText) {
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
         var thumb = "";
-        if (movies[i].thumbnail) {
-            thumb = "http://"+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
+        if (movies[i].thumbnail && movies[i].thumbnail != "") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
         }
         var duration = 0;
         if (movies[i].streamdetails)
@@ -53,14 +53,14 @@ Library.prototype.handleMovies = function (responseText) {
 }
 
 Library.prototype.loadMovies = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleMovies(doc.responseText);
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
@@ -70,14 +70,14 @@ Library.prototype.loadMovies = function () {
 }
 
 Library.prototype.recentMovies = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleMovies(doc.responseText);
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "properties": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"] }, "id": 1}';
     doc.send(str);
     movieModel.clear();
@@ -87,7 +87,7 @@ Library.prototype.recentMovies = function () {
 }
 
 Library.prototype.loadTVShows = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -104,8 +104,8 @@ Library.prototype.loadTVShows = function () {
             var tvshows = result.tvshows;
             for (var i = 0; i < tvshows.length; i++){
                 var thumb = "";
-                if (tvshows[i].thumbnail) {
-                    thumb = "http://"+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
+                if (tvshows[i].thumbnail && tvshows[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
                 }
                 if (tvshows[i].genre && tvshows[i].genre != "") {
                     var aGenre = tvshows[i].genre.split("/");
@@ -130,7 +130,7 @@ Library.prototype.loadTVShows = function () {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber"] }, "id": 1}';
     doc.send(str);
     tvshowModel.clear();
@@ -141,7 +141,7 @@ Library.prototype.loadTVShows = function () {
 
 Library.prototype.loadSeasons = function (id) {
     Library.prototype.tvshowId = id;
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -158,8 +158,8 @@ Library.prototype.loadSeasons = function (id) {
             if (!seasons) return;
             for (var i = 0; i < seasons.length; i++){
                 var thumb = "";
-                if (seasons[i].thumbnail) {
-                    thumb = "http://"+$().server+":" + $().port + "/vfs/" + seasons[i].thumbnail;
+                if (seasons[i].thumbnail && seasons[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + seasons[i].thumbnail;
                 }
                 var season = 0;
                 if (seasons[i].season) {
@@ -171,7 +171,7 @@ Library.prototype.loadSeasons = function (id) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "sort": {"method":"label", "order":"ascending"}, "properties": ["thumbnail", "showtitle", "season", "episode", "playcount"] }, "id": 1}';
     doc.send(str);
     seasonModel.clear();
@@ -195,8 +195,8 @@ Library.prototype.handleEpisodes = function (responseText) {
     for (var i = 0; i < episodes.length; i++){
 
         var thumb = "";
-        if (episodes[i].thumbnail) {
-            thumb = "http://"+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
+        if (episodes[i].thumbnail && episodes[i].thumbnail != "") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
         }
 
         var duration = 0;
@@ -212,14 +212,14 @@ Library.prototype.handleEpisodes = function (responseText) {
 }
 
 Library.prototype.loadEpisodes = function (id) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleEpisodes(doc.responseText);
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
     doc.send(str);
     episodeModel.clear();
@@ -228,14 +228,14 @@ Library.prototype.loadEpisodes = function (id) {
 }
 
 Library.prototype.recentEpisodes = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleEpisodes(doc.responseText);
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
     doc.send(str);
     episodeModel.clear();
@@ -244,7 +244,7 @@ Library.prototype.recentEpisodes = function () {
 }
 
 Library.prototype.loadTracks = function (idalbum) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -265,7 +265,7 @@ Library.prototype.loadTracks = function (idalbum) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration", "file"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
     trackModel.clear();
@@ -287,9 +287,9 @@ Library.prototype.handleAlbums = function (responseText) {
     var albums = result.albums;
     for (var i = 0; i < albums.length; i++){
 
-        var thumb = "qrc:/defaultImages/album";
-        if (albums[i].thumbnail) {
-            thumb = "http://"+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
+        var thumb = "";
+        if (albums[i].thumbnail && albums[i].thumbnail != "") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
         }
 
         albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "cover": thumb});
@@ -299,14 +299,14 @@ Library.prototype.handleAlbums = function (responseText) {
 
 Library.prototype.loadAlbums = function (idartist) {
     albumModel.clear();
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleAlbums(doc.responseText)
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"], "artistid": '+idartist+' }, "id": 1}';
     doc.send(str);
     albumModel.clear();
@@ -315,14 +315,14 @@ Library.prototype.loadAlbums = function (idartist) {
 }
 
 Library.prototype.loadAllAlbums = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleAlbums(doc.responseText)
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
     albumModel.clear();
@@ -331,14 +331,14 @@ Library.prototype.loadAllAlbums = function () {
 }
 
 Library.prototype.recentAlbums = function () {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             Library.prototype.handleAlbums(doc.responseText)
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetRecentlyAddedAlbums", "params": { "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
     albumModel.clear();
@@ -347,7 +347,7 @@ Library.prototype.recentAlbums = function () {
 }
 
 Library.prototype.loadArtists = function() {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -362,23 +362,23 @@ Library.prototype.loadArtists = function() {
             var result = oJSON.result;
             var artists = result.artists;
             for (var i = 0; i < artists.length; i++){
-                var thumb = "qrc:/defaultImages/artist";
-                if (artists[i].thumbnail) {
-                    thumb = "http://"+$().server+":" + $().port + "/vfs/" + artists[i].thumbnail;
+                var thumb = "";
+                if (artists[i].thumbnail && artists[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + artists[i].thumbnail;
                 }
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].artist, "poster": thumb, "selected": false});
             }
             artistProxyModel.reSort();
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "params": { "sort": {"method":"artist", "order":"ascending"}, "properties": ["thumbnail"] }, "id": 1}';
     doc.send(str);
     artistModel.clear();
 }
 
 Library.prototype.loadSources = function(fileModel) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -397,14 +397,14 @@ Library.prototype.loadSources = function(fileModel) {
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "video" }, "id": 1}';
     doc.send(str);
     fileModel.clear();
 }
 
 Library.prototype.loadFiles = function(fileModel, directory) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -424,7 +424,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
             }
         }
     }
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video" }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
@@ -433,7 +433,7 @@ Library.prototype.loadFiles = function(fileModel, directory) {
 }
 
 Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -451,17 +451,17 @@ Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
                     var o = Qt.createQmlObject(
                             'import QtQuick 1.0; import com.semperpax.qmlcomponents 1.0; Download { onIsActiveChanged: downloadTab.checkQueue(); onIsFinishedChanged: downloadTab.checkQueue(); }',
                             downloadsModel, "download");
-                    o.inputPath = "http://"+$().server+":" + $().port + "/" + details.path
+                    o.inputPath = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/" + details.path
                     o.outputPath = outputPath
                     o.filename = filename
                     console.debug(details.path)
-                    downloadsModel.append({"inputPath": "http://"+$().server+":" + $().port + "/" + details.path, "outputPath": outputPath, "filename": filename, "downloadObject":o });
+                    downloadsModel.append({"inputPath": "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/" + details.path, "outputPath": outputPath, "filename": filename, "downloadObject":o });
                 }
             }
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var o = { jsonrpc: "2.0", method: "Files.PrepareDownload", params: { path: inputPath }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
@@ -470,7 +470,7 @@ Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
 }
 
 Library.prototype.downloadAlbum = function(idalbum) {
-    var doc = new XMLHttpRequest();
+    var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
@@ -491,7 +491,7 @@ Library.prototype.downloadAlbum = function(idalbum) {
         }
     }
 
-    doc.open("POST", "http://"+$().server+":" + $().port + "/jsonrpc");
+
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "album", "track", "file"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
     trackModel.clear();
