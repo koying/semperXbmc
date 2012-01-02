@@ -117,9 +117,14 @@ QString SortFilterModel::boolFilterRole() const
 
 void SortFilterModel::setSortRole(const QString &role)
 {
-    QSortFilterProxyModel::setSortRole(roleNameToId(role));
     m_sortRole = role;
-    QSortFilterProxyModel::sort(0, sortOrder());
+    int sortRole = roleNameToId(role);
+    QSortFilterProxyModel::setSortRole(sortRole);
+    if (sortRole == -1)
+        QSortFilterProxyModel::sort(-1);
+    else {
+        QSortFilterProxyModel::sort(0, sortOrder());
+    }
 
     emit sortRoleChanged();
 }
@@ -146,6 +151,9 @@ bool SortFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source
 
 void SortFilterModel::reSort()
 {
-    QSortFilterProxyModel::sort(0, sortOrder());
+    if (m_sortRole.isEmpty())
+        QSortFilterProxyModel::sort(-1);
+    else
+        QSortFilterProxyModel::sort(0, sortOrder());
 }
 

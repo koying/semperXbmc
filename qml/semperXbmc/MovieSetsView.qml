@@ -1,6 +1,5 @@
-import QtQuick 1.0
+import Qt 4.7
 import com.nokia.symbian 1.1
-import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 import "menus" as Menus
 
@@ -8,7 +7,11 @@ import "js/Utils.js" as Utils
 
 Page {
     id: page
-    tools:  ToolBarLayout {
+
+    tools:  pgTools
+
+    ToolBarLayout {
+        id: pgTools
 
         ToolButton {
             iconSource: "toolbar-back"
@@ -58,7 +61,7 @@ Page {
 
     Menus.MovieViewMenu {
         id: viewMenu
-        currentType: "All"
+        currentType: "By Sets"
     }
 
     Menus.MovieSortMenu {
@@ -69,8 +72,49 @@ Page {
         id: styleMenu
     }
 
-    MovieComponent {
+    ListView {
+        id: videoSetsList
         anchors.fill: parent
+        clip: true
+
+        model: movieSetsProxyModel
+        delegate: videoSetsDelegate
+    }
+
+    ScrollDecorator {
+        id: scrolldecorator
+        flickableItem: videoSetsList
+    }
+
+    Component {
+        id: videoSetsDelegate
+
+        Cp.Delegate {
+            title: model.name
+            image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/movie"
+            watched: model.playcount > 0
+
+            type: "header"
+            style: "smallHorizontal"
+
+            subComponentSource: "MovieComponent.qml"
+
+            Connections {
+                target: subComponent
+
+                onLoaded: {
+                    $().library.loadMovieSetMovies(model.id);
+                }
+            }
+
+            onSelected:  {
+                if (style == "smallHorizontal") {
+                    style = "full"
+                } else {
+                    style = "smallHorizontal"
+                }
+            }
+        }
     }
 
     Cp.SearchDialog {
@@ -88,17 +132,10 @@ Page {
     }
 
     function refresh() {
-        $().library.loadMovies();
+        $().library.loadMovieSets();
     }
 
     Component.onCompleted: {
-        movieProxyModel.sortRole = globals.initialMovieSort
-        if (globals.initialMovieSort == "name")
-            movieProxyModel.sortOrder =  Qt.AscendingOrder
-        else
-            movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-
-        if (movieModel.count == 0)
-            $().library.loadMovies();
+        refresh()
     }
 }

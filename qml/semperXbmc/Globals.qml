@@ -26,8 +26,8 @@ Item {
     property string initialTvshowView: "TvShowView.qml"
     property string initialMusicView: "MusicArtistView.qml"
 
-    property string initialMovieSort:  "name"
-    property string initialTvshowSort:  "name"
+    property string initialMovieSort:  ""
+    property string initialTvshowSort:  ""
 
     VariantModel {
         id: settingsBackend

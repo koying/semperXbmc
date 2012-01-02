@@ -449,6 +449,19 @@ Window {
     ListModel {
         id: movieGenreModel
     }
+
+    SortFilterModel {
+        id: movieSetsProxyModel
+
+        sourceModel: movieSetsModel
+        boolFilterRole: globals.showViewed ? "" : "playcount"
+    }
+    VariantModel {
+        id: movieSetsModel
+        fields: [ "id", "name", "playcount", "poster", "posterThumb" ]
+        thumbDir: ctxFatFile
+    }
+
     SortFilterModel {
         id: movieProxyModel
 

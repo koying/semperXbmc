@@ -1,6 +1,7 @@
 import Qt 4.7
 import com.nokia.symbian 1.1
 import "components" as Cp;
+import "menus" as Menus
 
 import "js/Utils.js" as Utils
 
@@ -58,88 +59,17 @@ Page {
         }
     }
 
-    ContextMenu {
+    Menus.MovieViewMenu {
         id: viewMenu
-        MenuLayout {
-            MenuItem {
-                text:  "All"
-                onClicked: {
-                    globals.initialMovieView = "MovieView.qml"
-                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
-                }
-            }
-            MenuItem {
-                text:  "Recent"
-                onClicked: {
-                    globals.initialMovieView = "MovieRecentView.qml"
-                    movieStack.replace(Qt.resolvedUrl(globals.initialMovieView))
-                }
-            }
-            MenuItem {
-                text:  "By Genre"
-            }
-//            MenuItem {
-//                text:  "Coverflow view"
-//                onClicked: movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
-//            }
-        }
+        currentType: "By Genre"
     }
 
-    ContextMenu {
+    Menus.MovieSortMenu {
         id: sortMenu
-        MenuLayout {
-            MenuItem {
-                text:  "By Year"
-                onClicked: {
-                    globals.initialMovieSort = "year"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-                }
-            }
-            MenuItem {
-                text:  "By Rating"
-                onClicked: {
-                    globals.initialMovieSort = "rating"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
-                }
-            }
-
-            MenuItem {
-                text:  "By Name"
-                onClicked: {
-                    globals.initialMovieSort = "name"
-                    movieProxyModel.sortRole = globals.initialMovieSort
-                    movieProxyModel.sortOrder =  Qt.AscendingOrder
-                }
-            }
-        }
     }
 
-    ContextMenu {
+    Menus.StyleMenu {
         id: styleMenu
-        MenuLayout {
-            MenuItem {
-                text:  "Small Horizontal"
-                onClicked: {
-                    globals.styleMovies = "smallHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Big Horizontal"
-                onClicked: {
-                    globals.styleMovies = "bigHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Vertical"
-                onClicked: {
-                    globals.styleMovies = "vertical"
-                }
-            }
-        }
     }
 
     ListView {

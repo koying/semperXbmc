@@ -6,20 +6,10 @@ function Library() {
 }
 
 Library.prototype.tvshowId = -1;
+Library.prototype.movieFields = '["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"]'
 
-Library.prototype.handleMovies = function (responseText) {
-    var oJSON = JSON.parse(responseText);
-
-    var error = oJSON.error;
-    if (error) {
-        console.log(Xbmc.dumpObj(error, "loadMovies error", "", 0));
-        errorView.addError("error", error.message, error.code);
-        return;
-    }
-
+Library.prototype.handleMovies = function (movies) {
     var aGenres = []
-    var result = oJSON.result;
-    var movies = result.movies;
 
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
@@ -56,12 +46,23 @@ Library.prototype.loadMovies = function () {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            Library.prototype.handleMovies(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "loadMovies error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var movies = result.movies;
+            Library.prototype.handleMovies(movies);
         }
     }
 
 
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": '+Library.prototype.movieFields+'  }, "id": 1}';
     doc.send(str);
     movieModel.clear();
     movieGenreModel.clear();
@@ -73,15 +74,88 @@ Library.prototype.recentMovies = function () {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            Library.prototype.handleMovies(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "recentMovies error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var movies = result.movies;
+            Library.prototype.handleMovies(movies);
         }
     }
 
 
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "properties": ["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "properties": '+Library.prototype.movieFields+' }, "id": 1}';
     doc.send(str);
     movieModel.clear();
-    movieGenreModel.clear();
+
+    return;
+}
+
+Library.prototype.loadMovieSets = function () {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState != XMLHttpRequest.DONE) return;
+
+        var oJSON = JSON.parse(doc.responseText);
+
+        var error = oJSON.error;
+        if (error) {
+            console.log(Xbmc.dumpObj(error, "loadMovieSets error", "", 0));
+            errorView.addError("error", error.message, error.code);
+            return;
+        }
+
+        var result = oJSON.result;
+        var sets = result.sets;
+
+        for (var i = 0; i < sets.length; i++){
+            var thumb = "";
+            if (sets[i].thumbnail && sets[i].thumbnail != "") {
+                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + sets[i].thumbnail;
+            }
+
+            movieSetsModel.append({"id": sets[i].setid, "name": sets[i].label, "poster": thumb, "playcount":sets[i].playcount});
+        }
+        movieSetsProxyModel.reSort()
+    }
+
+
+            var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSets", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["title", "thumbnail","playcount"] }, "id": 1}';
+    doc.send(str);
+    movieSetsModel.clear();
+
+    return;
+}
+
+Library.prototype.loadMovieSetMovies = function (setId) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "loadMovieSetMovies error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var result = oJSON.result;
+            var movies = result.setdetails.items.movies
+            Library.prototype.handleMovies(movies);
+        }
+    }
+
+
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSetDetails", "params": { "setid":'+ setId +', "movies": {"sort": {"method":"year", "order":"ascending"}, "properties": '+Library.prototype.movieFields+' } }, "id": 1}';
+    doc.send(str);
+    movieModel.clear();
 
     return;
 }
