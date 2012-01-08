@@ -228,3 +228,12 @@ function dateToString(d) {
     var curr_year = d.getFullYear();
     return (curr_year + "/" + curr_month + "/" + curr_date);
 }
+
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true;
+}

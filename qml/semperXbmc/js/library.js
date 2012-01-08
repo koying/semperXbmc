@@ -30,19 +30,26 @@ Library.prototype.handleMovies = function (responseText) {
         if (movies[i].genre && movies[i].genre != "") {
             var aGenre = movies[i].genre.split("/");
             for (var j=0; j<aGenre.length; ++j) {
-                if (aGenres.indexOf(aGenre[j].trim()) == -1)
-                    aGenres.push(aGenre[j].trim());
+                if (aGenres.indexOf(aGenre[j].trim()) == -1) {
+                    var g = movieGenreModel.getValues(aGenre[j].trim());
+                    if (!Utils.isEmpty(g)) {
+                        g.count = g.count + 1
+                        if (movies[i].playcount == 0)
+                            g.unseen = g.unseen + 1
+                        g.playcount = g.unseen > 0 ? 0 : 1;
+                        movieGenreModel.keyUpdate(g);
+                    } else {
+                        movieGenreModel.append({"name":aGenre[j].trim(), "count":1, "unseen": movies[i].playcount ? 0 : 1, "playcount": movies[i].playcount ? 1 : 0})
+                    }
+                }
             }
         }
 
         movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": movies[i].duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "originaltitle": movies[i].originaltitle, "playcount": movies[i].playcount});
     }
 
-    aGenres.sort();
-    for (var i = 0; i < aGenres.length; i++){
-        movieGenreModel.append({"name": aGenres[i]});
-    }
     movieProxyModel.reSort();
+    movieGenreProxyModel.reSort()
 }
 
 Library.prototype.loadMovies = function () {

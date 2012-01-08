@@ -446,8 +446,17 @@ Window {
         id: playlistModel
     }
 
-    ListModel {
+    SortFilterModel {
+        id: movieGenreProxyModel
+
+        sourceModel: movieGenreModel
+        sortRole: "name"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
+    }
+    VariantModel {
         id: movieGenreModel
+        fields: [ "name", "count", "unseen", "playcount" ]
+        key: "name"
     }
 
     SortFilterModel {

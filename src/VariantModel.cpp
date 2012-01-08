@@ -144,6 +144,14 @@ QVariant VariantModel::getValue(const QVariant &keyvalue, const QString &valueFi
     return ret;
 }
 
+QVariantMap VariantModel::getValues(const QVariant &keyvalue) const
+{
+    int row = m_index.value(keyvalue, -1);
+    if (row == -1 || row >= m_data.size()) return QVariantMap();
+
+    return  m_data[row];
+}
+
 void VariantModel::setValue(const QVariant &keyvalue, const QString &valueField, const QVariant& value)
 {
     int row = m_index.value(keyvalue, -1);

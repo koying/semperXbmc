@@ -98,7 +98,9 @@ Page {
         else
             movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
 
-        if (movieModel.count == 0)
+        if (movieModel.count == 0 || globals.initialMovieView.indexOf("Recent") > 0 || globals.initialMovieView.indexOf("Sets") > 0)
             $().library.loadMovies();
+
+        globals.initialMovieView = "MovieView.qml"
     }
 }

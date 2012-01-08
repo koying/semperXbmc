@@ -96,5 +96,6 @@ Page {
         movieProxyModel.filterRegExp = ""
         movieProxyModel.sortRole = ""
         $().library.recentMovies();
+        globals.initialMovieView = "MovieRecentView.qml"
     }
 }

@@ -77,7 +77,7 @@ Page {
         anchors.fill: parent
         clip: true
 
-        model: movieGenreModel
+        model: movieGenreProxyModel
         delegate: videoGenreDelegate
     }
 
@@ -91,6 +91,7 @@ Page {
 
         Cp.Delegate {
             title: model.name
+            titleR: globals.showViewed ? model.unseen + "/" + model.count : model.unseen
 
             type: "header"
             style: "smallHorizontal"
@@ -103,10 +104,6 @@ Page {
                 onLoaded: {
                     movieProxyModel.filterRole = "genre"
                     movieProxyModel.filterRegExp = model.name
-                }
-                onDestruction: {
-                    movieProxyModel.filterRole = ""
-                    movieProxyModel.filterRegExp = ""
                 }
             }
 
@@ -145,7 +142,9 @@ Page {
         else
             movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
 
-        if (movieModel.count == 0)
+        if (movieModel.count == 0 || globals.initialMovieView.indexOf("Recent") > 0 || globals.initialMovieView.indexOf("Sets") > 0)
             $().library.loadMovies();
+
+        globals.initialMovieView = "MovieGenreView.qml"
     }
 }

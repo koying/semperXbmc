@@ -12,8 +12,7 @@ ContextMenu {
             visible: viewMenu.currentType != text
 
             onClicked: {
-                globals.initialMovieView = "MovieView.qml"
-                movieStack.replace(Qt.resolvedUrl("../"+globals.initialMovieView))
+                movieStack.replace(Qt.resolvedUrl("../MovieView.qml"))
             }
         }
         MenuItem {
@@ -21,8 +20,7 @@ ContextMenu {
             visible: viewMenu.currentType != text
 
             onClicked: {
-                globals.initialMovieView = "MovieRecentView.qml"
-                movieStack.replace(Qt.resolvedUrl("../"+globals.initialMovieView))
+                movieStack.replace(Qt.resolvedUrl("../MovieRecentView.qml"))
             }
         }
         MenuItem {
@@ -30,8 +28,7 @@ ContextMenu {
             visible: viewMenu.currentType != text
 
             onClicked: {
-                globals.initialMovieView = "MovieGenreView.qml"
-                movieStack.replace(Qt.resolvedUrl("../"+globals.initialMovieView))
+                movieStack.replace(Qt.resolvedUrl("../MovieGenreView.qml"))
             }
         }
         MenuItem {
@@ -39,8 +36,7 @@ ContextMenu {
             visible: viewMenu.currentType != text && $().jsonRPCVer > 2
 
             onClicked: {
-                globals.initialMovieView = "MovieSetsView.qml"
-                movieStack.replace(Qt.resolvedUrl("../"+globals.initialMovieView))
+                movieStack.replace(Qt.resolvedUrl("../MovieSetsView.qml"))
             }
         }
     }

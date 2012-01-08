@@ -90,7 +90,8 @@ public:
     Q_INVOKABLE void remove(const QVariantMap &vals);
     Q_INVOKABLE void clear();
 
-    Q_INVOKABLE QVariant getValue(const QVariant &key, const QString &valueField, const QVariant& defValue=QVariant()) const;
+    Q_INVOKABLE QVariant getValue(const QVariant &keyvalue, const QString &valueField, const QVariant& defValue=QVariant()) const;
+    Q_INVOKABLE QVariantMap getValues(const QVariant &keyvalue) const;
     Q_INVOKABLE void setValue(const QVariant &key, const QString &valueField, const QVariant& value);
     Q_INVOKABLE void removeValue(const QVariant &keyvalue, const QString &valueField);
 

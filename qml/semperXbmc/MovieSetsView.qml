@@ -136,6 +136,10 @@ Page {
     }
 
     Component.onCompleted: {
-        refresh()
+        movieProxyModel.filterRole = ""
+        movieProxyModel.filterRegExp = ""
+        movieProxyModel.sortRole = ""
+        $().library.loadMovieSets();
+        globals.initialMovieView = "MovieSetsView.qml"
     }
 }
