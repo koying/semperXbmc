@@ -27,6 +27,7 @@ SortFilterModel::SortFilterModel(QObject* parent)
 {
     setObjectName("SortFilterModel");
 //    setDynamicSortFilter(true);
+    setSortCaseSensitivity(Qt::CaseInsensitive);
     connect(this, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this, SIGNAL(countChanged()));
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
@@ -155,5 +156,7 @@ void SortFilterModel::reSort()
         QSortFilterProxyModel::sort(-1);
     else
         QSortFilterProxyModel::sort(0, sortOrder());
+    m_boolFilterIntRole = roleNameToId(m_boolFilterRole);
+    invalidateFilter();
 }
 

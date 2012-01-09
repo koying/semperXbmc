@@ -57,7 +57,7 @@ Page {
         clip: true
         highlightMoveDuration: 300
 
-        model: fileModel
+        model: fileProxyModel
         delegate: fileDelegate
 
         cacheBuffer: 800
@@ -73,7 +73,8 @@ Page {
 
         Cp.Delegate {
             title: model.name
-            image: model.filetype == "directory" ? "img/folder.png" : ""
+            image: model.filetype == "directory" ? "img/folder.png" : (model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "")
+            watched: model.playcount > 0
 
             style: globals.styleFiles
 
@@ -88,17 +89,24 @@ Page {
         }
     }
 
+    SortFilterModel {
+        id: fileProxyModel
+
+        sourceModel: fileModel
+        sortRole: "sortname"
+        boolFilterRole: globals.showViewed ? "" : "playcount"
+    }
     VariantModel {
         id: fileModel
-        fields: [ "name", "path", "filetype" ]
+        fields: [ "name", "sortname", "path", "filetype", "playcount", "poster", "posterThumb" ]
+        key: "path"
+        thumbDir: ctxFatFile
     }
 
     onCurDirChanged: {
-        albumModel.clear();
-        console.debug(curDir);
         if (curDir != "/")
-            $().library.loadFiles(fileModel, curDir);
+            $().library.loadFiles(fileProxyModel, curDir);
         else
-            $().library.loadSources(fileModel);
+            $().library.loadSources(fileProxyModel);
     }
 }

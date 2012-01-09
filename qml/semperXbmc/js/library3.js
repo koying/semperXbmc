@@ -458,7 +458,7 @@ Library.prototype.loadArtists = function() {
     artistModel.clear();
 }
 
-Library.prototype.loadSources = function(fileModel) {
+Library.prototype.loadSources = function(fileProxyModel) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -474,17 +474,18 @@ Library.prototype.loadSources = function(fileModel) {
             var result = oJSON.result;
             var sources = result.sources;
             for (var i = 0; i < sources.length; i++){
-                fileModel.append({"name": sources[i].label, "path": sources[i].file, "filetype": "directory"});
+                fileProxyModel.sourceModel.append({"name": sources[i].label, "sortname": "0"+sources[i].label, "path": sources[i].file, "filetype": "directory", "playcount":0, "poster":""});
             }
+            fileProxyModel.reSort()
         }
     }
 
     var str = '{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "video" }, "id": 1}';
     doc.send(str);
-    fileModel.clear();
+    fileProxyModel.sourceModel.clear();
 }
 
-Library.prototype.loadFiles = function(fileModel, directory) {
+Library.prototype.loadFiles = function(fileProxyModel, directory) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -501,16 +502,21 @@ Library.prototype.loadFiles = function(fileModel, directory) {
             var result = oJSON.result;
             var files = result.files;
             for (var i = 0; i < files.length; i++){
-                fileModel.append({"name": files[i].label, "path": files[i].file, "filetype": files[i].filetype});
+                var thumb = "";
+                if (files[i].thumbnail && files[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + files[i].thumbnail;
+                }
+                fileProxyModel.sourceModel.append({"name": files[i].label, "sortname": (files[i].filetype == "directory" ? "0" : "1")+files[i].label, "path": files[i].file, "filetype": files[i].filetype, "playcount": (files[i].playcount == null ? 0 : files[i].playcount), "poster": thumb });
             }
+            fileProxyModel.reSort();
         }
     }
 
-    var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video" }, id: 1};
+            var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video", "properties":["thumbnail","playcount"] }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
     doc.send(str);
-    fileModel.clear();
+    fileProxyModel.sourceModel.clear();
 }
 
 Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
