@@ -388,7 +388,6 @@ Window {
         id: splash;
         anchors.fill: parent
         z:5
-        sourceUrl: globals.showSplash ? Qt.resolvedUrl("Splash.qml") : ""
         duration: 5000
 
         MouseArea {
@@ -659,6 +658,10 @@ Window {
 
     Component.onCompleted: {
         globals.load();
+
+        if (globals.showSplash)
+            splash.sourceUrl = Qt.resolvedUrl("Splash.qml")
+
         if (globals.server == "Unspecified") {
             dialogPlaceholder.source = "Settings.qml"
             dialogPlaceholder.item.accepted.connect(
