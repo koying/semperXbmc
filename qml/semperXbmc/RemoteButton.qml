@@ -5,6 +5,7 @@ Item {
     id: container
 
     signal clicked
+    signal pressedandhold
 
     // Symbian specific signals and properties
     signal platformReleased
@@ -91,9 +92,13 @@ Item {
         }
 
         onPressAndHold: {
-            if (stateGroup.state != "Canceled" && autoRepeat)
-                stateGroup.state = "AutoRepeating"
+            if (stateGroup.state != "Canceled")
+                if (autoRepeat)
+                    stateGroup.state = "AutoRepeating"
+                 else
+                    stateGroup.state = "Canceled"
             container.platformPressAndHold()
+            container.pressedandhold()
         }
 
         onExited: stateGroup.state = "Canceled"

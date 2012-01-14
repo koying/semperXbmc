@@ -27,7 +27,7 @@ Rectangle {
             id: list
             anchors.fill: parent
             anchors.margins: 10
-            model:  remoteMenuModel
+            model:  remoteShortcutsModel
             section.delegate: sectionHeader
             section.property:  "section"
             clip: true
@@ -150,29 +150,23 @@ Rectangle {
         }
 
         ListModel {
-            id: remoteMenuModel
+            id: remoteShortcutsModel
 
-            ListElement { label: "Toggle subtitles"; button: "showsubtitles"; section: "Buttons" }
-            ListElement { label: "Cycle subtitles"; button: "nextsubtitle"; section: "Buttons" }
-            ListElement { label: "Toggle Info"; button: "info"; section: "Buttons" }
-            ListElement { label: "Toggle OSD"; button: "osd"; section: "Buttons" }
-            ListElement { label: "Toggle Watched"; button: "togglewatched"; section: "Buttons" }
-            ListElement { label: "Toggle fullscreen"; button: "fullscreen"; section: "Buttons" }
-            ListElement { label: "XBMC fullscreen"; button: "togglefullscreen"; section: "Buttons" }
-//            ListElement { label: "Toggle CPU"; shortcut: "o"; section: "Buttons" }
-
-            ListElement { label: "Play"; builtin: "PlayDVD"; section: "CD/DVD" }
-            ListElement { label: "Rip"; builtin: "RipCD"; section: "CD/DVD" }
-            ListElement { label: "Eject"; builtin: "EjectTray"; section: "CD/DVD" }
-
-
-            ListElement { label: "Update"; builtin: "UpdateLibrary(video)"; section: "Video Library" }
-            ListElement { label: "Clean"; builtin: "CleanLibrary(video)"; section: "Video Library" }
-            ListElement { label: "Export"; builtin: "ExportLibrary(video)"; section: "Video Library" }
-
-            ListElement { label: "Update"; builtin: "UpdateLibrary(music)"; section: "Music Library" }
-            ListElement { label: "Clean"; builtin: "CleanLibrary(music)"; section: "Music Library" }
-            ListElement { label: "Export"; builtin: "ExportLibrary(music)"; section: "Music Library" }
+            ListElement { label: "Favorites"; builtin: "ActivateWindow(favourites)"; close: true }
+            ListElement { label: "Settings"; builtin: "ActivateWindow(settings,return)"; close: true }
+            ListElement { label: "Programs"; builtin: "ActivateWindow(programs)"; close: true }
+            ListElement { label: "Addons"; builtin: "ActivateWindow(addonbrowser)"; close: true }
+            ListElement { label: "By Title"; builtin: "ActivateWindow(videolibrary,MovieTitles,return)"; section: "Movies"; close: true }
+            ListElement { label: "By Genre"; builtin: "ActivateWindow(videolibrary,MovieGenres,return)"; section: "Movies"; close: true }
+            ListElement { label: "Recent"; builtin: "ActivateWindow(videolibrary,RecentlyAddedMovies,return)"; section: "Movies"; close: true }
+            ListElement { label: "By Title"; builtin: "ActivateWindow(videolibrary,TvShowTitles,return)"; section: "TV Shows"; close: true }
+            ListElement { label: "By Genre"; builtin: "ActivateWindow(videolibrary,TvShowGenres,return)"; section: "TV Shows"; close: true }
+            ListElement { label: "Recent episodes "; builtin: "ActivateWindow(videolibrary,RecentlyAddedEpisodes,return)"; section: "TV Shows"; close: true }
+            ListElement { label: "Artists"; builtin: "ActivateWindow(MusicLibrary,Artists,return)"; section: "Music"; close: true }
+            ListElement { label: "Albums"; builtin: "ActivateWindow(MusicLibrary,Albums,return)"; section: "Music"; close: true }
+            ListElement { label: "Recent Albums"; builtin: "ActivateWindow(MusicLibrary,RecentlyAddedAlbums,return)"; section: "Music"; close: true }
+            ListElement { label: "Video"; builtin: "ActivateWindow(videolibrary,Plugins,return)"; section: "Plugins"; close: true }
+            ListElement { label: "Music"; builtin: "ActivateWindow(MusicLibrary,Plugins,return)"; section: "Plugins"; close: true }
         }
     }
 }
