@@ -9,8 +9,6 @@ Library.prototype.tvshowId = -1;
 Library.prototype.movieFields = '["genre", "title", "runtime", "year", "playcount", "rating", "thumbnail", "streamdetails", "imdbnumber", "originaltitle"]'
 
 Library.prototype.handleMovies = function (movies) {
-    var aGenres = []
-
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
         var thumb = "";
@@ -24,17 +22,15 @@ Library.prototype.handleMovies = function (movies) {
         if (movies[i].genre && movies[i].genre != "") {
             var aGenre = movies[i].genre.split("/");
             for (var j=0; j<aGenre.length; ++j) {
-                if (aGenres.indexOf(aGenre[j].trim()) == -1) {
-                    var g = movieGenreModel.getValues(aGenre[j].trim());
-                    if (!Utils.isEmpty(g)) {
-                        g.count = g.count + 1
-                        if (movies[i].playcount == 0)
-                            g.unseen = g.unseen + 1
-                        g.playcount = g.unseen > 0 ? 0 : 1;
-                        movieGenreModel.keyUpdate(g);
-                    } else {
-                        movieGenreModel.append({"name":aGenre[j].trim(), "count":1, "unseen": movies[i].playcount ? 0 : 1, "playcount": movies[i].playcount ? 1 : 0})
-                    }
+                var g = movieGenreModel.getValues(aGenre[j].trim());
+                if (!Utils.isEmpty(g)) {
+                    g.count = g.count + 1
+                    if (movies[i].playcount == 0)
+                        g.unseen = g.unseen + 1
+                    g.playcount = g.unseen > 0 ? 0 : 1;
+                    movieGenreModel.keyUpdate(g);
+                } else {
+                    movieGenreModel.append({"name":aGenre[j].trim(), "count":1, "unseen": movies[i].playcount ? 0 : 1, "playcount": movies[i].playcount ? 1 : 0})
                 }
             }
         }
@@ -46,7 +42,9 @@ Library.prototype.handleMovies = function (movies) {
     }
 
     movieProxyModel.reSort();
-    movieGenreProxyModel.reSort()
+    movieGenreProxyModel.sortRole = "name"
+    movieGenreProxyModel.sortOrder = Qt.AscendingOrder
+//    movieGenreProxyModel.reSort();
 }
 
 Library.prototype.loadMovies = function () {
@@ -68,11 +66,10 @@ Library.prototype.loadMovies = function () {
         }
     }
 
-
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": '+Library.prototype.movieFields+'  }, "id": 1}';
-    doc.send(str);
     movieModel.clear();
     movieGenreModel.clear();
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": '+Library.prototype.movieFields+'  }, "id": 1}';
+    doc.send(str);
 
     return;
 }
@@ -97,9 +94,9 @@ Library.prototype.recentMovies = function () {
     }
 
 
+    movieModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "properties": '+Library.prototype.movieFields+' }, "id": 1}';
     doc.send(str);
-    movieModel.clear();
 
     return;
 }
@@ -133,9 +130,9 @@ Library.prototype.loadMovieSets = function () {
     }
 
 
-            var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSets", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["title", "thumbnail","playcount"] }, "id": 1}';
-    doc.send(str);
     movieSetsModel.clear();
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSets", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["title", "thumbnail","playcount"] }, "id": 1}';
+    doc.send(str);
 
     return;
 }
@@ -160,9 +157,9 @@ Library.prototype.loadMovieSetMovies = function (setId) {
     }
 
 
+    movieModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSetDetails", "params": { "setid":'+ setId +', "movies": {"sort": {"method":"year", "order":"ascending"}, "properties": '+Library.prototype.movieFields+' } }, "id": 1}';
     doc.send(str);
-    movieModel.clear();
 
     return;
 }
@@ -212,10 +209,10 @@ Library.prototype.loadTVShows = function () {
     }
 
 
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber"] }, "id": 1}';
-    doc.send(str);
     tvshowModel.clear();
     tvshowGenreModel.clear();
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber"] }, "id": 1}';
+    doc.send(str);
 
     return;
 }
@@ -253,9 +250,9 @@ Library.prototype.loadSeasons = function (id) {
     }
 
 
+    seasonModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetSeasons", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "sort": {"method":"label", "order":"ascending"}, "properties": ["thumbnail", "showtitle", "season", "episode", "playcount"] }, "id": 1}';
     doc.send(str);
-    seasonModel.clear();
 
     return;
 }
@@ -301,9 +298,9 @@ Library.prototype.loadEpisodes = function (id) {
     }
 
 
+    episodeModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
     doc.send(str);
-    episodeModel.clear();
 
     return;
 }
@@ -317,9 +314,9 @@ Library.prototype.recentEpisodes = function () {
     }
 
 
+    episodeModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
     doc.send(str);
-    episodeModel.clear();
 
     return;
 }
@@ -347,9 +344,9 @@ Library.prototype.loadTracks = function (idalbum) {
     }
 
 
+    trackModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration", "file"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
-    trackModel.clear();
 
     return;
 }
@@ -379,7 +376,6 @@ Library.prototype.handleAlbums = function (responseText) {
 }
 
 Library.prototype.loadAlbums = function (idartist) {
-    albumModel.clear();
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -388,9 +384,9 @@ Library.prototype.loadAlbums = function (idartist) {
     }
 
 
+    albumModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"], "artistid": '+idartist+' }, "id": 1}';
     doc.send(str);
-    albumModel.clear();
 
     return;
 }
@@ -404,9 +400,9 @@ Library.prototype.loadAllAlbums = function () {
     }
 
 
+    albumModel.clea();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
-    albumModel.clear();
 
     return;
 }
@@ -420,9 +416,9 @@ Library.prototype.recentAlbums = function () {
     }
 
 
+    albumModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetRecentlyAddedAlbums", "params": { "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
-    albumModel.clear();
 
     return;
 }
@@ -453,9 +449,9 @@ Library.prototype.loadArtists = function() {
         }
     }
 
+    artistModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "params": { "sort": {"method":"artist", "order":"ascending"}, "properties": ["thumbnail"] }, "id": 1}';
     doc.send(str);
-    artistModel.clear();
 }
 
 Library.prototype.loadSources = function(fileProxyModel) {
@@ -480,9 +476,9 @@ Library.prototype.loadSources = function(fileProxyModel) {
         }
     }
 
+    fileProxyModel.sourceModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "video" }, "id": 1}';
     doc.send(str);
-    fileProxyModel.sourceModel.clear();
 }
 
 Library.prototype.loadFiles = function(fileProxyModel, directory) {
@@ -512,11 +508,11 @@ Library.prototype.loadFiles = function(fileProxyModel, directory) {
         }
     }
 
-            var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video", "properties":["thumbnail","playcount"] }, id: 1};
+    fileProxyModel.sourceModel.clear();
+    var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video", "properties":["thumbnail","playcount"] }, id: 1};
     var str = JSON.stringify(o);
     console.debug(str);
     doc.send(str);
-    fileProxyModel.sourceModel.clear();
 }
 
 Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
@@ -579,9 +575,9 @@ Library.prototype.downloadAlbum = function(idalbum) {
     }
 
 
+    trackModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "album", "track", "file"], "albumid" : '+idalbum+' }, "id": 1}';
     doc.send(str);
-    trackModel.clear();
 
     return;
 }

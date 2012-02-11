@@ -3,7 +3,7 @@
 #include <QFile>
 
 #include "qmlapplicationviewer.h"
-#include "networkaccessmanagerfactory.h"
+#include "NetworkAccessManagerFactory.h"
 
 #include "XbmcEventClient.h"
 #include "XbmcTcpTransport.h"
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     QString dataDir;
     QString fatPath;
     QString fatName = app.applicationName() + ".fat";
-#ifdef __ANDROID__
+#ifdef Q_OS_ANDROID
     if (QFile::exists("/sdcard/"+fatName)) {
         dataDir = "/sdcard";
         fatPath = "/sdcard/"+fatName;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
     //Not found? create one...
     if (fatPath.isEmpty()) {
-#ifdef __ANDROID__
+#ifdef Q_OS_ANDROID
         if (QDir("/sdcard").exists()) {
             dataDir = "/sdcard";
             fatPath = "/sdcard/"+fatName;
@@ -136,6 +136,14 @@ int main(int argc, char *argv[])
 
     viewer->engine()->addImageProvider(QLatin1String("thumb"), static_cast<QDeclarativeImageProvider*>(thumbProvider));
 
+#ifdef __OWN_COMPONENT
+#if defined(Q_OS_ANDROID)
+    viewer->addImportPath("/imports/");
+    viewer->engine()->addPluginPath(QDir::homePath()+"/../lib");
+#endif
+    viewer->addImportPath("qml/imports");
+    viewer->engine()->addPluginPath("qml/plugins");
+#endif
     viewer->setMainQmlFile(QLatin1String("qml/semperXbmc/main.qml"));
     viewer->engine()->setBaseUrl(QUrl::fromLocalFile("/"));
     viewer->showExpanded();

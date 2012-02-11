@@ -449,7 +449,6 @@ Window {
         id: movieGenreProxyModel
 
         sourceModel: movieGenreModel
-        sortRole: "name"
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
     VariantModel {
