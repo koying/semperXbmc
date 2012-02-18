@@ -1,5 +1,5 @@
 import Qt 4.7
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import "components/" as Cp;
 import "menus/" as Menus
 
@@ -9,9 +9,10 @@ Page {
     id: page
     focus: true
 
-    tools: ToolBarLayout {
-        Menus.MainTools {}
+    Menus.MainTools {
+        id: mainTools
     }
+    tools: mainTools.layout
 
     Keys.onBackPressed: {
         playListStack.pop()

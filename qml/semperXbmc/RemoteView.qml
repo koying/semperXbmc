@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components/" as Cp;
 import "menus/" as Menus
@@ -28,7 +28,7 @@ Rectangle {
         anchors {
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
+            bottom: opMenu.top
         }
 
 
@@ -108,7 +108,7 @@ Rectangle {
 
         RemoteNavigation {
             id: remotenavigationPlayer
-            scale:  main.inPortrait ? 0.9 : 0.8
+            scale:  main.inPortrait ? 0.7 : 0.6
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             textCenter: "Mute"
@@ -189,8 +189,9 @@ Rectangle {
         id: mainTools
     }
 
-    OptionsMenu {
+    ToolBar {
         id: opMenu
-        tools: mainTools
+        tools: mainTools.layout
+        anchors.bottom: parent.bottom
     }
 }

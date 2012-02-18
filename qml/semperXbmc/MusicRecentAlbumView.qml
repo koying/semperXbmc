@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import "components/" as Cp;
 import "menus/" as Menus
 

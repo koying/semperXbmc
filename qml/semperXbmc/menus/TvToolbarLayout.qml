@@ -1,19 +1,19 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 
 ToolBarLayout {
     id: layout
     property bool filterEnabled: false
 
-    //        ToolButton {
-    //            iconSource: "toolbar-back"
-    //            onClicked: tvshowStack.pop()
-    //            visible: tvshowStack.depth > 1
-    //        }
+    ToolButton {
+        iconSource: "toolbar-back"
+        onClicked: tvshowStack.pop()
+        visible: tvshowStack.depth > 1
+    }
 
     ToolButton {
         id: btFilter
-        text: "Filter"
+//        text: "Filter"
         checkable: true
         iconSource: "../img/filter.svg"
         onClicked: {
@@ -23,33 +23,38 @@ ToolBarLayout {
     }
 
     ToolButton {
-        text:  "View"
+//        text:  "View"
         iconSource: "../img/switch_windows.svg"
-        menu: viewMenu
+        onClicked: viewMenu.open()
+//        menu: viewMenu
     }
 
     ToolButton {
-        text:  "Sort"
+//        text:  "Sort"
         iconSource: "../img/shuffle.svg"
-        menu: sortMenu
+        onClicked: sortMenu.open()
+//        menu: sortMenu
     }
 
     ToolButton {
-        text:  "Style"
+//        text:  "Style"
         iconSource: "../img/template.svg"
-        menu: styleMenu
+        onClicked: styleMenu.open()
+//        menu: styleMenu
     }
 
     ToolButton {
-        text:  "Refresh"
+//        text:  "Refresh"
         iconSource: "../img/refresh.svg"
         onClicked: refresh()
     }
 
-    MainTools {}
+    ToolButton {
+        MainTools {
+            id: mainTools
+        }
 
-    //        ToolButton {
-    //            iconSource: "toolbar-menu"
-    //            onClicked: pgMenu.open()
-    //        }
+        iconSource: "toolbar-menu"
+        onClicked: mainTools.menu.open()
+    }
 }

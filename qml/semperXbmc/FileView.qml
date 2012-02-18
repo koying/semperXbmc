@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components/" as Cp;
 import "menus/" as Menus
@@ -12,9 +12,10 @@ Page {
 
     focus: true
 
-    tools: ToolBarLayout {
-        Menus.MainTools {}
+    Menus.MainTools {
+        id: mainTools
     }
+    tools: mainTools.layout
 
     Keys.onBackPressed: {
         fileStack.pop()

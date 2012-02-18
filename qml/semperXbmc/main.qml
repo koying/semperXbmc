@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components/" as Cp;
 
@@ -66,7 +66,7 @@ Window {
                 if (movieStack.depth == 0) {
                     movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
                 }
-                movieToolbar.active = true
+//                movieToolbar.active = true
                 movieStack.currentPage.focus = true;
             }
         }
@@ -79,7 +79,7 @@ Window {
                 if (tvshowStack.depth == 0) {
                     tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
                 }
-                tvToolbar.active = true;
+//                tvToolbar.active = true;
                 tvshowStack.currentPage.focus = true;
             }
         }
@@ -92,7 +92,7 @@ Window {
                 if (musicStack.depth == 0) {
                     musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
                 }
-                musicToolbar.active = true
+//                musicToolbar.active = true
                 musicStack.currentPage.focus = true;
             }
         }
@@ -105,7 +105,7 @@ Window {
                 if (playListStack.depth == 0) {
                     playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
                 }
-                playListToolbar.active = true
+//                playListToolbar.active = true
                 playListStack.currentPage.focus = true;
             }
         }
@@ -118,7 +118,7 @@ Window {
                 if (fileStack.depth == 0) {
                     fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
                 }
-                fileToolbar.active = true
+//                fileToolbar.active = true
                 fileStack.currentPage.focus = true;
             }
         }
@@ -177,7 +177,7 @@ Window {
                 toolBar: movieToolbar
             }
 
-            OptionsMenu {
+            ToolBar {
                 id: movieToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -200,7 +200,7 @@ Window {
                 toolBar: tvToolbar
 
             }
-            OptionsMenu {
+            ToolBar {
                 id: tvToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -225,7 +225,7 @@ Window {
 
             }
 
-            OptionsMenu {
+            ToolBar {
                 id: musicToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -249,7 +249,7 @@ Window {
 
             }
 
-            OptionsMenu {
+            ToolBar {
                 id: playListToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -273,7 +273,7 @@ Window {
 
             }
 
-            OptionsMenu {
+            ToolBar {
                 id: fileToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -583,7 +583,7 @@ Window {
 
     Component.onCompleted: {
         globals.load();
-        remoteTab.menu.active = true;
+//        remoteTab.menu.active = true;
 
         if (globals.showSplash)
             splash.sourceUrl = Qt.resolvedUrl("Splash.qml")
