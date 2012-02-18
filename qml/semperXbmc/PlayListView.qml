@@ -1,75 +1,90 @@
 import Qt 4.7
-import com.nokia.symbian 1.1
-import "components" as Cp;
+import com.nokia.android 1.1
+import "components/" as Cp;
+import "menus/" as Menus
 
 import "js/Utils.js" as Utils
 
 Page {
+    id: page
+    focus: true
+
     tools: ToolBarLayout {
+        Menus.MainTools {}
+    }
 
-        ToolButton {
-            iconSource: "toolbar-back"
-            onClicked: playListStack.pop()
-            visible: playListStack.depth > 1
-        }
-
-        ButtonRow {
-            ToolButton {
-                iconSource: "img/back1.svg"
-                onClicked: $().audioplayer.skipPrevious()
-            }
-            ToolButton {
-                iconSource: "toolbar-mediacontrol-stop"
-                onClicked: $().audioplayer.stop()
-            }
-            ToolButton {
-                id: btPause
-                iconSource: "toolbar-mediacontrol-pause"
-                onClicked:  {
-                    $().audioplayer.playPause()
-                    $().playlist.paused = true;
-                    visible = false;
-                    btPlay.visible = true;
-                }
-                visible: false
-            }
-            ToolButton {
-                id: btPlay
-                iconSource: "toolbar-mediacontrol-play"
-                onClicked: {
-                    if (!$().playlist.playing) {
-                        $().playlist.playAudio();
-                        $().playlist.playing = true;
-                    } else
-                        $().audioplayer.playPause();
-                    visible = false;
-                    btPause.visible = true;
-                }
-            }
-            ToolButton {
-                iconSource: "img/skip.svg"
-                onClicked: $().audioplayer.skipNext()
-            }
-        }
-
-        ToolButton {
-            iconSource: "toolbar-delete"
-            onClicked: {
-                if ($().playlist.playing)
-                    $().audioplayer.stop()
-                $().playlist.audioClear();
-            }
-            visible: playlistModel.count > 0
-        }
+    Keys.onBackPressed: {
+        playListStack.pop()
+        event.accepted = true
     }
 
     ListView {
         id: playList
-        anchors.fill: parent
+        anchors {right: parent.right; left: parent.left; top: parent.top; bottom: playlistToolbar.top }
         clip: true
 
         model: playlistModel
         delegate: playlistDelegate
+    }
+
+    ToolBar {
+        id: playlistToolbar
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+
+        tools: ToolBarLayout {
+            ButtonRow {
+                ToolButton {
+                    iconSource: "img/back1.svg"
+                    onClicked: $().audioplayer.skipPrevious()
+                }
+                ToolButton {
+                    iconSource: "toolbar-mediacontrol-stop"
+                    onClicked: $().audioplayer.stop()
+                }
+                ToolButton {
+                    id: btPause
+                    iconSource: "toolbar-mediacontrol-pause"
+                    onClicked:  {
+                        $().audioplayer.playPause()
+                        $().playlist.paused = true;
+                        visible = false;
+                        btPlay.visible = true;
+                    }
+                    visible: false
+                }
+                ToolButton {
+                    id: btPlay
+                    iconSource: "toolbar-mediacontrol-play"
+                    onClicked: {
+                        if (!$().playlist.playing) {
+                            $().playlist.playAudio();
+                            $().playlist.playing = true;
+                        } else
+                            $().audioplayer.playPause();
+                        visible = false;
+                        btPause.visible = true;
+                    }
+                }
+                ToolButton {
+                    iconSource: "img/skip.svg"
+                    onClicked: $().audioplayer.skipNext()
+                }
+            }
+
+            ToolButton {
+                iconSource: "toolbar-delete"
+                onClicked: {
+                    if ($().playlist.playing)
+                        $().audioplayer.stop()
+                    $().playlist.audioClear();
+                }
+                visible: playlistModel.count > 0
+            }
+        }
+    }
+
+    ScrollDecorator {
+        flickableItem: playList
     }
 
     Component {

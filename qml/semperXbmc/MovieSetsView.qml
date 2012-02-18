@@ -7,56 +7,17 @@ import "js/Utils.js" as Utils
 
 Page {
     id: page
+    focus: true
 
-    tools:  pgTools
+    tools:  menuLayout
 
-    ToolBarLayout {
-        id: pgTools
-
-        ToolButton {
-            iconSource: "toolbar-back"
-            onClicked: movieStack.pop()
-            visible: movieStack.depth > 1
-        }
-
-        ToolButton {
-            id: btFilter
-            checkable: true
-            iconSource: "img/filter.svg"
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
+    Menus.MovieToolbarLayout {
+        id: menuLayout
     }
 
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-
-            MenuItem {
-                text:  "View"
-                platformSubItemIndicator: true
-                onClicked: viewMenu.open()
-            }
-
-            MenuItem {
-                text:  "Sort"
-                platformSubItemIndicator: true
-                onClicked: sortMenu.open()
-            }
-
-            MenuItem {
-                text:  "Style"
-                platformSubItemIndicator: true
-                onClicked: styleMenu.open()
-            }
-            MenuItem {
-                text:  "Refresh"
-                onClicked: refresh()
-            }
-        }
+    Keys.onBackPressed: {
+        movieStack.pop()
+        event.accepted = true
     }
 
     Menus.MovieViewMenu {
@@ -82,7 +43,6 @@ Page {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
         flickableItem: videoSetsList
     }
 
@@ -119,7 +79,7 @@ Page {
 
     Cp.SearchDialog {
         id: searchDlg
-        visible: btFilter.checked
+        visible: menuLayout.filterEnabled
 
         onApply: {
             movieProxyModel.filterRole = "name"

@@ -1,9 +1,12 @@
 import QtQuick 1.0
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 import com.semperpax.qmlcomponents 1.0
-import "components" as Cp;
+import "components/" as Cp;
+import "menus/" as Menus
 
 Rectangle {
+    property alias menu: opMenu
+
     Cp.AutoDestructLoader { id: remoteMenu; anchors.fill:  parent; z:5 }
     Connections {
         target: remoteMenu.item
@@ -181,4 +184,13 @@ Rectangle {
             }
         }
     ]
+
+    Menus.MainTools {
+        id: mainTools
+    }
+
+    OptionsMenu {
+        id: opMenu
+        tools: mainTools
+    }
 }

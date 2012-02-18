@@ -1,7 +1,7 @@
 import QtQuick 1.0
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 import com.semperpax.qmlcomponents 1.0
-import "components" as Cp;
+import "components/" as Cp;
 
 import "js/xbmc.js" as Xbmc
 import "js/json.js" as Json
@@ -34,11 +34,103 @@ Window {
        anchors.fill: parent
     }
 
-    StatusBar {
-        id: statusBar
-        property alias text: txTitle.text
+    Text {
+        id: txMsg
+        anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
+        text: "No JSON to " + globals.server
+        font.family: "Helvetica"
+        font.pixelSize: 24
+        color: "white"
+    }
 
-        anchors { top: parent.top; left: parent.left; right: parent.right }
+    TabBar {
+        id: tabBar
+        anchors { left: parent.left; right: parent.right; top: parent.top }
+        opacity: 0
+
+        TabButton {
+            iconSource: "img/home.png"
+            tab: remoteTab
+            onClicked: {
+                main.state = ""
+                remoteTab.menu.active = true;
+                remoteTab.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/filmstripBg.png"
+            tab: movieTab
+            onClicked: {
+                main.state = "movies"
+                if (movieStack.depth == 0) {
+                    movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
+                }
+                movieToolbar.active = true
+                movieStack.currentPage.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/tvBg.png"
+            tab: tvTab
+            onClicked: {
+                main.state = "tvshows"
+                if (tvshowStack.depth == 0) {
+                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
+                }
+                tvToolbar.active = true;
+                tvshowStack.currentPage.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/musicBg.png"
+            tab: musicTab
+            onClicked: {
+                main.state = "music"
+                if (musicStack.depth == 0) {
+                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
+                }
+                musicToolbar.active = true
+                musicStack.currentPage.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/playlistBg.png"
+            tab:  playlistTab
+            onClicked: {
+                main.state = "playlist"
+                if (playListStack.depth == 0) {
+                    playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
+                }
+                playListToolbar.active = true
+                playListStack.currentPage.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/folderBg.png"
+            tab:  fileTab
+            onClicked: {
+                main.state = "file"
+                if (fileStack.depth == 0) {
+                    fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
+                }
+                fileToolbar.active = true
+                fileStack.currentPage.focus = true;
+            }
+        }
+
+        TabButton {
+            iconSource: "img/download.png"
+            tab: downloadTab
+            visible: (downloadTab.count > 0)
+            onClicked: {
+                main.state = "download"
+            }
+        }
 
         Behavior on opacity {
             NumberAnimation {
@@ -46,194 +138,26 @@ Window {
             }
         }
 
-        Text {
-            id: txTitle
-            anchors { left: parent.left; leftMargin: 10 }
-
-            color: "#2cb729"
-            font {
-                family: "Helvetica";
-                pixelSize: parent.height -5
-            }
-
-            text: mainTabGroup.currentTab.title
-        }
-
-        MouseArea {
-            id: statusArea
-            anchors.fill: parent
-        }
-    }
-
-    ToolBar {
-        id: toolBar
-        anchors { left: parent.left; right: parent.right; top: statusBar.bottom }
-
-        tools: ToolBarLayout {
-
-            ToolButton {
-                iconSource: "img/settings.svg"
-                onClicked: {
-                    settingMenu.open()
+        states: [
+            State {
+                name: "initialized"; when: main.jsonInitialized
+                PropertyChanges {
+                    target: tabBar
+                    opacity: 1
+                }
+                PropertyChanges {
+                    target: txMsg
+                    opacity: 0
                 }
             }
-
-            ButtonRow {
-                id: mainTabs
-                exclusive: true
-                opacity: 0
-
-                TabButton {
-                    iconSource: "img/home.png"
-                    tab: remoteTab
-                    onClicked: {
-                        main.state = ""
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/filmstripBg.png"
-                    tab: movieTab
-                    onClicked: {
-                        main.state = "movies"
-                        if (movieStack.depth == 0) {
-                            movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
-                        }
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/tvBg.png"
-                    tab: tvTab
-                    onClicked: {
-                        main.state = "tvshows"
-                        if (tvshowStack.depth == 0) {
-                            tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
-                        }
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/musicBg.png"
-                    tab: musicTab
-                    onClicked: {
-                        main.state = "music"
-                        if (musicStack.depth == 0) {
-                            musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
-                        }
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/playlistBg.png"
-                    tab:  playlistTab
-                    onClicked: {
-                        main.state = "playlist"
-                        if (playListStack.depth == 0) {
-                            playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
-                        }
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/folderBg.png"
-                    tab:  fileTab
-                    onClicked: {
-                        main.state = "file"
-                        if (fileStack.depth == 0) {
-                            fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
-                        }
-                    }
-                }
-
-                TabButton {
-                    iconSource: "img/download.png"
-                    tab: downloadTab
-                    visible: (downloadTab.count > 0)
-                    onClicked: {
-                        main.state = "download"
-                    }
-                }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-
-                states: [
-                    State {
-                        name: "initialized"; when: main.jsonInitialized
-                        PropertyChanges {
-                            target: mainTabs
-                            opacity: 1
-                        }
-                    }
-                ]
-            }
-
-            ToolButton {
-                iconSource: "img/close_stop.svg"
-                onClicked: mainMenu.open()
-                onPlatformPressAndHold: Qt.quit()
-            }
-        }
-    }
-
-    ContextMenu {
-        id: settingMenu
-        MenuLayout {
-
-            MenuItem {
-                text:  "Display options"
-                onClicked: {
-                    dialogPlaceholder.source = "Options.qml"
-                    dialogPlaceholder.item.open()
-                }
-            }
-
-            MenuItem {
-                text:  "Connection settings"
-                onClicked: {
-                    dialogPlaceholder.source = "Settings.qml"
-                    dialogPlaceholder.item.open()
-                }
-            }
-        }
-    }
-
-    ContextMenu {
-        id: mainMenu
-        MenuLayout {
-
-            MenuItem {
-                text:  "Quit"
-                onClicked: Qt.quit();
-            }
-
-            MenuItem {
-                text:  "Close XBMC and Quit"
-                onClicked: {
-                    xbmcEventClient.actionBuiltin("Quit");
-                    Qt.quit();
-                }
-            }
-
-            MenuItem {
-                text:  "Shutdown XBMC and Quit"
-                onClicked:  {
-                    xbmcEventClient.actionBuiltin("Powerdown");
-                    Qt.quit();
-                }
-            }
-        }
+        ]
     }
 
     TabGroup {
         id: mainTabGroup
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.top: toolBar.bottom
+        anchors.top: tabBar.bottom
         anchors.bottom: parent.bottom
 
 
@@ -253,7 +177,7 @@ Window {
                 toolBar: movieToolbar
             }
 
-            ToolBar {
+            OptionsMenu {
                 id: movieToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -276,7 +200,7 @@ Window {
                 toolBar: tvToolbar
 
             }
-            ToolBar {
+            OptionsMenu {
                 id: tvToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -301,7 +225,7 @@ Window {
 
             }
 
-            ToolBar {
+            OptionsMenu {
                 id: musicToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -325,7 +249,7 @@ Window {
 
             }
 
-            ToolBar {
+            OptionsMenu {
                 id: playListToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -349,7 +273,7 @@ Window {
 
             }
 
-            ToolBar {
+            OptionsMenu {
                 id: fileToolbar
                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
 
@@ -366,6 +290,7 @@ Window {
             property string title: "DOWNLOADS"
         }
     }
+
 
     Loader {
         id: dialogPlaceholder
@@ -451,6 +376,7 @@ Window {
         sourceModel: movieGenreModel
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
+
     VariantModel {
         id: movieGenreModel
         fields: [ "name", "count", "unseen", "playcount" ]
@@ -502,8 +428,8 @@ Window {
     }
     VariantModel {
         id: tvshowSuppModel
-        fields: [ "id", "lastplayed", "url" ]
-        key: "id"
+        fields: [ "showtitle", "lastplayed", "url" ]
+        key: "showtitle"
 
         stream: ctxFatFile + "/tvshowLastplayedModel.dat"
 
@@ -514,7 +440,7 @@ Window {
     VariantModel {
         id: tvshowModel
         fields: [ "id", "name", "poster", "genre", "duration", "rating", "playcount", "imdbnumber", "originaltitle", "posterThumb", "lastplayed" ]
-        key: "id"
+        key: "name"
         relatedFields: [ "lastplayed" ]
         thumbDir: ctxFatFile
     }
@@ -657,6 +583,7 @@ Window {
 
     Component.onCompleted: {
         globals.load();
+        remoteTab.menu.active = true;
 
         if (globals.showSplash)
             splash.sourceUrl = Qt.resolvedUrl("Splash.qml")

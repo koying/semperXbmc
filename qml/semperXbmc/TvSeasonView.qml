@@ -1,49 +1,25 @@
 import Qt 4.7
-import com.nokia.symbian 1.1
-import "components" as Cp;
+import com.nokia.android 1.1
+import "components/" as Cp;
+import "menus/" as Menus
 
 import "js/Utils.js" as Utils
 
 Page {
     id: page
+    focus: true
+
     property int serieId
 
-    tools:  pgTools
+    tools:  menuLayout
 
-    ToolBarLayout {
-        id: pgTools
-
-        ToolButton {
-            iconSource: "toolbar-back"
-            onClicked: tvshowStack.pop()
-            visible: tvshowStack.depth > 1
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
+    Menus.TvToolbarLayout {
+        id: menuLayout
     }
 
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-
-            MenuItem {
-                text:  "View"
-                platformSubItemIndicator: true
-                onClicked: viewMenu.open()
-            }
-            MenuItem {
-                text:  "Style"
-                platformSubItemIndicator: true
-                onClicked: styleMenu.open()
-            }
-            MenuItem {
-                text:  "Refresh"
-                onClicked: refresh()
-            }
-        }
+    Keys.onBackPressed: {
+        tvshowStack.pop()
+        event.accepted = true
     }
 
     ContextMenu {
@@ -76,28 +52,8 @@ Page {
         }
     }
 
-    ContextMenu {
+    Menus.TvStyleMenu {
         id: styleMenu
-        MenuLayout {
-            MenuItem {
-                text:  "Small Horizontal"
-                onClicked: {
-                    globals.styleTvShowSeasons = "smallHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Big Horizontal"
-                onClicked: {
-                    globals.styleTvShowSeasons = "bigHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Vertical"
-                onClicked: {
-                    globals.styleTvShowSeasons = "vertical"
-                }
-            }
-        }
     }
 
     ListView {
@@ -110,7 +66,6 @@ Page {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
         flickableItem: tvSeasonList
     }
 

@@ -1,108 +1,32 @@
 import QtQuick 1.0
-import com.nokia.symbian 1.1
-import "components" as Cp;
+import com.nokia.android 1.1
+import "components/" as Cp;
+import "menus/" as Menus
 
 import "js/Utils.js" as Utils
 
 Page {
     id: page
+    focus: true
 
-    tools:
+    tools:  menuLayout
 
-    ToolBarLayout {
-        id: pgTools
-
-        ToolButton {
-            iconSource: "toolbar-back"
-            onClicked: musicStack.pop()
-            visible: musicStack.depth > 1
-        }
-
-        ToolButton {
-            id: btFilter
-            checkable: true
-            iconSource: "img/filter.svg"
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: pgMenu.open()
-        }
+    Menus.MusicToolbarLayout {
+        id: menuLayout
     }
 
-    Menu {
-        id: pgMenu
-        content: MenuLayout {
-
-            MenuItem {
-                text:  "View"
-                platformSubItemIndicator: true
-                onClicked: viewMenu.open()
-            }
-
-            MenuItem {
-                text:  "Style"
-                platformSubItemIndicator: true
-                onClicked: styleMenu.open()
-            }
-            MenuItem {
-                text:  "Refresh"
-                onClicked: refresh()
-            }
-        }
+    Keys.onBackPressed: {
+        musicStack.pop()
+        event.accepted = true
     }
 
-    ContextMenu {
+    Menus.MusicViewMenu {
         id: viewMenu
-        MenuLayout {
-            MenuItem {
-                text:  "Artists"
-                onClicked: {
-                    globals.initialMusicView = "MusicArtistView.qml"
-                    if (musicStack.depth < 1) {
-                        musicStack.replace(Qt.resolvedUrl(globals.initialMusicView))
-                    } else {
-                        musicStack.clear();
-                        musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
-                    }
-                }
-            }
-            MenuItem {
-                text:  "Recent Albums"
-            }
-            MenuItem {
-                text:  "All Albums"
-                onClicked: {
-                    albumModel.clear();
-                    globals.initialMusicView = "MusicAlbumView.qml"
-                    musicStack.replace(Qt.resolvedUrl(globals.initialMusicView), {artistId: -1})
-                }
-            }
-        }
+        currentType: "All Albums"
     }
 
-    ContextMenu {
+    Menus.MusicStyleMenu {
         id: styleMenu
-        MenuLayout {
-            MenuItem {
-                text:  "Small Horizontal"
-                onClicked: {
-                    globals.styleMusicAlbums = "smallHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Big Horizontal"
-                onClicked: {
-                    globals.styleMusicAlbums = "bigHorizontal"
-                }
-            }
-            MenuItem {
-                text:  "Vertical"
-                onClicked: {
-                    globals.styleMusicAlbums = "vertical"
-                }
-            }
-        }
     }
 
     ListView {
@@ -116,7 +40,6 @@ Page {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
         flickableItem: musicAlbumList
     }
 
@@ -181,7 +104,7 @@ Page {
 
     Cp.SearchDialog {
         id: searchDlg
-        visible: btFilter.checked
+        visible: menuLayout.filterEnabled
 
         onApply: {
             albumProxyModel.filterRole = "name"
@@ -199,5 +122,7 @@ Page {
 
     Component.onCompleted: {
         $().library.recentAlbums();
+
+        globals.initialMusicView = "MusicRecentAlbumView.qml"
     }
 }

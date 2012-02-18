@@ -9,7 +9,7 @@ Rectangle {
     signal apply
     signal cancel
 
-    visible: btFilter.checked
+    visible: menuLayout.filterEnabled
     gradient: Gradient {
         GradientStop { position: 0.0; color: "#333" }
         GradientStop { position: 1.0; color: "#000" }
@@ -58,9 +58,9 @@ Rectangle {
     }
 
     Connections {
-        target: btFilter
-        onCheckedChanged: {
-            if (!btFilter.checked) {
+        target: menuLayout
+        onFilterEnabledChanged: {
+            if (!menuLayout.filterEnabled) {
                 searchDlg.cancel()
                 applyText.applied = false
                 applyText.source = "img/checkmark_24.png"

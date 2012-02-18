@@ -17,7 +17,7 @@ Item {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
+        flickableItem: tvEpisodeList
     }
 
     Component {

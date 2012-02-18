@@ -1,7 +1,8 @@
 import QtQuick 1.0
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 import com.semperpax.qmlcomponents 1.0
-import "components" as Cp;
+import "components/" as Cp;
+import "menus/" as Menus
 
 import "js/Utils.js" as Utils
 
@@ -9,47 +10,16 @@ Page {
     id: page
     property string curDir
 
-    tools:  ToolBarLayout {
+    focus: true
 
-        ToolButton {
-            iconSource: "toolbar-back"
-            onClicked: fileStack.pop()
-            visible: fileStack.depth > 1
-        }
-
-//        ToolButton {
-//            id: btFilter
-//            checkable: true
-//            iconSource: "img/filter.svg"
-//        }
-
-//        ToolButton {
-//            iconSource: "toolbar-menu"
-//            onClicked: pgMenu.open()
-//        }
+    tools: ToolBarLayout {
+        Menus.MainTools {}
     }
 
-//    Menu {
-//        id: pgMenu
-//        content: MenuLayout {
-
-//            MenuItem {
-//                text:  "View"
-//                platformSubItemIndicator: true
-//                onClicked: viewMenu.open()
-//            }
-
-//            MenuItem {
-//                text:  "Style"
-//                platformSubItemIndicator: true
-//                onClicked: styleMenu.open()
-//            }
-//            MenuItem {
-//                text:  "Refresh"
-//                onClicked: refresh()
-//            }
-//        }
-//    }
+    Keys.onBackPressed: {
+        fileStack.pop()
+        event.accepted = true
+    }
 
     ListView {
         id: fileList
@@ -64,7 +34,6 @@ Page {
     }
 
     ScrollDecorator {
-        id: scrolldecorator
         flickableItem: fileList
     }
 
@@ -96,6 +65,7 @@ Page {
         sortRole: "sortname"
         boolFilterRole: globals.showViewed ? "" : "playcount"
     }
+
     VariantModel {
         id: fileModel
         fields: [ "name", "sortname", "path", "filetype", "playcount", "poster", "posterThumb" ]

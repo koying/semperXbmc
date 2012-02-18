@@ -61,6 +61,7 @@ Xbmc.prototype.init = function() {
             }
 
             Xbmc.prototype.jsonRPCVer = JSON.parse(doc.responseText).result.version;
+            console.debug("Connected to: " + xbmc.server+":"+xbmc.port);
             console.debug("JSON ver: " + Xbmc.prototype.jsonRPCVer);
 
             xbmcTcpClient.initialize(globals.server, globals.jsonTcpPort, Xbmc.prototype.jsonRPCVer);
