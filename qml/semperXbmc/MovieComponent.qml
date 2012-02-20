@@ -80,10 +80,18 @@ Item {
             }
 
             function playMovie() {
+                playlistView.back.player.stop()
                 $().playlist.videoClear();
-                xbmcEventClient.actionButton("Stop");
+                $().playlist.onPlaylistChanged =
+                        function(id) {
+                            playlistView.back.player.playPause()
+                            $().playlist.onPlaylistChanged = null;
+                        }
                 $().playlist.addMovie(model.id);
-                mainTabGroup.currentTab = remoteTab
+
+                playlistView.showVideo()
+                main.state = "playlist"
+                mainTabGroup.currentTab = playlistTab
             }
 
             onSelected:  {
@@ -94,10 +102,10 @@ Item {
                         dialogPlaceholder.item.total = model.resume.total
                         dialogPlaceholder.item.accepted.connect(
                                     function () {
-                                        $().playlist.onVideoStarted =
-                                                function() {
+                                        $().playlist.onPlaylistStarted =
+                                                function(id) {
                                                     $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
-                                                    $().playlist.onVideoStarted = null;
+                                                    $().playlist.onPlaylistStarted = null;
                                                 }
 
                                         playMovie();

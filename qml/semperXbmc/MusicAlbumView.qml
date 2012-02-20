@@ -81,18 +81,25 @@ Page {
                 MenuLayout {
                     MenuItem {
                         text: "Append"
-                        onClicked: $().playlist.addAlbum(model.idalbum)
+                        onClicked: {
+                            $().playlist.addAlbum(model.idalbum)
+                            playlistView.showAudio()
+                        }
                     }
                     MenuItem {
                         text: "Insert"
                         visible: $().jsonRPCVer > 2
-                        onClicked: $().playlist.insertAlbum(model.idalbum)
+                        onClicked: {
+                            $().playlist.insertAlbum(model.idalbum)
+                            playlistView.showAudio()
+                        }
                     }
                     MenuItem {
                         text: "Replace"
                         onClicked: {
-                            $().playlist.audioClear();
+                            $().playlist.clear($().playlist.audioPlId);
                             $().playlist.addAlbum(model.idalbum)
+                            playlistView.showAudio()
                         }
                     }
                     MenuItem {

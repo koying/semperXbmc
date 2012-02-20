@@ -3,45 +3,49 @@
  *
  */
 
+var oPlayer;
+
 function Player(typ) {
-    this.playerId = -1;
     if (typ == "Audio")
-        this.playerId = 0;
+        Player.prototype.playerId = 0;
     else if (typ == "Video")
-        this.playerId = 1;
+        Player.prototype.playerId = 1;
     else if (typ == "Picture")
-        this.playerId = 2;
+        Player.prototype.playerId = 2;
 
 }
 
 Player.prototype.playerId = -1;
+Player.prototype.playing = false
+Player.prototype.paused = false
+Player.prototype.position = -1
+Player.prototype.percentage = 0
 
-Player.prototype.getPlayers = function() {
+Player.prototype.getPlayerProperties = function() {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-//            console.debug(doc.responseText);
+            console.debug(doc.responseText);
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
-                errorView.addError("error", error.message, error.code);
+                Player.prototype.playing = false
+                Player.prototype.paused = false
                 return;
             }
 
-//            var results = oJSON.result;
-//            for (var i = 0; i < results.length; i++){
-//                if (results[i].type == "audio")
-//                    $().playlist.audioPlId = results[i].playlistid;
-//                else if (results[i].type == "video")
-//                    $().playlist.videoPlId = results[i].playlistid;
-//                else if (results[i].type == "picture")
-//                    $().playlist.picturePlId = results[i].playlistid;
-//            }
+            var results = oJSON.result;
+            if (results.speed == 0)
+                Player.prototype.paused = true;
+            else
+                Player.prototype.playing = true;
+            Player.prototype.position = results.position
         }
     }
-    
-    var str = '{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}';
+
+    var o = { jsonrpc: "2.0", method: "Player.GetProperties", params: { playerid:Player.prototype.playerId, properties: ["speed", "percentage", "time", "totaltime", "position"] }, id: 1};
+    var str = JSON.stringify(o);
+    console.log(str);
     doc.send(str);
     return;
 }
@@ -75,7 +79,7 @@ Player.prototype.seekPercentage = function(percent) {
         }
     }
 
-    
+
     var o = { jsonrpc: "2.0", method: "Player.Seek", params: { playerid:this.playerId, value:percent }, id: 1};
     var str = JSON.stringify(o);
     console.log(str);
@@ -100,7 +104,7 @@ Player.prototype.cmd = function(cmd, param) {
         }
     }
 
-    
+
     var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:this.playerId }, id: 1};
     if (param) {
         o.params += param;
@@ -125,7 +129,7 @@ Player.prototype.playFile = function(path) {
         }
     }
 
-    
+
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { file: path } }, id: 1};
     var str = JSON.stringify(o);
 //    console.debug(str);

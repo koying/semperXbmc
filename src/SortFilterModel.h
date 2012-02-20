@@ -61,6 +61,7 @@ public:
     void setSortOrder(const Qt::SortOrder order);
 
     int count() const {return QSortFilterProxyModel::rowCount();}
+    Q_INVOKABLE QVariant property(int i, QString sRole);
 
     Q_INVOKABLE void reSort();
 

@@ -17,16 +17,58 @@ function isEqual(a, b) {
 
 function Playlist() {
     this.previousItems = {}
-    this.playing = false;
-    this.paused = false;
-    this.onVideoStarted = null
+
+    this.onPlaylistChanged = null
+    this.onPlaylistStarted = null
 
     this.videoPlId = -1;
     this.audioPlId = -1;
     this.picturePlId = -1;
+    this.videoPlSize = -1;
+    this.audioPlSize = -1;
+    this.picturePlSize = -1;
 
     Playlist.prototype.getPlaylists();
 }
+
+Playlist.prototype.getPlaylistSize = function(id) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+//            console.debug(doc.responseText);
+            var oJSON = JSON.parse(doc.responseText);
+            var error = oJSON.error;
+            if (error) {
+                console.log(Xbmc.dumpObj(error, "Playlist.prototype.getPlaylistSize error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+
+            var results = oJSON.result;
+            if (results.type == "audio") {
+                $().playlist.audioPlId = id;
+                $().playlist.audioPlSize = results.size;
+                audioPlId = $().playlist.audioPlId
+                audioPlSize = $().playlist.audioPlSize
+            } else if (results.type == "video") {
+                $().playlist.videoPlId = id;
+                $().playlist.videoPlSize = results.size;
+                videoPlId = $().playlist.videoPlId
+                videoPlSize = $().playlist.videoPlSize
+            } else if (results.type == "pictures") {
+                $().playlist.picturePlId = id;
+                $().playlist.picturePlSize = results.size;
+            }
+
+        }
+    }
+
+    var o = { jsonrpc: "2.0", method: "Playlist.GetProperties", params: { playlistid: id, properties: ["type", "size"] }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+    return;
+}
+
 
 Playlist.prototype.getPlaylists = function(){
     var doc = new globals.getJsonXMLHttpRequest();
@@ -43,12 +85,7 @@ Playlist.prototype.getPlaylists = function(){
 
             var results = oJSON.result;
             for (var i = 0; i < results.length; i++){
-                if (results[i].type == "audio")
-                    $().playlist.audioPlId = results[i].playlistid;
-                else if (results[i].type == "video")
-                    $().playlist.videoPlId = results[i].playlistid;
-                else if (results[i].type == "picture")
-                    $().playlist.picturePlId = results[i].playlistid;
+                Playlist.prototype.getPlaylistSize(results[i].playlistid)
             }
         }
     }
@@ -70,9 +107,8 @@ Playlist.prototype.insertTrack = function(idTrack){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playAudio();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.audioPlId)
             }
         }
     }
@@ -95,9 +131,8 @@ Playlist.prototype.addTrack = function(idTrack){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playAudio();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.audioPlId)
             }
         }
     }
@@ -121,9 +156,8 @@ Playlist.prototype.insertAlbum = function(idalbum){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playAudio();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.audioPlId)
             }
         }
     }
@@ -148,9 +182,8 @@ Playlist.prototype.addAlbum = function(idalbum){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playAudio();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.audioPlId)
             }
         }
     }
@@ -175,9 +208,8 @@ Playlist.prototype.addMovie = function(idmovie){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playVideo();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.videoPlId)
             }
         }
     }
@@ -202,9 +234,8 @@ Playlist.prototype.addEpisode = function(idepisode){
                 return;
             }
 
-            if (!$().playlist.playing) {
-//                console.log("play");
-                $().playlist.playVideo();
+            if ($().playlist.onPlaylistChanged) {
+                $().playlist.onPlaylistChanged($().playlist.videoPlId)
             }
         }
     }
@@ -215,17 +246,21 @@ Playlist.prototype.addEpisode = function(idepisode){
     return;
 }
 
-Playlist.prototype.videoClear = function(){
-    Playlist.prototype.cmd("Clear", $().playlist.videoPlId);
+
+Playlist.prototype.clear = function(id){
+    Playlist.prototype.cmd("Clear", id);
     this.previousItems = {}
+}
+
+Playlist.prototype.videoClear = function(){
+    Playlist.prototype.clear($().playlist.videoPlId);
 }
 
 Playlist.prototype.audioClear = function(){
-    Playlist.prototype.cmd("Clear", $().playlist.audioPlId);
-    this.previousItems = {}
+    Playlist.prototype.clear($().playlist.audioPlId);
 }
 
-Playlist.prototype.update = function(playlistModel){
+Playlist.prototype.update = function(id, playlistModel){
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -252,29 +287,30 @@ Playlist.prototype.update = function(playlistModel){
                         if (items[i].thumbnail && items[i].thumbnail != "" && items[i].thumbnail != "DefaultAlbumCover.png") {
                             thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
                         }
-                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration });
+                        var number = 0
+                        if (items[i].episode)
+                            number = items[i].episode
+                        else if (items[i].track)
+                            number = items[i].track
+                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration, "showtitle": items[i].showtitle, "number": number });
                     }
                 }
             } else {
                 playlistModel.clear();
-                $().playlist.playing = false;
-                $().playlist.paused = false;
             }
 
-            if (result.state && playlistModel.count > 0) {
-                for (var i = 0; i < playlistModel.count; i++) {
-                    playlistModel.setProperty(i, "select", false);
-                }
-                if (result.state.current >= 0)
-                    playlistModel.setProperty(result.state.current, "select", true);
-                $().playlist.playing = result.state.playing == true ? true : false;
-                $().playlist.paused = result.state.paused == true ? true : false;
-            }
+//            if (result.state && playlistModel.count > 0) {
+//                for (var i = 0; i < playlistModel.count; i++) {
+//                    playlistModel.setProperty(i, "select", false);
+//                }
+//                if (result.state.current >= 0)
+//                    playlistModel.setProperty(result.state.current, "select", true);
+//            }
         }
     }
 
 
-    var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + $().playlist.audioPlId + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail"] }, "id": 1}';
+            var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + id + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail", "showtitle", "episode"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -305,49 +341,36 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     return;
 }
 
-Playlist.prototype.playVideo = function() {
+Playlist.prototype.play = function(id) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "playVideo error: ", "", 0));
+                console.log(Xbmc.dumpObj(error, "play error: ", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
-            if ($().playlist.onVideoStarted) {
-                console.log("onVideoStarted");
-                $().playlist.onVideoStarted();
+
+            if ($().playlist.onPlaylistStarted) {
+                $().playlist.onPlaylistStarted(id)
             }
         }
     }
 
 
-    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: id } }, id: 1};
     var str = JSON.stringify(o);
+            console.debug(str)
     doc.send(str);
     return;
+}
+
+Playlist.prototype.playVideo = function() {
+    Playlist.prototype.play($().playlist.videoPlId)
 }
 
 Playlist.prototype.playAudio = function() {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-            var error = oJSON.error;
-            if (error) {
-                console.log(Xbmc.dumpObj(error, "playAudio error: ", "", 0));
-                errorView.addError("error", error.message, error.code);
-                return;
-            }
-        }
-    }
-
-
-    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.audioPlId } }, id: 1};
-    var str = JSON.stringify(o);
-    doc.send(str);
-    return;
+    Playlist.prototype.play($().playlist.audioPlId)
 }
-

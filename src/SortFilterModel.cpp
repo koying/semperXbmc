@@ -141,6 +141,11 @@ void SortFilterModel::setSortOrder(const Qt::SortOrder order)
     QSortFilterProxyModel::sort(0, order);
 }
 
+QVariant SortFilterModel::property(int i, QString sRole)
+{
+    return data(index(i, 0), roleNameToId(sRole));
+}
+
 bool SortFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     if (m_boolFilterIntRole >= Qt::UserRole) {

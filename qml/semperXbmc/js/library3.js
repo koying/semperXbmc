@@ -3,6 +3,7 @@ String.prototype.trim = function() {
 };
 
 function Library() {
+    this.onDone = null
 }
 
 Library.prototype.tvshowId = -1;
@@ -246,6 +247,10 @@ Library.prototype.loadSeasons = function (id) {
                 seasonModel.append({"id": season, "name": seasons[i].label, "showtitle": seasons[i].showtitle, "poster": thumb, "episodes":seasons[i].episode, "playcount":seasons[i].playcount});
             }
             seasonProxyModel.reSort();
+
+            if ($().library.onDone) {
+                $().library.onDone()
+            }
         }
     }
 
@@ -400,7 +405,7 @@ Library.prototype.loadAllAlbums = function () {
     }
 
 
-    albumModel.clea();
+    albumModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
 

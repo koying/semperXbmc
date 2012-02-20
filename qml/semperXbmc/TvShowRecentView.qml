@@ -29,7 +29,7 @@ Page {
         id: sortMenu
     }
 
-    Menus.TvStyleMenu {
+    Menus.TvSeasonStyleMenu {
         id: styleMenu
     }
 

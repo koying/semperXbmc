@@ -10,6 +10,7 @@ Page {
     focus: true
 
     property int serieId
+    property bool allFull: false
 
     tools:  menuLayout
 
@@ -22,37 +23,12 @@ Page {
         event.accepted = true
     }
 
-    ContextMenu {
+    Menus.TvViewMenu {
         id: viewMenu
-        MenuLayout {
-            MenuItem {
-                text:  "All"
-            }
-            MenuItem {
-                text:  "Recent episodes"
-                onClicked: {
-                    globals.initialTvshowView = "TvShowRecentView.qml"
-                    tvshowStack.clear();
-                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
-                }
-            }
-            MenuItem {
-                text:  "By Genre"
-                onClicked: {
-                    tvshowProxyModel.clear();
-                    globals.initialTvshowView = "TvShowGenreView.qml"
-                    tvshowStack.clear();
-                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
-                }
-            }
-//            MenuItem {
-//                text:  "Coverflow view"
-//                onClicked: movieStack.push(Qt.resolvedUrl("MovieViewCover.qml"))
-//            }
-        }
+        currentType: "All"
     }
 
-    Menus.TvStyleMenu {
+    Menus.TvSeasonStyleMenu {
         id: styleMenu
     }
 
@@ -79,7 +55,7 @@ Page {
             image: model.poster != "" ? model.poster : "qrc:/defaultImages/tvshow"
             watched: model.playcount > 0
 
-            style: globals.styleTvShowSeasons
+            style: page.allFull ? "full" : globals.styleTvShowSeasons
             banner: globals.showBanners
             type: "header"
 
@@ -97,14 +73,47 @@ Page {
                 else
                     style = globals.styleTvShowSeasons
             }
+
+            onContext: {
+                if (episodeProxyModel.count == 0)
+                    return
+
+                $().playlist.clear($().playlist.videoPlId);
+                var i=0
+                $().playlist.onPlaylistChanged =
+                        function(id) {
+                            i++;
+                            if (i<episodeProxyModel.count)
+                                $().playlist.addEpisode(episodeProxyModel.property(i, "id"));
+                            else {
+                                $().playlist.onPlaylistChanged = null;
+                                playlistView.back.player.playPause()
+                            }
+                        }
+                $().playlist.addEpisode(episodeProxyModel.property(i, "id"));
+
+                playlistView.showVideo()
+                main.state = "playlist"
+                mainTabGroup.currentTab = playlistTab
+            }
         }
     }
 
     function refresh() {
+        episodeModel.clear();
+        $().library.onDone =
+                function() {
+                    if (seasonProxyModel.count == 1) {
+                        page.allFull = true
+                    }
+
+                    $().library.onDone = null
+                }
+
         $().library.loadSeasons(serieId);
     }
 
     onSerieIdChanged: {
-        $().library.loadSeasons(serieId);
+        refresh()
     }
 }

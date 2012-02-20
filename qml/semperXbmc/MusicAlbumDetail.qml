@@ -89,12 +89,18 @@ Item {
                     MenuLayout {
                         MenuItem {
                             text: "Append"
-                            onClicked: $().playlist.addTrack(model.idtrack)
+                            onClicked: {
+                                $().playlist.addTrack(model.idtrack)
+                                playlistView.showAudio()
+                            }
                         }
                         MenuItem {
                             text: "Insert"
                             visible: $().jsonRPCVer > 2
-                            onClicked: $().playlist.insertTrack(model.idtrack)
+                            onClicked: {
+                                $().playlist.insertTrack(model.idtrack)
+                                playlistView.showAudio()
+                            }
                         }
                         MenuItem {
                             text: "Download"

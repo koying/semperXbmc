@@ -2,26 +2,31 @@ import QtQuick 1.0
 import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components/" as Cp;
+import "menus/" as Menus
 
 import "js/xbmc.js" as Xbmc
 import "js/json.js" as Json
 import "js/Utils.js" as Utils
 
 import "js/general.js" as General
-import "js/player.js" as Player
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
 
 import "js/general3.js" as General3
 import "js/library3.js" as Library3
 import "js/playlist3.js" as Playlist3
-import "js/player3.js" as Player3
 
 Window {
     id: main
 
     property bool jsonInitialized: false
     property real scaling: inPortrait ? main.height / 640 : main.height / 360
+    property int videoPlId: -1;
+    property int audioPlId: -1;
+    property int picturePlId: -1;
+    property int videoPlSize: -1;
+    property int audioPlSize: -1;
+    property int picturePlSize: -1;
 
     Globals {
         id: globals
@@ -53,7 +58,7 @@ Window {
             tab: remoteTab
             onClicked: {
                 main.state = ""
-                remoteTab.menu.active = true;
+//                remoteTab.menu.active = true;
                 remoteTab.focus = true;
             }
         }
@@ -98,19 +103,6 @@ Window {
         }
 
         TabButton {
-            iconSource: "img/playlistBg.png"
-            tab:  playlistTab
-            onClicked: {
-                main.state = "playlist"
-                if (playListStack.depth == 0) {
-                    playListStack.push(Qt.resolvedUrl("PlayListView.qml"))
-                }
-//                playListToolbar.active = true
-                playListStack.currentPage.focus = true;
-            }
-        }
-
-        TabButton {
             iconSource: "img/folderBg.png"
             tab:  fileTab
             onClicked: {
@@ -121,6 +113,18 @@ Window {
 //                fileToolbar.active = true
                 fileStack.currentPage.focus = true;
             }
+        }
+
+        TabButton {
+            iconSource: "img/playlistBg.png"
+            tab: playlistTab
+            onClicked: {
+                if (main.state == "playlist")
+                    playlistView.flipped = !playlistView.flipped
+                else
+                    main.state = "playlist"
+            }
+            //                playlistToolbar.active = true
         }
 
         TabButton {
@@ -238,30 +242,6 @@ Window {
         }
 
         Item {
-            id: playlistTab
-            property string title: "PLAYLIST"
-
-            PageStack {
-                id: playListStack
-
-                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playListToolbar.top }
-                toolBar: playListToolbar
-
-            }
-
-            ToolBar {
-                id: playListToolbar
-                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-        }
-
-        Item {
             id: fileTab
             property string title: "FILES"
 
@@ -282,6 +262,27 @@ Window {
                         easing.type: Easing.InOutQuad
                     }
                 }
+            }
+        }
+
+        Item {
+            id: playlistTab
+            property alias view: playlistView
+
+            PlayListView {
+                id: playlistView
+                property string title: "PLAYLIST"
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playlistToolbar.top }
+            }
+
+            Menus.MainTools {
+                id: mainTools
+            }
+
+            ToolBar {
+                id: playlistToolbar
+                tools: mainTools.layout
+                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
             }
         }
 
@@ -365,9 +366,6 @@ Window {
     }
     ListModel {
         id: trackModel
-    }
-    ListModel {
-        id: playlistModel
     }
 
     SortFilterModel {
@@ -484,6 +482,10 @@ Window {
 
     Timer {
         id: utilTimer
+        interval: 2000; running: false; repeat: true
+        onTriggered: {
+            $().playlist.getPlaylists()
+        }
     }
 
     XbmcEventClient {
@@ -494,76 +496,8 @@ Window {
         }
     }
 
-    XbmcJsonTcpClient {
+    Notifications {
         id: xbmcTcpClient
-
-        onNotificationReceived: {
-            var oJSON = JSON.parse(jsonMsg);
-            var error = oJSON.error;
-            if (error) {
-                console.debug(Xbmc.dumpObj(error, "Error", "", 0));
-                return;
-            }
-            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
-
-            var method = oJSON.method;
-//            console.debug(method);
-            if (!method) {
-//                console.debug("no method");
-                return;
-            }
-
-            var data = oJSON.params.data;
-            if (!data) {
-//                console.debug("No data");
-                return;
-            }
-            var item = data.item;
-            if (item) {
-                for (var attrname in item) { data[attrname] = item[attrname]; }
-            }
-
-//            console.debug(Xbmc.dumpObj(data, "data", "", 0));
-
-            switch (method) {
-            case "VideoLibrary.OnUpdate":
-                switch(data.type) {
-                case "movie":
-                    movieModel.update(data);
-                    break;
-
-                case "episode":
-                    episodeModel.update(data);
-                    break;
-                }
-
-                break;
-
-            case "VideoLibrary.OnRemove":
-                switch(data.type) {
-                case "movie":
-                    movieModel.remove(data);
-                    break;
-
-                case "episode":
-                    episodeModel.remove(data);
-                    break;
-                }
-
-                break;
-
-            case "AudioLibrary.OnUpdate":
-                break;
-
-            case "AudioLibrary.OnRemove":
-                break;
-            }
-
-        }
-
-        onErrorDetected: {
-            errorView.addError(type, msg, info);
-        }
     }
 
     function $() {
@@ -578,7 +512,11 @@ Window {
         Xbmc.xbmc.server = globals.server;
 //        Xbmc.xbmc.introspect();
         Xbmc.xbmc.init();
+    }
 
+    onJsonInitializedChanged: {
+        if (jsonInitialized)
+            utilTimer.running = true
     }
 
     Component.onCompleted: {

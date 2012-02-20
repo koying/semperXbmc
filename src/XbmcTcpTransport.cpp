@@ -24,6 +24,7 @@ void XbmcTcpTransport::on_socket_connected()
         break;
 
     case 3:
+    case 4:
         m_socket->write("{\"jsonrpc\": \"2.0\", \"method\": \"JSONRPC.SetConfiguration\", \"params\": { \"notifications\": {\"VideoLibrary\": true, \"AudioLibrary\": true } }, \"id\":1 }");
         break;
     }
@@ -37,6 +38,20 @@ void XbmcTcpTransport::on_socket_error ( QAbstractSocket::SocketError socketErro
 void XbmcTcpTransport::on_socket_readyRead()
 {
     QString msg = QString(m_socket->readAll());
-//    qDebug() << "msg: " << msg;
-    emit notificationReceived(msg);
+    QString jsonMsg;
+    int openedBrackets = 0;
+    for (int i=0; i<msg.size(); ++i) {
+        if (msg.at(i) == '{') {
+            openedBrackets++;
+            jsonMsg.append(msg.at(i));
+        } else if (msg.at(i) == '}') {
+            openedBrackets--;
+            jsonMsg.append(msg.at(i));
+            if (openedBrackets == 0 && jsonMsg.size()) {
+                emit notificationReceived(jsonMsg);
+                jsonMsg = QString();
+            }
+        } else if (openedBrackets > 0)
+            jsonMsg.append(msg.at(i));
+    }
 }

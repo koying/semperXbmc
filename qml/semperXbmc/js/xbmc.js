@@ -71,8 +71,6 @@ Xbmc.prototype.init = function() {
                 xbmc.general = new General.General();
                 xbmc.library = new Library.Library();
                 xbmc.playlist = new Playlist.Playlist();
-                xbmc.audioplayer = new Player.Player("Audio");
-                xbmc.videoplayer = new Player.Player("Video");
                 break;
 
             case 3:  // Eden
@@ -80,8 +78,6 @@ Xbmc.prototype.init = function() {
                 xbmc.general = new General3.General();
                 xbmc.library = new Library3.Library();
                 xbmc.playlist = new Playlist3.Playlist();
-                xbmc.audioplayer = new Player3.Player("Audio");
-                xbmc.videoplayer = new Player3.Player("Video");
                 break;
 
             default:
