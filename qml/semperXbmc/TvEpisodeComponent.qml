@@ -2,6 +2,7 @@ import Qt 4.7
 import com.nokia.symbian 1.1
 import "components" as Cp;
 
+import "js/xbmc.js" as Xbmc
 import "js/Utils.js" as Utils
 
 Item {
@@ -34,18 +35,37 @@ Item {
             banner: globals.showBanners
 
             function playEpisode() {
-                playlistView.back.player.stop()
-                $().playlist.videoClear();
-                $().playlist.onPlaylistChanged =
-                        function(id) {
-                            playlistView.back.player.playPause()
-                            $().playlist.onPlaylistChanged = null;
-                        }
-                $().playlist.addEpisode(id);
+                var batch = "[";
+                var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+                batch += JSON.stringify(o) + ","
+                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+                batch += JSON.stringify(o) + ","
 
-                tvshowSuppModel.keyUpdate({"id":model.tvshowId, "lastplayed":new Date()});
-                if (tvshowProxyModel.sortRole == "lastplayed")
-                    tvshowProxyModel.reSort();
+                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }, id:1};
+                batch += JSON.stringify(o)
+                batch += "]"
+
+                var doc = new globals.getJsonXMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if (doc.readyState == XMLHttpRequest.DONE) {
+                        var oJSON = JSON.parse(doc.responseText);
+                        var error = oJSON.error;
+                        if (error) {
+                            console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
+                            errorView.addError("error", error.message, error.code);
+                            return;
+                        }
+
+                        playlistView.back.player.playPause()
+
+                        tvshowSuppModel.keyUpdate({"id":model.tvshowId, "lastplayed":new Date()});
+                        if (tvshowProxyModel.sortRole == "lastplayed")
+                            tvshowProxyModel.reSort();
+                    }
+                }
+                console.debug(batch)
+                doc.send(batch);
+
                 playlistView.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab

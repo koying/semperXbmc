@@ -248,7 +248,7 @@ Playlist.prototype.addEpisode = function(idepisode){
 
 
 Playlist.prototype.clear = function(id){
-    Playlist.prototype.cmd("Clear", id);
+    Playlist.prototype.cmd("Clear", id, null, null);
     this.previousItems = {}
 }
 
@@ -317,6 +317,17 @@ Playlist.prototype.update = function(id, playlistModel){
 
 }
 
+Playlist.prototype.batchcmd = function(cmd, playlistId, param, id) {
+    var o = { jsonrpc: "2.0", method: "Playlist."+cmd, params: { playlistid:playlistId }};
+    if (id != null)
+        o.id = id;
+    if (param != null) {
+        o.params += param;
+    }
+    var str = JSON.stringify(o);
+    return str;
+}
+
 Playlist.prototype.cmd = function(cmd, media, param) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
@@ -331,13 +342,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
         }
     }
 
-
-    var str = '{"jsonrpc": "2.0", "method": "Playlist.'+cmd+'", "params": {';
-    if (param) {
-        str += param + ","
-    }
-    str += '"playlistid":'+ media + '}, "id": 1}';
-    doc.send(str);
+    doc.send(Playlist.prototype.batchcmd(cmd, media, param, 1));
     return;
 }
 
@@ -374,3 +379,4 @@ Playlist.prototype.playVideo = function() {
 Playlist.prototype.playAudio = function() {
     Playlist.prototype.play($().playlist.audioPlId)
 }
+

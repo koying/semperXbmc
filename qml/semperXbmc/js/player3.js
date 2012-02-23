@@ -91,6 +91,17 @@ Player.prototype.seekTime = function(position) {
     this.cmd("SeekTime", { value: position.toFixed(0) } );
 }
 
+Player.prototype.batchcmd = function(cmd, param, id) {
+    var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:this.playerId }};
+    if (id != null)
+        o.id = id;
+    if (param != null) {
+        o.params += param;
+    }
+    var str = JSON.stringify(o);
+    return str;
+}
+
 Player.prototype.cmd = function(cmd, param) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
@@ -104,14 +115,7 @@ Player.prototype.cmd = function(cmd, param) {
         }
     }
 
-
-    var o = { jsonrpc: "2.0", method: "Player."+cmd, params: { playerid:this.playerId }, id: 1};
-    if (param) {
-        o.params += param;
-    }
-    var str = JSON.stringify(o);
-    console.log(str);
-    doc.send(str);
+    doc.send(Player.prototype.batchcmd(cmd, param, 1));
     return;
 }
 
