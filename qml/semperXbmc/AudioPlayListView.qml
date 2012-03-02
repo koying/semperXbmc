@@ -25,8 +25,7 @@ Item {
                 id: tbClearAll
                 text: "Clear Audio"
                 onClicked: {
-                    if (player.playing)
-                        player.stop()
+                    player.stop()
                     $().playlist.clear(playlistId);
                 }
             }
@@ -51,7 +50,7 @@ Item {
         id: player
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
         playlistId: page.playlistId
-        playerType: "Audio"
+        playerType: "audio"
     }
 
     ScrollDecorator {
@@ -66,7 +65,8 @@ Item {
             subtitle: model.artist + "  -  " + model.album
             subtitleR:  model.duration > 0 ? Utils.secToMMSS(model.duration) : ""
             image: model.thumb != "" ? model.thumb : "qrc:/defaultImages/artist"
-            current: model.select
+            percentage: (model.id == player.position ? player.percentage : 0)
+            current: (model.id == player.position)
 
             onSelected:  {
             }
@@ -75,7 +75,11 @@ Item {
 
     Timer {
         id: timer
-        interval: 2000; running: false; repeat: true
+        property bool active: false
+
+        interval: 2000;
+        running: active && main.state == "playlist"
+        repeat: true
         onTriggered: {
             $().playlist.update(playlistId, playlistModel);
         }
@@ -84,10 +88,10 @@ Item {
 
     onPlaylistIdChanged: {
         console.debug("playlistId:"+playlistId)
-        timer.running = false;
+        timer.active = false;
         if (playlistId != -1) {
             $().playlist.update(playlistId, playlistModel);
-            timer.running = true
+            timer.active = true
         }
     }
 }

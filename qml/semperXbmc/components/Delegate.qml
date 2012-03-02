@@ -15,6 +15,7 @@ Item {
     property bool watched: false
     property bool banner:  false
     property bool current:  false
+    property real percentage: 0
 
     property string type: "normal"
 

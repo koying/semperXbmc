@@ -28,7 +28,7 @@ General.prototype.setVolume = function(i) {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "setVolume error", "", 0));
+                console.log(Utils.dumpObj(error, "setVolume error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -54,7 +54,7 @@ General.prototype.getVolume = function() {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "getVolume error", "", 0));
+                console.log(Utils.dumpObj(error, "getVolume error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }

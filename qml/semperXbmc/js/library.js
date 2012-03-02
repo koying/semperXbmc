@@ -12,7 +12,7 @@ Library.prototype.handleMovies = function (responseText) {
 
     var error = oJSON.error;
     if (error) {
-        console.log(Xbmc.dumpObj(error, "loadMovies error", "", 0));
+        console.log(Utils.dumpObj(error, "loadMovies error", "", 0));
         errorView.addError("error", error.message, error.code);
         return;
     }
@@ -94,7 +94,7 @@ Library.prototype.loadTVShows = function () {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "loadTVs error", "", 0));
+                console.log(Utils.dumpObj(error, "loadTVs error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -148,7 +148,7 @@ Library.prototype.loadSeasons = function (id) {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "loadSeasons error", "", 0));
+                console.log(Utils.dumpObj(error, "loadSeasons error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -184,7 +184,7 @@ Library.prototype.handleEpisodes = function (responseText) {
 
     var error = oJSON.error;
     if (error) {
-        console.log(Xbmc.dumpObj(error, "loadepisodes error", "", 0));
+        console.log(Utils.dumpObj(error, "loadepisodes error", "", 0));
         errorView.addError("error", error.message, error.code);
         return;
     }
@@ -245,7 +245,7 @@ Library.prototype.loadTracks = function (idalbum) {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "loadTracks error", "", 0));
+                console.log(Utils.dumpObj(error, "loadTracks error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -271,7 +271,7 @@ Library.prototype.handleAlbums = function (responseText) {
 
     var error = oJSON.error;
     if (error) {
-        console.log(Xbmc.dumpObj(error, "loadAlbums error", "", 0));
+        console.log(Utils.dumpObj(error, "loadAlbums error", "", 0));
         errorView.addError("error", error.message, error.code);
         return;
     }
@@ -346,7 +346,7 @@ Library.prototype.loadArtists = function() {
 
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "loadArtists error", "", 0));
+                console.log(Utils.dumpObj(error, "loadArtists error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }

@@ -24,9 +24,6 @@ function Playlist() {
     this.videoPlId = -1;
     this.audioPlId = -1;
     this.picturePlId = -1;
-    this.videoPlSize = -1;
-    this.audioPlSize = -1;
-    this.picturePlSize = -1;
 
     Playlist.prototype.getPlaylists();
 }
@@ -39,7 +36,7 @@ Playlist.prototype.getPlaylistSize = function(id) {
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.getPlaylistSize error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.getPlaylistSize error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -47,17 +44,12 @@ Playlist.prototype.getPlaylistSize = function(id) {
             var results = oJSON.result;
             if (results.type == "audio") {
                 $().playlist.audioPlId = id;
-                $().playlist.audioPlSize = results.size;
                 audioPlId = $().playlist.audioPlId
-                audioPlSize = $().playlist.audioPlSize
             } else if (results.type == "video") {
                 $().playlist.videoPlId = id;
-                $().playlist.videoPlSize = results.size;
                 videoPlId = $().playlist.videoPlId
-                videoPlSize = $().playlist.videoPlSize
             } else if (results.type == "pictures") {
                 $().playlist.picturePlId = id;
-                $().playlist.picturePlSize = results.size;
             }
 
         }
@@ -78,7 +70,7 @@ Playlist.prototype.getPlaylists = function(){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -102,7 +94,7 @@ Playlist.prototype.insertTrack = function(idTrack){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.insertTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -126,7 +118,7 @@ Playlist.prototype.addTrack = function(idTrack){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -151,7 +143,7 @@ Playlist.prototype.insertAlbum = function(idalbum){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.insertAlbum error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.insertAlbum error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -177,7 +169,7 @@ Playlist.prototype.addAlbum = function(idalbum){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -203,7 +195,7 @@ Playlist.prototype.addMovie = function(idmovie){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -229,7 +221,7 @@ Playlist.prototype.addEpisode = function(idepisode){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -268,7 +260,7 @@ Playlist.prototype.update = function(id, playlistModel){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.update error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.update error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -292,25 +284,17 @@ Playlist.prototype.update = function(id, playlistModel){
                             number = items[i].episode
                         else if (items[i].track)
                             number = items[i].track
-                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration, "showtitle": items[i].showtitle, "number": number });
+                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration, "showtitle": items[i].showtitle, "playcount": items[i].playcount, "number": number});
                     }
                 }
             } else {
                 playlistModel.clear();
             }
-
-//            if (result.state && playlistModel.count > 0) {
-//                for (var i = 0; i < playlistModel.count; i++) {
-//                    playlistModel.setProperty(i, "select", false);
-//                }
-//                if (result.state.current >= 0)
-//                    playlistModel.setProperty(result.state.current, "select", true);
-//            }
         }
     }
 
 
-            var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + id + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail", "showtitle", "episode"] }, "id": 1}';
+            var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + id + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail", "showtitle", "episode", "playcount"] }, "id": 1}';
 //    console.log(str);
     doc.send(str);
     return;
@@ -335,7 +319,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -353,7 +337,7 @@ Playlist.prototype.play = function(id) {
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "play error: ", "", 0));
+                console.log(Utils.dumpObj(error, "play error: ", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }

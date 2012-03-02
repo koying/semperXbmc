@@ -80,17 +80,40 @@ Page {
 
                 $().playlist.clear($().playlist.videoPlId);
                 var i=0
-                $().playlist.onPlaylistChanged =
-                        function(id) {
-                            i++;
-                            if (i<episodeProxyModel.count)
-                                $().playlist.addEpisode(episodeProxyModel.property(i, "id"));
-                            else {
-                                $().playlist.onPlaylistChanged = null;
-                                playlistView.back.player.playPause()
-                            }
+                var batch = "[";
+                var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+                batch += JSON.stringify(o)
+                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+                batch += "," + JSON.stringify(o)
+
+                for (var i=0; i<episodeProxyModel.count; ++i) {
+                    o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: episodeProxyModel.property(i, "id") } }};
+                    batch += "," + JSON.stringify(o)
+                }
+
+                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+                batch += "," + JSON.stringify(o)
+
+                batch += "]"
+
+                var doc = new globals.getJsonXMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if (doc.readyState == XMLHttpRequest.DONE) {
+                        var oJSON = JSON.parse(doc.responseText);
+                        var error = oJSON.error;
+                        if (error) {
+                            console.log(Utils.dumpObj(error, "playSeason error", "", 0));
+                            errorView.addError("error", error.message, error.code);
+                            return;
                         }
-                $().playlist.addEpisode(episodeProxyModel.property(i, "id"));
+
+                        tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
+                        if (tvshowProxyModel.sortRole == "lastplayed")
+                            tvshowProxyModel.reSort();
+                    }
+                }
+                console.debug(batch)
+                doc.send(batch);
 
                 playlistView.showVideo()
                 main.state = "playlist"

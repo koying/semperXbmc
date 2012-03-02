@@ -1,10 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 import com.nokia.symbian 1.1
-
-import "js/xbmc.js" as Xbmc
-import "js/json.js" as Json
-import "js/player3.js" as Player
+import com.semperpax.qmlcomponents 1.0
 
 ToolBar {
     id: root
@@ -12,15 +9,17 @@ ToolBar {
 
     property int playlistId: -1
     property string  playerType: ""
-    property bool playing: false
-    property bool paused: false
+
+    property alias position: xbmcPlayer.position
+    property alias percentage: xbmcPlayer.percentage
+    property alias speed: xbmcPlayer.speed
 
     tools: ToolBarLayout {
 
         ButtonRow {
             ToolButton {
                 iconSource: "img/back1.svg"
-                onClicked: Player.oPlayer.skipPrevious()
+                onClicked: xbmcPlayer.skipPrevious()
             }
             ToolButton {
                 iconSource: "toolbar-mediacontrol-stop"
@@ -34,7 +33,7 @@ ToolBar {
                 onClicked:  {
                     playPause()
                 }
-                visible: playing && !paused
+                visible: (xbmcPlayer.speed > 0)
             }
             ToolButton {
                 id: btPlay
@@ -42,11 +41,11 @@ ToolBar {
                 onClicked: {
                     playPause();
                 }
-                visible: !playing || paused
+                visible: (xbmcPlayer.speed <= 0)
             }
             ToolButton {
                 iconSource: "img/skip.svg"
-                onClicked: Player.oPlayer.skipNext()
+                onClicked: xbmcPlayerr.skipNext()
             }
         }
 
@@ -79,63 +78,29 @@ ToolBar {
 //            btPlaylist.checked = false
 //    }
 
-    Connections {
-        target: main
-        onJsonInitializedChanged: {
-            if (main.jsonInitialized) {
-                initPlayer();
-            }
-        }
+    XbmcPlayer {
+        id: xbmcPlayer
+        type: root.playerType
+        transport: xbmcTcpClient
+
+        onSpeedChanged: console.debug("speed changed:"+xbmcPlayer.speed)
     }
 
     onPlaylistIdChanged: {
         console.debug("player plylistid: " + playlistId)
     }
 
-    function initPlayer() {
-        if (root.playerType == "")
-            return
-
-        Player.oPlayer = new Player.Player(root.playerType);
-        var doc = new globals.getJsonXMLHttpRequest();
-        doc.onreadystatechange = function() {
-            if (doc.readyState == XMLHttpRequest.DONE) {
-//                console.debug(doc.responseText);
-                var oJSON = JSON.parse(doc.responseText);
-                var error = oJSON.error;
-                if (error) {
-                    Player.oPlayer.playing = false; root.playing = false
-                    Player.oPlayer.paused = false; root.paused = false
-                    return;
-                }
-
-                var results = oJSON.result;
-                if (results.speed == 0) {
-                    Player.oPlayer.paused = true; root.paused = true
-                } else {
-                    Player.oPlayer.playing = true; root.playing = true
-                }
-                Player.oPlayer.position = results.position
-            }
-        }
-
-        var o = { jsonrpc: "2.0", method: "Player.GetProperties", params: { playerid: Player.oPlayer.playerId, properties: ["speed", "percentage", "time", "totaltime", "position"] }, id: 1};
-        var str = JSON.stringify(o);
-//        console.log(str);
-        doc.send(str);
-        return;
-    }
-
     function playPause() {
-        if (!playing && !paused) {
+        if (xbmcPlayer.speed < 0) {
             $().playlist.play(playlistId);
         } else
-            Player.oPlayer.playPause();
+            xbmcPlayer.playPause();
     }
 
     function stop() {
-        if (playing ||paused)
-        Player.oPlayer.stop()
+        console.debug("stop:" + xbmcPlayer.speed);
+        if (xbmcPlayer.speed >= 0)
+            xbmcPlayer.stop()
     }
 
     Component.onCompleted: {

@@ -2,7 +2,6 @@ import Qt 4.7
 import com.nokia.symbian 1.1
 import "components" as Cp;
 
-import "js/xbmc.js" as Xbmc
 import "js/Utils.js" as Utils
 
 Item {
@@ -37,12 +36,49 @@ Item {
             function playEpisode() {
                 var batch = "[";
                 var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
-                batch += JSON.stringify(o) + ","
-                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
-                batch += JSON.stringify(o) + ","
-
-                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }, id:1};
                 batch += JSON.stringify(o)
+                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+                batch += "," + JSON.stringify(o)
+
+                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }};
+                batch += "," + JSON.stringify(o)
+
+                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+                batch += "," + JSON.stringify(o)
+
+                batch += "]"
+
+                var doc = new globals.getJsonXMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if (doc.readyState == XMLHttpRequest.DONE) {
+                        console.debug("lastplayed: "+ doc.responseText)
+                        var oJSON = JSON.parse(doc.responseText);
+                        var error = oJSON.error;
+                        if (error) {
+                            console.log(Utils.dumpObj(error, "playEpisode error", "", 0));
+                            errorView.addError("error", error.message, error.code);
+                            return;
+                        }
+
+                        tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
+                        if (tvshowProxyModel.sortRole == "lastplayed")
+                            tvshowProxyModel.reSort();
+                    }
+                }
+//                console.debug(batch)
+                doc.send(batch);
+
+                playlistView.showVideo()
+                main.state = "playlist"
+                mainTabGroup.currentTab = playlistTab
+            }
+
+            function addEpisode() {
+                var batch = "[";
+
+                var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }, id: 1};
+                batch += JSON.stringify(o)
+
                 batch += "]"
 
                 var doc = new globals.getJsonXMLHttpRequest();
@@ -51,19 +87,17 @@ Item {
                         var oJSON = JSON.parse(doc.responseText);
                         var error = oJSON.error;
                         if (error) {
-                            console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
+                            console.log(Utils.dumpObj(error, "playEpisode error", "", 0));
                             errorView.addError("error", error.message, error.code);
                             return;
                         }
-
-                        playlistView.back.player.playPause()
 
                         tvshowSuppModel.keyUpdate({"id":model.tvshowId, "lastplayed":new Date()});
                         if (tvshowProxyModel.sortRole == "lastplayed")
                             tvshowProxyModel.reSort();
                     }
                 }
-                console.debug(batch)
+//                console.debug(batch)
                 doc.send(batch);
 
                 playlistView.showVideo()
@@ -99,8 +133,7 @@ Item {
             }
 
             onContext: {
-                if (seasonId >= 0) {
-                }
+                addEpisode();
             }
         }
 

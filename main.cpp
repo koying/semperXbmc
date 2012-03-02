@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
 #endif
     qmlRegisterType<XbmcEventClient>("com.semperpax.qmlcomponents", 1, 0, "XbmcEventClient");
     qmlRegisterType<XbmcTcpTransport>("com.semperpax.qmlcomponents", 1, 0, "XbmcJsonTcpClient");
+    qmlRegisterType<XbmcPlayer>("com.semperpax.qmlcomponents", 1, 0, "XbmcPlayer");
     qmlRegisterType<VariantModel>("com.semperpax.qmlcomponents", 1, 0, "VariantModel");
     qmlRegisterType<SortFilterModel>("com.semperpax.qmlcomponents", 1, 0, "SortFilterModel");
     qmlRegisterType<Haptics>("com.semperpax.qmlcomponents", 1, 0, "Haptics");

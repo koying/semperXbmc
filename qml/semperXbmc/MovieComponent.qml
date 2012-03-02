@@ -80,15 +80,35 @@ Item {
             }
 
             function playMovie() {
-                playlistView.back.player.stop()
-                $().playlist.videoClear();
-                $().playlist.onPlaylistChanged =
-                        function(id) {
-                            playlistView.back.player.playPause()
-                            $().playlist.onPlaylistChanged = null;
-                        }
-                $().playlist.addMovie(model.id);
+                var batch = "[";
+                var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+                batch += JSON.stringify(o)
+                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+                batch += "," + JSON.stringify(o)
 
+                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: model.id } }};
+                batch += "," + JSON.stringify(o)
+
+                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+                batch += "," + JSON.stringify(o)
+
+                batch += "]"
+
+                var doc = new globals.getJsonXMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if (doc.readyState == XMLHttpRequest.DONE) {
+                        var oJSON = JSON.parse(doc.responseText);
+                        var error = oJSON.error;
+                        if (error) {
+                            console.log(Utils.dumpObj(error, "playMovie error", "", 0));
+                            errorView.addError("error", error.message, error.code);
+                            return;
+                        }
+                    }
+                }
+//                console.debug(batch)
+                doc.send(batch);
+                
                 playlistView.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab

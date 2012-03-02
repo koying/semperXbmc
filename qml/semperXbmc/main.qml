@@ -24,9 +24,6 @@ Window {
     property int videoPlId: -1;
     property int audioPlId: -1;
     property int picturePlId: -1;
-    property int videoPlSize: -1;
-    property int audioPlSize: -1;
-    property int picturePlSize: -1;
 
     Globals {
         id: globals
@@ -57,9 +54,7 @@ Window {
             iconSource: "img/home.png"
             tab: remoteTab
             onClicked: {
-                main.state = ""
-//                remoteTab.menu.active = true;
-                remoteTab.focus = true;
+                main.state = "remote"
             }
         }
 
@@ -68,11 +63,6 @@ Window {
             tab: movieTab
             onClicked: {
                 main.state = "movies"
-                if (movieStack.depth == 0) {
-                    movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
-                }
-//                movieToolbar.active = true
-                movieStack.currentPage.focus = true;
             }
         }
 
@@ -81,11 +71,6 @@ Window {
             tab: tvTab
             onClicked: {
                 main.state = "tvshows"
-                if (tvshowStack.depth == 0) {
-                    tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
-                }
-//                tvToolbar.active = true;
-                tvshowStack.currentPage.focus = true;
             }
         }
 
@@ -94,11 +79,6 @@ Window {
             tab: musicTab
             onClicked: {
                 main.state = "music"
-                if (musicStack.depth == 0) {
-                    musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
-                }
-//                musicToolbar.active = true
-                musicStack.currentPage.focus = true;
             }
         }
 
@@ -107,11 +87,6 @@ Window {
             tab:  fileTab
             onClicked: {
                 main.state = "file"
-                if (fileStack.depth == 0) {
-                    fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
-                }
-//                fileToolbar.active = true
-                fileStack.currentPage.focus = true;
             }
         }
 
@@ -124,7 +99,6 @@ Window {
                 else
                     main.state = "playlist"
             }
-            //                playlistToolbar.active = true
         }
 
         TabButton {
@@ -292,7 +266,80 @@ Window {
         }
     }
 
-
+    states: [
+        State {
+            name: "remote"
+            StateChangeScript {
+                script: {
+//                    remoteTab.menu.active = true;
+                    remoteTab.focus = true;
+                }
+            }
+        },
+        State {
+            name: "movies"
+            StateChangeScript {
+                script: {
+//                    movieToolbar.active = true
+                    if (movieStack.depth == 0) {
+                        movieStack.push(Qt.resolvedUrl(globals.initialMovieView))
+                    }
+                    movieStack.currentPage.focus = true;
+                }
+            }
+        },
+        State {
+            name: "tvshows"
+            StateChangeScript {
+                script: {
+//                    tvToolbar.active = true;
+                    if (tvshowStack.depth == 0) {
+                        tvshowStack.push(Qt.resolvedUrl(globals.initialTvshowView))
+                    }
+                    tvshowStack.currentPage.focus = true;
+                }
+            }
+        },
+        State {
+            name: "music"
+            StateChangeScript {
+                script: {
+//                    musicToolbar.active = true
+                    if (musicStack.depth == 0) {
+                        musicStack.push(Qt.resolvedUrl(globals.initialMusicView))
+                    }
+                    musicStack.currentPage.focus = true;
+                }
+            }
+        },
+        State {
+            name: "file"
+            StateChangeScript {
+                script: {
+//                    fileToolbar.active = true
+                    if (fileStack.depth == 0) {
+                        fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: "/"})
+                    }
+                    fileStack.currentPage.focus = true;
+                }
+            }
+        },
+        State {
+            name: "playlist"
+            StateChangeScript {
+                script: {
+//                    playlistToolbar.active = true
+                }
+            }
+        },
+        State {
+            name: "download"
+            StateChangeScript {
+                script: {
+                }
+            }
+        }
+    ]
     Loader {
         id: dialogPlaceholder
     }
@@ -480,13 +527,13 @@ Window {
         }
     }
 
-    Timer {
-        id: utilTimer
-        interval: 2000; running: false; repeat: true
-        onTriggered: {
-            $().playlist.getPlaylists()
-        }
-    }
+//    Timer {
+//        id: utilTimer
+//        interval: 2000; running: false; repeat: true
+//        onTriggered: {
+//            $().playlist.getPlaylists()
+//        }
+//    }
 
     XbmcEventClient {
         id: xbmcEventClient
@@ -516,12 +563,12 @@ Window {
 
     onJsonInitializedChanged: {
         if (jsonInitialized)
-            utilTimer.running = true
+            $().playlist.getPlaylists()
     }
 
     Component.onCompleted: {
         globals.load();
-//        remoteTab.menu.active = true;
+        main.state = "remote"
 
         if (globals.showSplash)
             splash.sourceUrl = Qt.resolvedUrl("Splash.qml")

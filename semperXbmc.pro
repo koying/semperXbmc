@@ -62,6 +62,13 @@ contains(__NOWEBKIT,1) {
     include(../qtscroller/qtscroller.pri)
 }
 
+INCLUDEPATH += ../qjson/include
+android {
+    LIBS += -L../qjson-build-android/lib -lqjson
+} else {
+    LIBS += -L../qjson-build-desktop/lib -lqjson
+}
+
 RESOURCES += \
     qml/resource.qrc
 

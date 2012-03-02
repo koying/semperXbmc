@@ -2,6 +2,8 @@
 import QtQuick 1.1
 import com.semperpax.qmlcomponents 1.0
 
+import "js/Utils.js" as Utils
+
 XbmcJsonTcpClient {
 
     onNotificationReceived: {
@@ -9,10 +11,10 @@ XbmcJsonTcpClient {
         var oJSON = JSON.parse(jsonMsg);
         var error = oJSON.error;
         if (error) {
-            console.debug(Xbmc.dumpObj(error, "Error", "", 0));
+            console.debug(Utils.dumpObj(error, "Error", "", 0));
             return;
         }
-//            console.debug(Xbmc.dumpObj(oJSON, "Notif", "", 0));
+//            console.debug(Utils.dumpObj(oJSON, "Notif", "", 0));
 
         var method = oJSON.method;
 //            console.debug(method);
@@ -31,7 +33,7 @@ XbmcJsonTcpClient {
             for (var attrname in item) { data[attrname] = item[attrname]; }
         }
 
-//            console.debug(Xbmc.dumpObj(data, "data", "", 0));
+//            console.debug(Utils.dumpObj(data, "data", "", 0));
 
         switch (method) {
         case "VideoLibrary.OnUpdate":
@@ -66,50 +68,50 @@ XbmcJsonTcpClient {
         case "AudioLibrary.OnRemove":
             break;
 
-        case "Player.OnPlay":
-            switch(data.type) {
-            case "song":
-                playlistView.front.player.playing = true
-                playlistView.front.player.paused = false
-                break;
-            case "movie":
-            case "episode":
-                playlistView.back.player.playing = true
-                playlistView.back.player.paused = false
-                break;
-            }
-            break;
+//        case "Player.OnPlay":
+//            switch(data.type) {
+//            case "song":
+//                playlistView.front.player.playing = true
+//                playlistView.front.player.paused = false
+//                break;
+//            case "movie":
+//            case "episode":
+//                playlistView.back.player.playing = true
+//                playlistView.back.player.paused = false
+//                break;
+//            }
+//            break;
 
 
-        case "Player.OnPause":
+//        case "Player.OnPause":
 
-            switch(data.type) {
-            case "song":
-                playlistView.front.player.playing = false
-                playlistView.front.player.paused = true
-                break;
-            case "movie":
-            case "episode":
-                playlistView.back.player.playing = false
-                playlistView.back.player.paused = true
-                break;
-            }
-            break;
+//            switch(data.type) {
+//            case "song":
+//                playlistView.front.player.playing = false
+//                playlistView.front.player.paused = true
+//                break;
+//            case "movie":
+//            case "episode":
+//                playlistView.back.player.playing = false
+//                playlistView.back.player.paused = true
+//                break;
+//            }
+//            break;
 
-        case "Player.OnStop":
+//        case "Player.OnStop":
 
-            switch(data.type) {
-            case "song":
-                playlistView.front.player.playing = false
-                playlistView.front.player.paused = false
-                break;
-            case "movie":
-            case "episode":
-                playlistView.back.player.playing = false
-                playlistView.back.player.paused = false
-                break;
-            }
-            break;
+//            switch(data.type) {
+//            case "song":
+//                playlistView.front.player.playing = false
+//                playlistView.front.player.paused = false
+//                break;
+//            case "movie":
+//            case "episode":
+//                playlistView.back.player.playing = false
+//                playlistView.back.player.paused = false
+//                break;
+//            }
+//            break;
 
         }
 

@@ -17,7 +17,7 @@ Playlist.prototype.addTrack = function(idTrack){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addTrack error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -42,7 +42,7 @@ Playlist.prototype.addAlbum = function(idalbum){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addAlbum error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -68,7 +68,7 @@ Playlist.prototype.addMovie = function(idmovie){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addMovie error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -93,7 +93,7 @@ Playlist.prototype.addEpisode = function(idepisode){
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.addEpisode error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
@@ -178,7 +178,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
             var oJSON = JSON.parse(doc.responseText);
             var error = oJSON.error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
+                console.log(Utils.dumpObj(error, "Playlist.prototype.cmd error: " + cmd, "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }

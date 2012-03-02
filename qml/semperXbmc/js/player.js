@@ -33,7 +33,7 @@ Player.prototype.cmd = function(cmd, param) {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var error = JSON.parse(doc.responseText).error;
             if (error) {
-                console.log(Xbmc.dumpObj(error, "Player.prototype.cmd error", "", 0));
+                console.log(Utils.dumpObj(error, "Player.prototype.cmd error", "", 0));
                 errorView.addError("error", error.message, error.code);
                 return;
             }
