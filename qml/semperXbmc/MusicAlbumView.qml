@@ -83,7 +83,7 @@ Page {
                         text: "Append"
                         onClicked: {
                             $().playlist.addAlbum(model.idalbum)
-                            playlistView.showAudio()
+                            playlistTab.showAudio()
                         }
                     }
                     MenuItem {
@@ -91,7 +91,7 @@ Page {
                         visible: $().jsonRPCVer > 2
                         onClicked: {
                             $().playlist.insertAlbum(model.idalbum)
-                            playlistView.showAudio()
+                            playlistTab.showAudio()
                         }
                     }
                     MenuItem {
@@ -99,7 +99,7 @@ Page {
                         onClicked: {
                             $().playlist.clear($().playlist.audioPlId);
                             $().playlist.addAlbum(model.idalbum)
-                            playlistView.showAudio()
+                            playlistTab.showAudio()
                         }
                     }
                     MenuItem {

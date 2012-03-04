@@ -178,6 +178,34 @@ void XbmcPlayer::skipNext()
     m_transport->send(req);
 }
 
+void XbmcPlayer::seek(qreal percentage)
+{
+    if (!m_transport)
+        return;
+
+    XbmcJsonRequest req("Player.Seek");
+    QVariantMap params;
+    params["playerid"] = m_playerId;
+    params["value"] = percentage;
+    req.setParams(params);
+    m_transport->send(req);
+}
+
+void XbmcPlayer::playFile(QString file)
+{
+    if (!m_transport)
+        return;
+
+    XbmcJsonRequest req("Player.Open");
+    QVariantMap item;
+    item["file"] = file;
+    QVariantMap params;
+    params["playerid"] = m_playerId;
+    params["item"] = item;
+    req.setParams(params);
+    m_transport->send(req);
+}
+
 void XbmcPlayer::settype(QString val)
 {
     m_type = val;

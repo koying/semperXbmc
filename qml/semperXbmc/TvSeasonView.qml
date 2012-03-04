@@ -23,6 +23,10 @@ Page {
         event.accepted = true
     }
 
+    Menus.TvSortMenu {
+        id: sortMenu
+    }
+
     Menus.TvViewMenu {
         id: viewMenu
         currentType: "All"
@@ -115,7 +119,7 @@ Page {
                 console.debug(batch)
                 doc.send(batch);
 
-                playlistView.showVideo()
+                playlistTab.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab
             }

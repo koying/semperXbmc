@@ -52,7 +52,7 @@ Page {
                 if (model.filetype == "directory")
                     fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: model.path})
                 else {
-                    $().videoplayer.playFile(model.path);
+                    playlistTab.videoPlayer().playFile(model.path);
                     mainTabGroup.currentTab = remoteTab
                 }
             }

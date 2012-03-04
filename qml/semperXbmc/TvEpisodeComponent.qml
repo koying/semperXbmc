@@ -40,10 +40,7 @@ Item {
                 o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
                 batch += "," + JSON.stringify(o)
 
-                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }};
-                batch += "," + JSON.stringify(o)
-
-                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: model.id } }, id: 1};
                 batch += "," + JSON.stringify(o)
 
                 batch += "]"
@@ -51,7 +48,7 @@ Item {
                 var doc = new globals.getJsonXMLHttpRequest();
                 doc.onreadystatechange = function() {
                     if (doc.readyState == XMLHttpRequest.DONE) {
-                        console.debug("lastplayed: "+ doc.responseText)
+//                        console.debug("lastplayed: "+ doc.responseText)
                         var oJSON = JSON.parse(doc.responseText);
                         var error = oJSON.error;
                         if (error) {
@@ -60,15 +57,17 @@ Item {
                             return;
                         }
 
+                        $().playlist.play($().playlist.videoPlId)
+
                         tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
                         if (tvshowProxyModel.sortRole == "lastplayed")
                             tvshowProxyModel.reSort();
                     }
                 }
-//                console.debug(batch)
+                console.debug(batch)
                 doc.send(batch);
 
-                playlistView.showVideo()
+                playlistTab.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab
             }
@@ -100,7 +99,7 @@ Item {
 //                console.debug(batch)
                 doc.send(batch);
 
-                playlistView.showVideo()
+                playlistTab.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab
             }
@@ -108,13 +107,14 @@ Item {
             onSelected: {
                 if (model.resume && model.resume.position != 0) {
                     dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
+//                    console.debug(model.resume.position + "/" + model.resume.total)
                     dialogPlaceholder.item.position = model.resume.position
                     dialogPlaceholder.item.total = model.resume.total
                     dialogPlaceholder.item.accepted.connect(
                                 function () {
                                     $().playlist.onPlaylistStarted =
                                             function(id) {
-                                                $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
+                                                playlistTab.videoPlayer().seekPercentage(model.resume.position/model.resume.total*100);
                                                 $().playlist.onPlaylistStarted = null;
                                             }
 

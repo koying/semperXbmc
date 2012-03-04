@@ -7,7 +7,7 @@ QueryDialog {
     property int position
     property int total
 
-    anchors.centerIn: parent
+//    anchors.centerIn: parent
 
     titleText: "BOOKMARK FOUND"
     message: "Resume at " + (position/total*100).toFixed(0) + "%?"

@@ -2,6 +2,8 @@ import Qt 4.7
 
 Flipable {
     id: flipable
+    anchors.fill: parent
+
     property bool flipped: false
 
     front: AudioPlayListView {

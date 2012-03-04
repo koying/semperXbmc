@@ -91,7 +91,7 @@ Item {
                             text: "Append"
                             onClicked: {
                                 $().playlist.addTrack(model.idtrack)
-                                playlistView.showAudio()
+                                playlistTab.showAudio()
                             }
                         }
                         MenuItem {
@@ -99,7 +99,7 @@ Item {
                             visible: $().jsonRPCVer > 2
                             onClicked: {
                                 $().playlist.insertTrack(model.idtrack)
-                                playlistView.showAudio()
+                                playlistTab.showAudio()
                             }
                         }
                         MenuItem {

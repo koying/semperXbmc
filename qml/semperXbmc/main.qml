@@ -8,13 +8,13 @@ import "js/xbmc.js" as Xbmc
 import "js/json.js" as Json
 import "js/Utils.js" as Utils
 
-import "js/general.js" as General
 import "js/library.js" as Library
 import "js/playlist.js" as Playlist
+import "js/general.js" as General
 
-import "js/general3.js" as General3
 import "js/library3.js" as Library3
 import "js/playlist3.js" as Playlist3
+import "js/general3.js" as General3
 
 Window {
     id: main
@@ -24,6 +24,8 @@ Window {
     property int videoPlId: -1;
     property int audioPlId: -1;
     property int picturePlId: -1;
+    property int volume: 100
+    property bool muted: false
 
     Globals {
         id: globals
@@ -95,7 +97,7 @@ Window {
             tab: playlistTab
             onClicked: {
                 if (main.state == "playlist")
-                    playlistView.flipped = !playlistView.flipped
+                    playlistTab.flip()
                 else
                     main.state = "playlist"
             }
@@ -241,11 +243,45 @@ Window {
 
         Item {
             id: playlistTab
-            property alias view: playlistView
 
-            PlayListView {
-                id: playlistView
-                property string title: "PLAYLIST"
+            function showVideo() {
+                if (playlistStack.depth == 0)
+                    return;
+
+                playlistStack.currentPage.showVideo()
+            }
+
+            function showAudio() {
+                if (playlistStack.depth == 0)
+                    return;
+
+                playlistStack.currentPage.showAudio()
+            }
+
+            function flip() {
+                if (playlistStack.depth == 0)
+                    return;
+
+                playlistStack.currentPage.flipped = !playlistStack.currentPage.flipped
+            }
+
+            function videoPlayer() {
+                if (playlistStack.depth == 0)
+                    return null;
+
+                return playlistStack.currentPage.back.player
+            }
+
+            function audioPlayer() {
+                if (playlistStack.depth == 0)
+                    return null;
+
+                return playlistStack.currentPage.front.player
+            }
+
+            PageStack {
+                id: playlistStack
+
                 anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playlistToolbar.top }
             }
 

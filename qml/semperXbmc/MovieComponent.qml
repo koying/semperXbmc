@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
@@ -86,10 +86,7 @@ Item {
                 o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
                 batch += "," + JSON.stringify(o)
 
-                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: model.id } }};
-                batch += "," + JSON.stringify(o)
-
-                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
+                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: model.id } }, id: 1};
                 batch += "," + JSON.stringify(o)
 
                 batch += "]"
@@ -104,12 +101,13 @@ Item {
                             errorView.addError("error", error.message, error.code);
                             return;
                         }
+                        $().playlist.play($().playlist.videoPlId)
                     }
                 }
 //                console.debug(batch)
                 doc.send(batch);
                 
-                playlistView.showVideo()
+                playlistTab.showVideo()
                 main.state = "playlist"
                 mainTabGroup.currentTab = playlistTab
             }
@@ -124,7 +122,7 @@ Item {
                                     function () {
                                         $().playlist.onPlaylistStarted =
                                                 function(id) {
-                                                    $().videoplayer.seekPercentage(model.resume.position/model.resume.total*100);
+                                                    playlistTab.videoPlayer().seekPercentage(model.resume.position/model.resume.total*100);
                                                     $().playlist.onPlaylistStarted = null;
                                                 }
 

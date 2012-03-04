@@ -70,6 +70,7 @@ Player.prototype.seekPercentage = function(percent) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            console.debug(doc.responseText)
             var error = JSON.parse(doc.responseText).error;
             if (error) {
                 console.log(Utils.dumpObj(error, "Player.prototype.seekPercentage error", "", 0));

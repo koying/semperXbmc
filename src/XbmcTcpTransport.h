@@ -105,6 +105,8 @@ public:
     Q_INVOKABLE void stop();
     Q_INVOKABLE void skipPrevious();
     Q_INVOKABLE void skipNext();
+    Q_INVOKABLE void seek(qreal percentage);
+    Q_INVOKABLE void playFile(QString file);
 
 
 public:
