@@ -69,6 +69,7 @@ Item {
             current: (model.id == player.position)
 
             onSelected:  {
+                $().playlist.play($().playlist.audioPlId, model.id)
             }
         }
     }

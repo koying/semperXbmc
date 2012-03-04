@@ -330,7 +330,7 @@ Playlist.prototype.cmd = function(cmd, media, param) {
     return;
 }
 
-Playlist.prototype.play = function(id) {
+Playlist.prototype.play = function(id, pos) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -349,7 +349,7 @@ Playlist.prototype.play = function(id) {
     }
 
 
-    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: id } }, id: 1};
+    var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: id, position: pos } }, id: 1};
     var str = JSON.stringify(o);
             console.debug(str)
     doc.send(str);

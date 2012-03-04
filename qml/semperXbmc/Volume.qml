@@ -44,6 +44,7 @@ Rectangle {
         orientation: Qt.Vertical
         minimumValue: 0
         maximumValue: 100
+        inverted: true
         stepSize: 5
         value: main.volume
         valueIndicatorVisible: true

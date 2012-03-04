@@ -101,7 +101,7 @@ Item {
                             errorView.addError("error", error.message, error.code);
                             return;
                         }
-                        $().playlist.play($().playlist.videoPlId)
+                        $().playlist.play($().playlist.videoPlId, 0)
                     }
                 }
 //                console.debug(batch)

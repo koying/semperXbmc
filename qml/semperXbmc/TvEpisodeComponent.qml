@@ -57,7 +57,7 @@ Item {
                             return;
                         }
 
-                        $().playlist.play($().playlist.videoPlId)
+                        $().playlist.play($().playlist.videoPlId, 0)
 
                         tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
                         if (tvshowProxyModel.sortRole == "lastplayed")

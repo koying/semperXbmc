@@ -89,7 +89,7 @@ Item {
 
     function playPause() {
         if (xbmcPlayer.speed < 0) {
-            $().playlist.play(playlistId);
+            $().playlist.play(playlistId, 0);
         } else
             xbmcPlayer.playPause();
     }
