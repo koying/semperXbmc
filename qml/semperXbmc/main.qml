@@ -365,6 +365,10 @@ Window {
             StateChangeScript {
                 script: {
 //                    playlistToolbar.active = true
+                    if (playlistStack.depth == 0) {
+                        playlistStack.push(Qt.resolvedUrl("PlayListView.qml"))
+                    }
+                    playlistStack.currentPage.focus = true;
                 }
             }
         },

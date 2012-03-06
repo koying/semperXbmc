@@ -51,11 +51,12 @@ Rectangle {
 
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom; top: btMute.bottom }
 
-        onValueChanged: {
+        onPressedChanged :{
             if (!volSlider.pressed && !main.muted && volSlider.value != main.volume) {
                 $().general.setVolume(volSlider.value)
             }
         }
+
     }
 
 

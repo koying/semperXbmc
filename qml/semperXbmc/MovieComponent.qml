@@ -1,5 +1,5 @@
 import QtQuick 1.0
-import com.nokia.android 1.1
+import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 import "components" as Cp;
 
@@ -106,9 +106,9 @@ Item {
                 }
 //                console.debug(batch)
                 doc.send(batch);
-                
-                playlistTab.showVideo()
+
                 main.state = "playlist"
+                playlistTab.showVideo()
                 mainTabGroup.currentTab = playlistTab
             }
 

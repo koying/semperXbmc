@@ -67,8 +67,8 @@ Item {
                 console.debug(batch)
                 doc.send(batch);
 
-                playlistTab.showVideo()
                 main.state = "playlist"
+                playlistTab.showVideo()
                 mainTabGroup.currentTab = playlistTab
             }
 
@@ -99,8 +99,8 @@ Item {
 //                console.debug(batch)
                 doc.send(batch);
 
-                playlistTab.showVideo()
                 main.state = "playlist"
+                playlistTab.showVideo()
                 mainTabGroup.currentTab = playlistTab
             }
 
