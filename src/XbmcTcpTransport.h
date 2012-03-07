@@ -61,6 +61,7 @@ public:
     Q_INVOKABLE void initialize(const QString& ip, const QString& port, const int version);
 
     void send(const XbmcJsonRequest& req) const;
+    void send(const QVariantList &reqs) const;
 
 signals:
     void initialized();

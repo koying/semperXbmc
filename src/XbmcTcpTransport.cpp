@@ -68,6 +68,12 @@ void XbmcTcpTransport::send(const XbmcJsonRequest &req) const
     m_socket->write(req.serialize());
 }
 
+void XbmcTcpTransport::send(const QVariantList &reqs) const
+{
+    QJson::Serializer serializer;
+    m_socket->write(serializer.serialize(reqs));
+}
+
 void XbmcTcpTransport::on_socket_connected()
 {
     qDebug() << "Socket Connected";
@@ -135,11 +141,26 @@ void XbmcPlayer::playPause()
     if (!m_transport)
         return;
 
+    if (m_speed < 0)
+        return;
+
+    QVariantList requests;
+
+    if (m_speed == 0) {
+        XbmcJsonRequest reqSeek("Player.Seek");
+        QVariantMap params;
+        params["playerid"] = m_playerId;
+        params["value"] = "smallbackward";
+        reqSeek.setParams(params);
+        requests << reqSeek.toVariant();
+    }
     XbmcJsonRequest req("Player.PlayPause");
     QVariantMap params;
     params["playerid"] = m_playerId;
     req.setParams(params);
-    m_transport->send(req);
+    requests << req.toVariant();
+
+    m_transport->send(requests);
 }
 
 void XbmcPlayer::stop()
