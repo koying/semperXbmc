@@ -102,12 +102,13 @@ public:
     Q_PROPERTY(qreal percentage READ percentage NOTIFY percentageChanged)
     Q_PROPERTY(int position READ position NOTIFY positionChanged)
 
-    Q_INVOKABLE void playPause();
+public:
     Q_INVOKABLE void stop();
     Q_INVOKABLE void skipPrevious();
     Q_INVOKABLE void skipNext();
     Q_INVOKABLE void seek(qreal percentage);
     Q_INVOKABLE void playFile(QString file);
+    Q_INVOKABLE void playPause();
 
 
 public:

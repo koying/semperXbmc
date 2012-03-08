@@ -89,9 +89,9 @@ Item {
 
     function playPause() {
         if (xbmcPlayer.speed < 0) {
-            $().playlist.play(playlistId, 0);
+            $().playlist.play(playlistId, 0)
         } else
-            xbmcPlayer.playPause();
+            xbmcPlayer.playPause()
     }
 
     function stop() {
