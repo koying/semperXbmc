@@ -146,6 +146,16 @@ QVariant SortFilterModel::property(int i, QString sRole)
     return data(index(i, 0), roleNameToId(sRole));
 }
 
+QVariantMap SortFilterModel::properties(int row)
+{
+    QVariantMap ret;
+    QHash<int, QByteArray>::const_iterator i;
+    for (i = roleNames().constBegin(); i != roleNames().constEnd(); ++i) {
+        ret[i.value()] = data(index(row, 0), i.key());
+    }
+    return ret;
+}
+
 bool SortFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     if (m_boolFilterIntRole >= Qt::UserRole) {

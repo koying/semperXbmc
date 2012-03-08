@@ -49,6 +49,87 @@ Page {
         flickableItem: tvSeasonList
     }
 
+    ContextMenu {
+        id: contextMenu
+        property string showtitle
+
+        MenuLayout {
+            MenuItem {
+                text: "Play season"
+                onClicked: {
+                    var batch = "[";
+                    var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+                    batch += JSON.stringify(o)
+                    o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+                    batch += "," + JSON.stringify(o)
+
+                    for (var i=0; i<episodeProxyModel.count; ++i) {
+                        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: episodeProxyModel.property(i, "id") } }};
+                        batch += "," + JSON.stringify(o)
+                    }
+
+                    o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }};
+                    batch += "," + JSON.stringify(o)
+
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+
+                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    if (tvshowProxyModel.sortRole == "lastplayed")
+                        tvshowProxyModel.reSort();
+
+                    main.state = "playlist"
+                    playlistTab.showVideo()
+                    mainTabGroup.currentTab = playlistTab
+                }
+            }
+            MenuItem {
+                text: "Append to queue"
+                onClicked: {
+                    var o
+                    var batch = "[";
+                    for (var i=0; i<episodeProxyModel.count; ++i) {
+                        if (i > 0)
+                            batch += ","
+                        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: episodeProxyModel.property(i, "id") } }};
+                        batch += JSON.stringify(o)
+                    }
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+
+                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    if (tvshowProxyModel.sortRole == "lastplayed")
+                        tvshowProxyModel.reSort();
+                }
+            }
+            MenuItem {
+                text: "Insert into queue"
+                onClicked: {
+                    var o
+                    var batch = "[";
+                    for (var i=0; i<episodeProxyModel.count; ++i) {
+                        if (i > 0)
+                            batch += ","
+                        o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.videoPlId, item: { episodeid: episodeProxyModel.property(i, "id") }, position: i }};
+                        batch += JSON.stringify(o)
+                    }
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+
+                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    if (tvshowProxyModel.sortRole == "lastplayed")
+                        tvshowProxyModel.reSort();
+                }
+            }
+        }
+    }
+
     Component {
         id: seasonDelegate
 
@@ -82,46 +163,8 @@ Page {
                 if (episodeProxyModel.count == 0)
                     return
 
-                $().playlist.clear($().playlist.videoPlId);
-                var i=0
-                var batch = "[";
-                var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
-                batch += JSON.stringify(o)
-                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
-                batch += "," + JSON.stringify(o)
-
-                for (var i=0; i<episodeProxyModel.count; ++i) {
-                    o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: episodeProxyModel.property(i, "id") } }};
-                    batch += "," + JSON.stringify(o)
-                }
-
-                o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }, id: 1};
-                batch += "," + JSON.stringify(o)
-
-                batch += "]"
-
-                var doc = new globals.getJsonXMLHttpRequest();
-                doc.onreadystatechange = function() {
-                    if (doc.readyState == XMLHttpRequest.DONE) {
-                        var oJSON = JSON.parse(doc.responseText);
-                        var error = oJSON.error;
-                        if (error) {
-                            console.log(Utils.dumpObj(error, "playSeason error", "", 0));
-                            errorView.addError("error", error.message, error.code);
-                            return;
-                        }
-
-                        tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
-                        if (tvshowProxyModel.sortRole == "lastplayed")
-                            tvshowProxyModel.reSort();
-                    }
-                }
-                console.debug(batch)
-                doc.send(batch);
-
-                main.state = "playlist"
-                playlistTab.showVideo()
-                mainTabGroup.currentTab = playlistTab
+                contextMenu.showtitle = model.showtitle
+                contextMenu.open()
             }
         }
     }

@@ -62,6 +62,7 @@ public:
 
     int count() const {return QSortFilterProxyModel::rowCount();}
     Q_INVOKABLE QVariant property(int i, QString sRole);
+    Q_INVOKABLE QVariantMap properties(int row);
 
     Q_INVOKABLE void reSort();
 
