@@ -12,10 +12,25 @@ Page {
 
     focus: true
 
-    Menus.MainTools {
-        id: mainTools
+    tools:  layout
+    ToolBarLayout {
+        id: layout
+
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: fileStack.pop()
+            visible: fileStack.depth > 1
+        }
+
+        ToolButton {
+            Menus.MainTools {
+                id: mainTools
+            }
+
+            iconSource: "toolbar-menu"
+            onClicked: mainTools.menu.open()
+        }
     }
-    tools: mainTools.layout
 
     Keys.onBackPressed: {
         fileStack.pop()
@@ -38,6 +53,72 @@ Page {
         flickableItem: fileList
     }
 
+    function playfile(path) {
+        var batch = "[";
+        var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+        batch += JSON.stringify(o)
+        o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+        batch += "," + JSON.stringify(o)
+
+        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { file: path } }};
+        batch += "," + JSON.stringify(o)
+
+        o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: $().playlist.videoPlId } }};
+        batch += "," + JSON.stringify(o)
+
+        batch += "]"
+
+        var doc = new globals.getJsonXMLHttpRequest();
+        doc.send(batch);
+
+        main.state = "playlist"
+        playlistTab.showVideo()
+        mainTabGroup.currentTab = playlistTab
+    }
+
+    ContextMenu {
+        id: contextMenu
+        property int index
+
+        MenuLayout {
+            MenuItem {
+                text: "Play file"
+                onClicked: {
+                    var item = fileProxyModel.properties(contextMenu.index)
+                    playFile(item.path)
+                }
+            }
+            MenuItem {
+                text: "Append file to queue"
+                onClicked: {
+                    var item = fileProxyModel.properties(contextMenu.index)
+
+                    var batch = "[";
+                    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { file: item.path } }};
+                    batch += JSON.stringify(o)
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+                }
+            }
+            MenuItem {
+                text: "Insert into queue"
+                onClicked: {
+                    var item = fileProxyModel.properties(contextMenu.index)
+
+                    var batch = "[";
+                    var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.videoPlId, item: { file: item.path }, position: 0 }};
+                    batch += JSON.stringify(o)
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+                }
+            }
+        }
+    }
+
     Component {
         id: fileDelegate
 
@@ -52,9 +133,13 @@ Page {
                 if (model.filetype == "directory")
                     fileStack.push(Qt.resolvedUrl("FileView.qml"), {curDir: model.path})
                 else {
-                    playlistTab.videoPlayer().playFile(model.path);
-                    mainTabGroup.currentTab = remoteTab
+                    playfile(model.path)
                 }
+            }
+
+            onContext: {
+                contextMenu.index = index
+                contextMenu.open()
             }
         }
     }
