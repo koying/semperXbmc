@@ -21,10 +21,122 @@ Item {
         flickableItem: movieList
     }
 
+    ContextMenu {
+        id: contextMenu
+        property int index
+        property variant component
+
+        MenuLayout {
+            MenuItem {
+                text: "Play movie"
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+                    if (item.resume && item.resume.position != 0) {
+                        dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
+    //                    console.debug(model.resume.position + "/" + model.resume.total)
+                        dialogPlaceholder.item.position = item.resume.position
+                        dialogPlaceholder.item.total = item.resume.total
+                        dialogPlaceholder.item.accepted.connect(
+                                    function () {
+                                        $().playlist.onPlaylistStarted =
+                                                function(id) {
+                                                    playlistTab.videoPlayer().seekPercentage(item.resume.position/item.resume.total*100);
+                                                    $().playlist.onPlaylistStarted = null;
+                                                }
+
+                                        playMovie(item.id);
+                                    }
+                                    );
+                        dialogPlaceholder.item.rejected.connect(
+                                    function () {
+                                        playMovie(item.id);
+                                    }
+                                    );
+                        dialogPlaceholder.item.open();
+                    } else {
+                        playMovie(item.id);
+                    }
+                }
+            }
+            MenuItem {
+                text: "Append to queue"
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+
+                    var batch = "[";
+                    var o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: item.id } }};
+                    batch += JSON.stringify(o)
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+                }
+            }
+            MenuItem {
+                text: "Insert into queue"
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+
+                    var batch = "[";
+
+                    var o = { jsonrpc: "2.0", method: "Playlist.Insert", params: { playlistid: $().playlist.videoPlId, item: { movieid: item.id }, position: 0 }};
+                    batch += JSON.stringify(o)
+
+                    batch += "]"
+
+                    var doc = new globals.getJsonXMLHttpRequest();
+                    doc.send(batch);
+                }
+            }
+            MenuItem {
+                text: "Show IMDB"
+                visible: ctxHasBrowser
+                onClicked: {
+                    contextMenu.component.style = "full"
+                }
+            }
+        }
+    }
+
+    function playMovie(movieId) {
+        var batch = "[";
+        var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
+        batch += JSON.stringify(o)
+        o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
+        batch += "," + JSON.stringify(o)
+
+        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: movieId } }, id: 1};
+        batch += "," + JSON.stringify(o)
+
+        batch += "]"
+
+        var doc = new globals.getJsonXMLHttpRequest();
+        doc.onreadystatechange = function() {
+                    if (doc.readyState == XMLHttpRequest.DONE) {
+                        var oJSON = JSON.parse(doc.responseText);
+                        var error = oJSON.error;
+                        if (error) {
+                            console.log(Utils.dumpObj(error, "playMovie error", "", 0));
+                            errorView.addError("error", error.message, error.code);
+                                return;
+                            }
+                            $().playlist.play($().playlist.videoPlId, 0)
+                        }
+                    }
+            //                console.debug(batch)
+            doc.send(batch);
+
+            main.state = "playlist"
+            playlistTab.showVideo()
+            mainTabGroup.currentTab = playlistTab
+    }
+
     Component {
         id: movieDelegate
 
         Cp.Delegate {
+            id: delegate
+
             title: model.name
             titleR: model.year ? model.year : ""
             subtitle: (model.genre != undefined ? model.genre : "")
@@ -79,39 +191,6 @@ Item {
                 }
             }
 
-            function playMovie() {
-                var batch = "[";
-                var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
-                batch += JSON.stringify(o)
-                o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
-                batch += "," + JSON.stringify(o)
-
-                o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { movieid: model.id } }, id: 1};
-                batch += "," + JSON.stringify(o)
-
-                batch += "]"
-
-                var doc = new globals.getJsonXMLHttpRequest();
-                doc.onreadystatechange = function() {
-                    if (doc.readyState == XMLHttpRequest.DONE) {
-                        var oJSON = JSON.parse(doc.responseText);
-                        var error = oJSON.error;
-                        if (error) {
-                            console.log(Utils.dumpObj(error, "playMovie error", "", 0));
-                            errorView.addError("error", error.message, error.code);
-                            return;
-                        }
-                        $().playlist.play($().playlist.videoPlId, 0)
-                    }
-                }
-//                console.debug(batch)
-                doc.send(batch);
-
-                main.state = "playlist"
-                playlistTab.showVideo()
-                mainTabGroup.currentTab = playlistTab
-            }
-
             onSelected:  {
                 if (style == globals.styleMovies) {
                     if (model.resume && model.resume.position != 0) {
@@ -143,10 +222,9 @@ Item {
             }
 
             onContext: {
-                if (style == globals.styleMovies)
-                    style = "full"
-                else
-                    style = globals.styleMovies
+                contextMenu.index = index
+                contextMenu.component = delegate
+                contextMenu.open()
             }
         }
     }

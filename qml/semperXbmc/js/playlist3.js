@@ -253,7 +253,6 @@ Playlist.prototype.audioClear = function(){
 }
 
 Playlist.prototype.update = function(id, playlistModel, items) {
-            console.debug(items.length)
     playlistModel.clear();
     for (var i = 0; i < items.length; i++){
         var thumb = "";
@@ -319,7 +318,7 @@ Playlist.prototype.play = function(id, pos) {
 
     var o = { jsonrpc: "2.0", method: "Player.Open", params: { item: { playlistid: id, position: pos } }, id: 1};
     var str = JSON.stringify(o);
-            console.debug(str)
+//            console.debug(str)
     doc.send(str);
     return;
 }
