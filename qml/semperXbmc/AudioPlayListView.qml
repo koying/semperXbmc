@@ -14,23 +14,43 @@ Item {
     property alias player: player
 
     ToolBar {
-        id: buttons
-        anchors { top: parent.top; left: parent.left; right: parent.right; }
+        id: tbar
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
 
-        tools: Row {
-            anchors.centerIn: parent
-            spacing: platformStyle.paddingMedium
 
-            ToolButton {
-                id: tbClearAll
-                text: "Clear Audio"
-                onClicked: {
-                    player.stop()
-                    $().playlist.clear(playlistId);
+        tools:
+            ToolBarLayout {
+                id: layout
+
+                ToolButton {
+                    iconSource: "toolbar-back"
+                    visible: false
+                }
+
+                Row {
+                    anchors.centerIn: parent
+                    spacing: platformStyle.paddingMedium
+
+                    ToolButton {
+                        id: tbClearAll
+                        text: "Clear Audio"
+                        onClicked: {
+                            player.stop()
+                            $().playlist.clear(playlistId);
+                        }
+                    }
+                }
+
+                ToolButton {
+                    Menus.MainTools {
+                        id: mainTools
+                    }
+
+                    iconSource: "toolbar-menu"
+                    onClicked: mainTools.menu.open()
                 }
             }
 
-        }
     }
 
     ListModel {
@@ -39,7 +59,7 @@ Item {
 
     ListView {
         id: playList
-        anchors {right: parent.right; left: parent.left; bottom: player.top; top: buttons.bottom }
+        anchors {right: parent.right; left: parent.left; bottom: player.top; top: parent.top }
         clip: true
 
         model: playlistModel
@@ -48,7 +68,7 @@ Item {
 
     Player {
         id: player
-        anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+        anchors { left: parent.left; right: parent.right; bottom: tbar.top }
         playlistId: page.playlistId
         playerType: "audio"
     }

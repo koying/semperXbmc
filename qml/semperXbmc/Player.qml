@@ -6,6 +6,7 @@ import com.semperpax.qmlcomponents 1.0
 Item {
     id: root
     anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+    height: tbar.height
 
     property int playlistId: -1
     property string  playerType: ""

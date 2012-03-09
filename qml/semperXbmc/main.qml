@@ -282,18 +282,9 @@ Window {
             PageStack {
                 id: playlistStack
 
-                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: playlistToolbar.top }
+                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom }
             }
 
-            Menus.MainTools {
-                id: mainTools
-            }
-
-            ToolBar {
-                id: playlistToolbar
-                tools: mainTools.layout
-                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-            }
         }
 
         DownloadView {
@@ -364,7 +355,6 @@ Window {
             name: "playlist"
             StateChangeScript {
                 script: {
-//                    playlistToolbar.active = true
                     if (playlistStack.depth == 0) {
                         playlistStack.push(Qt.resolvedUrl("PlayListView.qml"))
                     }
