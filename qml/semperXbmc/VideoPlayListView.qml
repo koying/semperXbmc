@@ -95,25 +95,38 @@ Item {
         }
     }
 
-    Timer {
-        id: timer
-        property bool active: false
+    Connections {
+        id: xbmcConnection
+        target: xbmcTcpClient
 
-        interval: 2000;
-        running: active && main.state == "playlist"
-        repeat: true
-        onTriggered: {
-            $().playlist.update(playlistId, playlistModel);
+        onPlaylistChanged: {
+            if (playlistId == page.playlistId)
+                $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
         }
-
     }
 
-    onPlaylistIdChanged: {
-        console.debug("playlistId:"+playlistId)
-        timer.active = false;
-        if (playlistId != -1) {
-            $().playlist.update(playlistId, playlistModel);
-            timer.active = true
+    Connections {
+        target: main
+
+        onStateChanged :{
+            if (main.state == "playlist") {
+                if (page.playlistId == -1)
+                    return;
+
+                $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
+                xbmcConnection.target = xbmcTcpClient
+            } else
+                xbmcConnection.target = null
+        }
+    }
+
+    Component.onCompleted: {
+        if (main.state == "playlist") {
+            if (page.playlistId == -1)
+                return;
+
+            $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
+            xbmcConnection.target = xbmcTcpClient
         }
     }
 }

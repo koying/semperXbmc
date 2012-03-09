@@ -252,53 +252,21 @@ Playlist.prototype.audioClear = function(){
     Playlist.prototype.clear($().playlist.audioPlId);
 }
 
-Playlist.prototype.update = function(id, playlistModel){
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-//            console.debug(doc.responseText)
-            var oJSON = JSON.parse(doc.responseText);
-            var error = oJSON.error;
-            if (error) {
-                console.log(Utils.dumpObj(error, "Playlist.prototype.update error", "", 0));
-                errorView.addError("error", error.message, error.code);
-                return;
-            }
-
-            var result = oJSON.result;
-            if ( result && result.items) {
-                var items = result.items;
-
-                if (!$().playlist.previousItems || !isEqual($().playlist.previousItems,items)) {
-//                    console.log("new playlist");
-                    $().playlist.previousItems = items;
-                    playlistModel.clear();
-                    for (var i = 0; i < items.length; i++){
-
-                        var thumb = "";
-                        if (items[i].thumbnail && items[i].thumbnail != "" && items[i].thumbnail != "DefaultAlbumCover.png") {
-                            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
-                        }
-                        var number = 0
-                        if (items[i].episode)
-                            number = items[i].episode
-                        else if (items[i].track)
-                            number = items[i].track
-                        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration, "showtitle": items[i].showtitle, "playcount": items[i].playcount, "number": number});
-                    }
-                }
-            } else {
-                playlistModel.clear();
-            }
+Playlist.prototype.update = function(id, playlistModel, items) {
+            console.debug(items.length)
+    playlistModel.clear();
+    for (var i = 0; i < items.length; i++){
+        var thumb = "";
+        if (items[i].thumbnail && items[i].thumbnail != "" && items[i].thumbnail != "DefaultAlbumCover.png") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + items[i].thumbnail;
         }
+        var number = 0
+        if (items[i].episode)
+            number = items[i].episode
+        else if (items[i].track)
+            number = items[i].track
+        playlistModel.append({"name": items[i].label, "id": i, "select": false, "thumb": thumb, "artist": items[i].artist, "album": items[i].album, "duration": items[i].duration, "showtitle": items[i].showtitle, "playcount": items[i].playcount, "number": number});
     }
-
-
-            var str = '{"jsonrpc": "2.0", "method": "Playlist.GetItems", "params": { "playlistid":' + id + ', "sort": {"method":"playlist", "order":"ascending"}, "properties": ["title", "artist", "album", "genre", "track", "duration", "thumbnail", "showtitle", "episode", "playcount"] }, "id": 1}';
-//    console.log(str);
-    doc.send(str);
-    return;
-
 }
 
 Playlist.prototype.batchcmd = function(cmd, playlistId, param, id) {

@@ -59,6 +59,7 @@ public:
 
 public:
     Q_INVOKABLE void initialize(const QString& ip, const QString& port, const int version);
+    Q_INVOKABLE QVariantList getPlaylistItems(int playlistId);
 
     void send(const XbmcJsonRequest& req) const;
     void send(const QVariantList &reqs) const;
@@ -67,11 +68,13 @@ signals:
     void initialized();
     void notificationReceived(QString jsonMsg);
     void errorDetected(QString type, QString msg, QString info);
+    void playlistChanged(int playlistId);
 
-public slots:
+protected slots:
     void on_socket_connected();
     void on_socket_error ( QAbstractSocket::SocketError socketError);
     void on_socket_readyRead();
+    void onPlaylistChanged(int playlistId, QVariantList items);
 
 protected:
     QTcpSocket* m_socket;
@@ -79,6 +82,7 @@ protected:
 
     QThread m_statusThread;
     XbmcStatus* m_statusObject;
+    QVariantList m_playlistItems[3];
 };
 
 /************************/
@@ -158,6 +162,8 @@ signals:
     void videoPercentageChanged(qreal percentage);
     void videoPositionChanged(int position);
 
+    void playlistChanged(int playlistId, QVariantList items);
+
 protected slots:
     void on_socket_connected();
     void on_socket_error ( QAbstractSocket::SocketError socketError);
@@ -181,6 +187,9 @@ protected:
     qreal m_currentVideoSpeed;
     qreal m_currentVideoPercentage;
     int m_currentVideoPosition;
+
+    QVariantList m_lastAudioPlaylist;
+    QVariantList m_lastVideoPlaylist;
 };
 
 #endif // XBMCTCPTRANSPORT_H

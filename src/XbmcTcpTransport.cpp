@@ -60,7 +60,17 @@ void XbmcTcpTransport::initialize(const QString &ip, const QString &port, const 
     m_statusObject->moveToThread(&m_statusThread);
     m_statusThread.start();
 
+    connect(m_statusObject, SIGNAL(playlistChanged(int,QVariantList)), this, SLOT(onPlaylistChanged(int,QVariantList)));
+
     emit initialized();
+}
+
+QVariantList XbmcTcpTransport::getPlaylistItems(int playlistId)
+{
+    if (playlistId < 3)
+        return m_playlistItems[playlistId];
+    else
+        return QVariantList();
 }
 
 void XbmcTcpTransport::send(const XbmcJsonRequest &req) const
@@ -105,7 +115,7 @@ void XbmcTcpTransport::on_socket_error ( QAbstractSocket::SocketError socketErro
 
 void XbmcTcpTransport::on_socket_readyRead()
 {
-    QString msg = QString(m_socket->readAll());
+    QString msg = QString::fromUtf8(m_socket->readAll().data());
     QString jsonMsg;
     int openedBrackets = 0;
     for (int i=0; i<msg.size(); ++i) {
@@ -122,6 +132,12 @@ void XbmcTcpTransport::on_socket_readyRead()
         } else if (openedBrackets > 0)
             jsonMsg.append(msg.at(i));
     }
+}
+
+void XbmcTcpTransport::onPlaylistChanged(int playlistId, QVariantList items)
+{
+    m_playlistItems[playlistId] = items;
+    emit playlistChanged(playlistId);
 }
 
 /******************/
@@ -343,7 +359,7 @@ void XbmcStatus::on_socket_error ( QAbstractSocket::SocketError socketError)
 
 void XbmcStatus::on_socket_readyRead()
 {
-    QString msg = QString(m_socket->readAll());
+    QString msg = QString::fromUtf8(m_socket->readAll().data());
     QString jsonMsg;
     int openedBrackets = 0;
     for (int i=0; i<msg.size(); ++i) {
@@ -373,21 +389,36 @@ void XbmcStatus::update()
 
     QStringList properties;
     QVariantMap params;
+    QVariantMap parmSort;
 
-    XbmcJsonRequest req1("Player.GetProperties", 1);
+    XbmcJsonRequest reqAudioPlayer("Player.GetProperties", 1);
     properties << "speed" << "percentage" << "position";
     params["playerid"] = 0;
     params["properties"] = properties;
-    req1.setParams(params);
-    requests << req1.toVariant();
+    reqAudioPlayer.setParams(params);
+    requests << reqAudioPlayer.toVariant();
 
-    XbmcJsonRequest req2("Player.GetProperties", 2);
+    XbmcJsonRequest reqVideoPlayer("Player.GetProperties", 2);
     params["playerid"] = 1;
-    req2.setParams(params);
-    requests << req2.toVariant();
+    reqVideoPlayer.setParams(params);
+    requests << reqVideoPlayer.toVariant();
 
-//    XbmcJsonRequest req3("Player.GetActivePlayers", 3);
-//    requests << req3.toVariant();
+    params.clear();
+    properties.clear();
+    XbmcJsonRequest reqAudioPlaylist("Playlist.GetItems", 3);
+    params["playlistid"] = 0;
+    parmSort["method"] = "playlist";
+    parmSort["order"] = "ascending";
+    properties << "title" << "artist" << "album" << "genre" << "track" << "duration" << "thumbnail" << "showtitle" << "episode" << "playcount";
+    params["sort"] = parmSort;
+    params["properties"] = properties;
+    reqAudioPlaylist.setParams(params);
+    requests << reqAudioPlaylist.toVariant();
+
+    XbmcJsonRequest reqVideoPlaylist("Playlist.GetItems", 4);
+    params["playlistid"] = 1;
+    reqVideoPlaylist.setParams(params);
+    requests << reqVideoPlaylist.toVariant();
 
     QJson::Serializer serializer;
 //    QString out = QString(serializer.serialize(requests));
@@ -407,12 +438,13 @@ void XbmcStatus::handleMsg(const QString &msg)
     }
 
     int reqId = o["id"].toInt();
-    qreal newSpeed = -1;
-    qreal newPercentage = -1;
-    int newPos = -1;
 
     switch (reqId) {
-    case 1:
+    case 1: {  //Player.GetProperties Audio
+        qreal newSpeed = -1;
+        qreal newPercentage = -1;
+        int newPos = -1;
+
         if (o["result"].isValid()) {
             QVariantMap result = o["result"].toMap();
             newSpeed = result["speed"].toReal();
@@ -432,8 +464,13 @@ void XbmcStatus::handleMsg(const QString &msg)
             emit audioPositionChanged(m_currentAudioPosition);
         }
         break;
+    }
 
-    case 2: {
+    case 2: { //Player.GetProperties Video
+        qreal newSpeed = -1;
+        qreal newPercentage = -1;
+        int newPos = -1;
+
         if (o["result"].isValid()) {
             QVariantMap result = o["result"].toMap();
             newSpeed = result["speed"].toReal();
@@ -454,6 +491,44 @@ void XbmcStatus::handleMsg(const QString &msg)
         }
         break;
     }
+
+    case 3: //Playlist.GetItems Audio
+        if (o["result"].isValid()) {
+            QVariantMap r = o["result"].toMap();
+            if (r["items"].isValid())  {
+                QVariantList items = r["items"].toList();
+                if (items == m_lastAudioPlaylist)
+                    return;
+                m_lastAudioPlaylist = items;
+                emit playlistChanged(0, items);
+            } else {
+                if (m_lastAudioPlaylist.size()) {
+                    m_lastAudioPlaylist.clear();
+                    emit playlistChanged(0, m_lastAudioPlaylist);
+                }
+            }
+        }
+
+        break;
+
+    case 4: //Playlist.GetItems Video
+        if (o["result"].isValid()) {
+            QVariantMap r = o["result"].toMap();
+            if (r["items"].isValid())  {
+                QVariantList items = r["items"].toList();
+                if (items == m_lastVideoPlaylist)
+                    return;
+                m_lastVideoPlaylist = items;
+                emit playlistChanged(1, items);
+            } else {
+                if (m_lastVideoPlaylist.size()) {
+                    m_lastVideoPlaylist.clear();
+                    emit playlistChanged(1, m_lastVideoPlaylist);
+                }
+            }
+        }
+
+        break;
     }
 }
 
