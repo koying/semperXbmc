@@ -286,7 +286,7 @@ Library.prototype.handleEpisodes = function (responseText) {
         if (episodes[i].streamdetails)
             duration = episodes[i].streamdetails.video[0].duration;
 
-        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].label, "poster": thumb, "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume});
+        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].title, "poster": thumb, "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume});
         if (episodes[i].resume && episodes[i].resume.position!=0) {
             console.debug("resume " + episodes[i].label + " @ " + episodes[i].resume.position + "/" + episodes[i].resume.total );
         }
@@ -304,7 +304,7 @@ Library.prototype.loadEpisodes = function (id) {
 
 
     episodeModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -320,7 +320,7 @@ Library.prototype.recentEpisodes = function () {
 
 
     episodeModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
     doc.send(str);
 
     return;

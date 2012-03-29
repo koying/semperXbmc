@@ -370,6 +370,7 @@ void XbmcStatus::on_socket_readyRead()
             openedBrackets--;
             jsonMsg.append(msg.at(i));
             if (openedBrackets == 0 && jsonMsg.size()) {
+                qDebug() << jsonMsg;
                 handleMsg(jsonMsg);
                 jsonMsg = QString();
             }
@@ -433,7 +434,7 @@ void XbmcStatus::handleMsg(const QString &msg)
 
     QVariantMap o = parser.parse(msg.toUtf8(), &ok).toMap();
     if (!ok) {
-        qDebug() << "Parse error";
+        qDebug() << "Parse error: " << msg;
         return;
     }
 
