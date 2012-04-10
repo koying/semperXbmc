@@ -53,7 +53,6 @@ CommonDialog {
             }
 
             Text {
-                id: lblMax
                 font.family: platformStyle.fontFamilyRegular
                 font.pixelSize: platformStyle.fontSizeLarge
                 color: platformStyle.colorNormalLight
@@ -99,6 +98,36 @@ CommonDialog {
                 width: 100
             }
 
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Trakt User:"
+            }
+
+            TextField {
+                id: inpTrktUser
+                width: grid.lineWidth - (lblMax.width + platformStyle.paddingMedium)
+            }
+
+            Text {
+                font.family: platformStyle.fontFamilyRegular
+                font.pixelSize: platformStyle.fontSizeLarge
+                color: platformStyle.colorNormalLight
+                height: inpJsonPort.height
+                verticalAlignment: Text.AlignVCenter
+
+                text: "Trakt Pwd:"
+            }
+
+            TextField {
+                id: inpTraktPassword
+                width: grid.lineWidth - (lblMax.width + platformStyle.paddingMedium)
+                echoMode: TextInput.Password
+            }
         }
     }
 
@@ -111,6 +140,8 @@ CommonDialog {
         inpJsonUser.text = globals.jsonUser
         inpJsonPassword.text = globals.jsonPassword
         inpEventPort.text = globals.eventPort;
+        inpTrktUser = globals.traktUser;
+        inpTraktPassword = globals.traktPassword
     }
 
     onAccepted: {
@@ -119,6 +150,8 @@ CommonDialog {
         globals.jsonUser = inpJsonUser.text
         globals.jsonPassword = inpJsonPassword.text
         globals.eventPort = inpEventPort.text;
+        globals.traktUser = inpTrktUser.text;
+        globals.traktPassword = inpTraktPassword.text;
 
         globals.save();
     }

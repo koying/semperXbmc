@@ -1,6 +1,8 @@
 import QtQuick 1.0
 import com.semperpax.qmlcomponents 1.0
 
+import "js/Utils.js" as Utils
+
 Item {
     property string server: "Unspecified"
     property string jsonPort: "8080"
@@ -8,6 +10,8 @@ Item {
     property string jsonPassword: ""
     property string jsonTcpPort: "9090"
     property string eventPort: "9777"
+    property string traktUser: ""
+    property string traktPassword: ""
 
     property bool showSplash: true
     property bool cacheThumbnails: true
@@ -53,6 +57,8 @@ Item {
         jsonUser = settingsBackend.getSetting("jsonUser", jsonUser);
         jsonPassword = settingsBackend.getSetting("jsonPassword", jsonPassword);
         eventPort = settingsBackend.getSetting("eventPort", eventPort);
+        traktUser = settingsBackend.getSetting("traktUser", traktUser);
+        traktPassword = settingsBackend.getSetting("traktPassword", jsonPassword);
 
         showSplash = settingsBackend.getSetting("showSplash", showSplash);
         cacheThumbnails = settingsBackend.getSetting("cacheThumbnails", cacheThumbnails);
@@ -80,6 +86,8 @@ Item {
         settingsBackend.setSetting("jsonUser", jsonUser);
         settingsBackend.setSetting("jsonPassword", jsonPassword);
         settingsBackend.setSetting("eventPort", eventPort);
+        settingsBackend.setSetting("traktUser", traktUser);
+        settingsBackend.setSetting("traktPassword", traktPassword);
 
         settingsBackend.setSetting("showSplash", showSplash);
         settingsBackend.setSetting("cacheThumbnails", cacheThumbnails);
@@ -116,6 +124,26 @@ Item {
         if (jsonUser != "") {
             request.setRequestHeader("Authorization", "Basic "+Qt.btoa(jsonUser+":"+jsonPassword))
         }
+        return request;
+    }
+
+    function getTraktAuthString() {
+        if (traktUser != "") {
+            return (traktUser + ":" + Utils.SHA1(traktPassword) + "@")
+        } else
+            return "";
+    }
+
+    function getTraktHttpRequest(method, verb, param) {
+        var url = "http://api.trakt.tv/" + verb + ".json/aa8ef30168ad03a9ecc40dda2b0f1ace"
+        if (param != "")
+            url += "/" + param
+        var request = new XMLHttpRequest();
+        request.open(method, url );
+        if (traktUser != "") {
+            request.setRequestHeader("Authorization", "Basic "+Qt.btoa(traktUser+":"+Utils.SHA1(traktPassword)))
+        }
+        console.debug(url)
         return request;
     }
 

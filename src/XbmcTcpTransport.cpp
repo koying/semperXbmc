@@ -370,7 +370,6 @@ void XbmcStatus::on_socket_readyRead()
             openedBrackets--;
             jsonMsg.append(msg.at(i));
             if (openedBrackets == 0 && jsonMsg.size()) {
-                qDebug() << jsonMsg;
                 handleMsg(jsonMsg);
                 jsonMsg = QString();
             }

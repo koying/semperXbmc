@@ -16,6 +16,8 @@ import "js/library3.js" as Library3
 import "js/playlist3.js" as Playlist3
 import "js/general3.js" as General3
 
+import "js/trakt.js" as Trakt
+
 Window {
     id: main
 
@@ -581,6 +583,10 @@ Window {
         return Xbmc.xbmc;
     }
 
+    function $trakt() {
+        return Trakt.trakt;
+    }
+
     function initialize() {
 //        console.log("xbmc initialization");
 
@@ -589,6 +595,8 @@ Window {
         Xbmc.xbmc.server = globals.server;
 //        Xbmc.xbmc.introspect();
         Xbmc.xbmc.init();
+
+        Trakt.trakt = new Trakt.Trakt()
     }
 
     onJsonInitializedChanged: {

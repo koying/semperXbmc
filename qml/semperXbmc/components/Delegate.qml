@@ -13,6 +13,7 @@ Item {
     property string subtitleR
 
     property bool watched: false
+    property bool unavailable: false
     property bool banner:  false
     property bool current:  false
     property real percentage: 0
@@ -159,12 +160,12 @@ Item {
                         }
 
                         Image {
-                            source: "../img/checkmark_48.png"
+                            source: wrapper.watched ? "../img/checkmark_24.png" : "../img/unavailable_24.png"
                             smooth: true
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.bottom: parent.bottom
                             anchors.right: parent.right
-                            anchors.rightMargin: 10
-                            visible: wrapper.watched
+                            anchors.margins: 5
+                            visible: wrapper.watched || wrapper.unavailable
                         }
                     }
                 }

@@ -144,6 +144,7 @@ Item {
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/movie"
             watched: model.playcount > 0
+            unavailable: model.id == 0
 
             style: globals.styleMovies
             banner: globals.showBanners
