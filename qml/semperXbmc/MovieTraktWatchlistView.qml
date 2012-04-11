@@ -64,7 +64,7 @@ Page {
         else
             movieProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
 
-        $trakt().loadMoviesWatchlist();
+        refresh()
 
         globals.initialMovieView = "MovieTraktWatchlistView.qml"
     }

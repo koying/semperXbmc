@@ -25,6 +25,15 @@ VariantModel::~VariantModel()
     }
 }
 
+int VariantModel::roleNameToId(const QString &name)
+{
+    int role = m_fields.indexOf(name);
+    if (role == -1)
+        return -1;
+
+    return role + Qt::UserRole;
+}
+
 QVariant VariantModel::data(const QModelIndex &index, int role) const
 {
     if (!m_initialised)
@@ -184,6 +193,22 @@ void VariantModel::removeValue(const QVariant &keyvalue, const QString &valueFie
     emit dataChanged(index, index);
     m_dirty = true;
 }
+
+QVariant VariantModel::property(int i, QString sRole)
+{
+    return data(index(i, 0), roleNameToId(sRole));
+}
+
+bool VariantModel::setProperty(int i, QString sRole, QVariant val)
+{
+    m_data[i][sRole] = val;
+
+    QModelIndex idx = index(i, 0);
+    emit dataChanged(idx, idx);
+
+    return true;
+}
+
 
 void VariantModel::append(const QVariantMap &vals)
 {

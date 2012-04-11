@@ -57,6 +57,7 @@ Item {
                         playMovie(item.id);
                     }
                 }
+                visible: !contextMenu.component.unavailable
             }
             MenuItem {
                 text: "Append to queue"
@@ -71,6 +72,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
                 }
+                visible: !contextMenu.component.unavailable
             }
             MenuItem {
                 text: "Insert into queue"
@@ -87,6 +89,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
                 }
+                visible: !contextMenu.component.unavailable
             }
             MenuItem {
                 text: "Show IMDB"
@@ -156,12 +159,10 @@ Item {
                     subComponent.item.url = url
                 } else {
                     var imdb = model.imdbnumber
-                    if (imdb) {
-                        if (imdb.indexOf("tt") != 0) {
-                            imdb = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
-                        }
+                    if (imdb != 0) {
+                        var imdbId = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
 
-                        subComponent.item.url = "http://m.imdb.com/title/" + imdb;
+                        subComponent.item.url = "http://m.imdb.com/title/" + imdbId;
                     } else {
                         subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
                     }
@@ -193,6 +194,11 @@ Item {
             }
 
             onSelected:  {
+                if (model.id == 0) {
+                    style = "full"
+                    return
+                }
+
                 if (style == globals.styleMovies) {
                     if (model.resume && model.resume.position != 0) {
                         dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");

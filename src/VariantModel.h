@@ -95,12 +95,16 @@ public:
     Q_INVOKABLE void setValue(const QVariant &key, const QString &valueField, const QVariant& value);
     Q_INVOKABLE void removeValue(const QVariant &keyvalue, const QString &valueField);
 
+    Q_INVOKABLE QVariant property(int i, QString sRole);
+    Q_INVOKABLE bool setProperty(int i, QString sRole, QVariant val);
+
     Q_INVOKABLE void load();
     Q_INVOKABLE void save();
 
     /********** END METHODS *************/
 
 protected:
+    int roleNameToId(const QString &name);
     QString getKey();
     QVariant getKeyValue(const QVariantMap &vals);
     QVariant getKeyValue(int row);

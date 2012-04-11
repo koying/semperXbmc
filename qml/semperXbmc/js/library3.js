@@ -20,6 +20,14 @@ Library.prototype.handleMovies = function (movies) {
         if (movies[i].streamdetails)
             duration = movies[i].streamdetails.video[0].duration;
 
+        var imdbnumber = movies[i].imdbnumber
+        if (imdbnumber) {
+            if (imdbnumber.substring(0,2) == "tt")
+                imdbnumber = imdbnumber.slice(2)
+            imdbnumber = parseInt(imdbnumber,10)
+        } else
+            imdbnumber = 0
+
         if (movies[i].genre && movies[i].genre != "") {
             var aGenre = movies[i].genre.split("/");
             for (var j=0; j<aGenre.length; ++j) {
@@ -36,7 +44,7 @@ Library.prototype.handleMovies = function (movies) {
             }
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": movies[i].imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  movies[i].genre, "duration": duration, "runtime": movies[i].runtime, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
         if (movies[i].resume && movies[i].resume.position!=0) {
             console.debug("resume " + movies[i].label + " @ " + movies[i].resume.position + "/" + movies[i].resume.total );
         }
@@ -70,6 +78,35 @@ Library.prototype.loadMovies = function () {
     movieModel.clear();
     movieGenreModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": '+Library.prototype.movieFields+'  }, "id": 1}';
+    doc.send(str);
+
+    return;
+}
+
+Library.prototype.updateMoviesByImdb = function (movieModel) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+            var result = oJSON.result;
+            var movies = result.movies;
+            for (var i = 0; i < movies.length; i++) {
+                var imdbnumber = movies[i].imdbnumber
+                if (!imdbnumber)
+                    continue
+                if (imdbnumber.substring(0,2) == "tt")
+                    imdbnumber = imdbnumber.slice(2)
+                imdbnumber = parseInt(imdbnumber,10)
+                for (var j=0; j<movieModel.count; ++j) {
+                    if (movieModel.property(j, "imdbnumber") == imdbnumber)
+                        movieModel.setProperty(j, "id", movies[i].movieid)
+                }
+
+            }
+        }
+    }
+
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "properties": ["imdbnumber"] }, "id": 1}';
     doc.send(str);
 
     return;

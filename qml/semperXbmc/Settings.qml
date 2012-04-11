@@ -53,6 +53,7 @@ CommonDialog {
             }
 
             Text {
+                id: lblMax
                 font.family: platformStyle.fontFamilyRegular
                 font.pixelSize: platformStyle.fontSizeLarge
                 color: platformStyle.colorNormalLight
@@ -140,8 +141,8 @@ CommonDialog {
         inpJsonUser.text = globals.jsonUser
         inpJsonPassword.text = globals.jsonPassword
         inpEventPort.text = globals.eventPort;
-        inpTrktUser = globals.traktUser;
-        inpTraktPassword = globals.traktPassword
+        inpTrktUser.text = globals.traktUser;
+        inpTraktPassword.text = globals.traktPassword
     }
 
     onAccepted: {

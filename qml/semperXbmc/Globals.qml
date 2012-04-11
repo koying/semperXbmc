@@ -58,7 +58,7 @@ Item {
         jsonPassword = settingsBackend.getSetting("jsonPassword", jsonPassword);
         eventPort = settingsBackend.getSetting("eventPort", eventPort);
         traktUser = settingsBackend.getSetting("traktUser", traktUser);
-        traktPassword = settingsBackend.getSetting("traktPassword", jsonPassword);
+        traktPassword = settingsBackend.getSetting("traktPassword", traktPassword);
 
         showSplash = settingsBackend.getSetting("showSplash", showSplash);
         cacheThumbnails = settingsBackend.getSetting("cacheThumbnails", cacheThumbnails);
