@@ -47,5 +47,13 @@ ContextMenu {
                 movieStack.replace(Qt.resolvedUrl("../MovieTraktWatchlistView.qml"))
             }
         }
+        MenuItem {
+            text:  "Trakt Recommended"
+            visible: viewMenu.currentType != text && globals.traktUser != ""
+
+            onClicked: {
+                movieStack.replace(Qt.resolvedUrl("../MovieTraktRecommendedView.qml"))
+            }
+        }
     }
 }

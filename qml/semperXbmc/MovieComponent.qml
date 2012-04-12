@@ -194,12 +194,11 @@ Item {
             }
 
             onSelected:  {
-                if (model.id == 0) {
-                    style = "full"
-                    return
-                }
-
                 if (style == globals.styleMovies) {
+                    if (model.id == 0) {
+                        style = "full"
+                        return
+                    }
                     if (model.resume && model.resume.position != 0) {
                         dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
                         dialogPlaceholder.item.position = model.resume.position
@@ -212,17 +211,17 @@ Item {
                                                     $().playlist.onPlaylistStarted = null;
                                                 }
 
-                                        playMovie();
+                                        playMovie(model.id);
                                     }
                                     );
                         dialogPlaceholder.item.rejected.connect(
                                     function () {
-                                        playMovie();
+                                        playMovie(model.id);
                                     }
                                     );
                         dialogPlaceholder.item.open();
                     } else {
-                        playMovie();
+                        playMovie(model.id);
                     }
                 } else
                     style = globals.styleMovies

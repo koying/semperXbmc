@@ -25,3 +25,26 @@ Trakt.prototype.loadMoviesWatchlist = function () {
 
     return;
 }
+
+Trakt.prototype.loadRecommended = function () {
+    var doc = new globals.getTraktHttpRequest("POST", "recommendations/movies");
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+//            console.debug(doc.responseText)
+            var oJSON = JSON.parse(doc.responseText);
+
+            var movies = oJSON
+            for (var i = 0; i < movies.length; i++){
+
+                var imdbnum = parseInt(movies[i].imdb_id.slice(2),10)
+                movieModel.append({"id": 0, "name": movies[i].title, "poster": movies[i].images.poster, "genre":  movies[i].genres.join(), "duration": 0, "runtime": movies[i].runtime, "rating": movies[i].ratings.percentage/10, "year": movies[i].year, "imdbnumber": imdbnum, "originaltitle": movies[i].title, "playcount":0, "resume":0});
+            }
+            $().library.updateMoviesByImdb(movieModel)
+        }
+    }
+
+    var str = '{ "username":"' + globals.traktUser + '", "password":"' + Utils.SHA1(globals.traktPassword) + '" }';
+    doc.send(str);
+
+    return;
+}
