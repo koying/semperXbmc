@@ -43,6 +43,13 @@ Xbmc.prototype.init = function() {
                 xbmc.playlist = new Playlist3.Playlist();
                 break;
 
+            case 5:  // Frodo
+            case 6:
+                xbmc.general = new General5.General();
+                xbmc.library = new Library5.Library();
+                xbmc.playlist = new Playlist5.Playlist();
+                break;
+
             default:
                 return;
             }

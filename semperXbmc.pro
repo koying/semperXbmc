@@ -63,11 +63,10 @@ contains(__NOWEBKIT,1) {
 }
 
 INCLUDEPATH += ../qjson/include
-android {
-    LIBS += -L../qjson-build-android/lib -lqjson
-} else {
-    LIBS += -L../qjson-build-desktop/lib -lqjson
-}
+android: LIBS += -L../qjson-build-android/lib -lqjson
+symbian: LIBS += -lqjson.lib
+else: LIBS += -L../qjson-build-desktop/lib -lqjson
+
 
 RESOURCES += \
     qml/resource.qrc

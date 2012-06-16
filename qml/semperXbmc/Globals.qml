@@ -121,6 +121,7 @@ Item {
     function getJsonXMLHttpRequest() {
         var request = new XMLHttpRequest();
         request.open("POST", "http://"+server+":" + jsonPort + "/jsonrpc");
+        request.setRequestHeader("Content-Type", "application/json")
         if (jsonUser != "") {
             request.setRequestHeader("Authorization", "Basic "+Qt.btoa(jsonUser+":"+jsonPassword))
         }

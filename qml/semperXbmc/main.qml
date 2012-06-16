@@ -16,6 +16,10 @@ import "js/library3.js" as Library3
 import "js/playlist3.js" as Playlist3
 import "js/general3.js" as General3
 
+import "js/library5.js" as Library5
+import "js/playlist5.js" as Playlist5
+import "js/general5.js" as General5
+
 import "js/trakt.js" as Trakt
 
 Window {
