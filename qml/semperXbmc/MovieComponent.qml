@@ -92,6 +92,21 @@ Item {
                 visible: !contextMenu.component.unavailable
             }
             MenuItem {
+                text: "Mark as seen"
+                visible: $().jsonRPCVer > 4
+                onClicked: {
+                    $().library.markMovieAsSeen(item.id)
+                }
+            }
+            MenuItem {
+                text: "Remove"
+                visible: $().jsonRPCVer > 4
+                onClicked: {
+                    $().library.removeMovie(item.id)
+                }
+            }
+
+            MenuItem {
                 text: "Show IMDB"
                 visible: ctxHasBrowser
                 onClicked: {

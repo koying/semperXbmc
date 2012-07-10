@@ -115,6 +115,20 @@ Item {
                         tvshowProxyModel.reSort();
                 }
             }
+            MenuItem {
+                text: "Mark as seen"
+                visible: $().jsonRPCVer > 4
+                onClicked: {
+                    $().library.markEpisodeAsSeen(item.id)
+                }
+            }
+            MenuItem {
+                text: "Remove"
+                visible: $().jsonRPCVer > 4
+                onClicked: {
+                    $().library.removeEpisode(item.id)
+                }
+            }
         }
     }
 

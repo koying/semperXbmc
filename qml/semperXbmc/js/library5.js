@@ -202,6 +202,52 @@ Library.prototype.loadMovieSetMovies = function (setId) {
     return;
 }
 
+Library.prototype.markMovieAsSeen = function (movieId) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Utils.dumpObj(error, "markMovieAsSeen error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetMovieDetails", params: { movieid: movieId, playcount: 1}, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+
+    return;
+}
+
+Library.prototype.removeMovie = function (movieId) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Utils.dumpObj(error, "RemoveMovie error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveMovie", params: { movieid: movieId }, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+
+    return;
+}
+
 Library.prototype.loadTVShows = function () {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
@@ -358,6 +404,52 @@ Library.prototype.recentEpisodes = function () {
 
     episodeModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
+    doc.send(str);
+
+    return;
+}
+
+Library.prototype.markEpisodeAsSeen = function (epId) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Utils.dumpObj(error, "markEpisodeAsSeen error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetEpisodeDetails", params: { episodeid: epId, playcount: 1}, id: 1};
+    var str = JSON.stringify(o);
+    doc.send(str);
+
+    return;
+}
+
+Library.prototype.removeEpisode = function (epId) {
+    var doc = new globals.getJsonXMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var oJSON = JSON.parse(doc.responseText);
+
+            var error = oJSON.error;
+            if (error) {
+                console.log(Utils.dumpObj(error, "removeEpisode error", "", 0));
+                errorView.addError("error", error.message, error.code);
+                return;
+            }
+        }
+    }
+
+
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveEpisode", params: { episodeid: epId }, id: 1};
+    var str = JSON.stringify(o);
     doc.send(str);
 
     return;
