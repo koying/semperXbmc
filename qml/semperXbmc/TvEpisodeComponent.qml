@@ -119,6 +119,7 @@ Item {
                 text: "Mark as seen"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
+                    var item = episodeProxyModel.properties(contextMenu.index)
                     $().library.markEpisodeAsSeen(item.id)
                 }
             }
@@ -126,6 +127,7 @@ Item {
                 text: "Remove"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
+                    var item = episodeProxyModel.properties(contextMenu.index)
                     $().library.removeEpisode(item.id)
                 }
             }

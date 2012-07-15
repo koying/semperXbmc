@@ -95,6 +95,7 @@ Item {
                 text: "Mark as seen"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
                     $().library.markMovieAsSeen(item.id)
                 }
             }
@@ -110,6 +111,7 @@ Item {
                 text: "Show IMDB"
                 visible: ctxHasBrowser
                 onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
                     contextMenu.component.style = "full"
                 }
             }
