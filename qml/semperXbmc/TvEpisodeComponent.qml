@@ -23,6 +23,7 @@ Item {
     ContextMenu {
         id: contextMenu
         property int index
+        property bool seen
 
         MenuLayout {
             MenuItem {
@@ -117,10 +118,18 @@ Item {
             }
             MenuItem {
                 text: "Mark as seen"
-                visible: $().jsonRPCVer > 4
+                visible: $().jsonRPCVer > 4 && !contextMenu.seen
                 onClicked: {
                     var item = episodeProxyModel.properties(contextMenu.index)
-                    $().library.markEpisodeAsSeen(item.id)
+                    $().library.markEpisodeAsSeen(item.id, true)
+                }
+            }
+            MenuItem {
+                text: "Mark as not seen"
+                visible: $().jsonRPCVer > 4 && contextMenu.seen
+                onClicked: {
+                    var item = episodeProxyModel.properties(contextMenu.index)
+                    $().library.markEpisodeAsSeen(item.id, false)
                 }
             }
             MenuItem {
@@ -217,6 +226,7 @@ Item {
 
             onContext: {
                 contextMenu.index = index
+                contextMenu.seen = (playcount > 0)
                 contextMenu.open()
             }
         }

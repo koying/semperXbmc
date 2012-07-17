@@ -25,6 +25,7 @@ Item {
         id: contextMenu
         property int index
         property variant component
+        property bool seen
 
         MenuLayout {
             MenuItem {
@@ -57,7 +58,7 @@ Item {
                         playMovie(item.id);
                     }
                 }
-                visible: !contextMenu.component.unavailable
+                visible: contextMenu.component ? !contextMenu.component.unavailable : true
             }
             MenuItem {
                 text: "Append to queue"
@@ -72,7 +73,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
                 }
-                visible: !contextMenu.component.unavailable
+                visible: contextMenu.component ? !contextMenu.component.unavailable : true
             }
             MenuItem {
                 text: "Insert into queue"
@@ -89,20 +90,29 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
                 }
-                visible: !contextMenu.component.unavailable
+                visible: contextMenu.component ? !contextMenu.component.unavailable : true
             }
             MenuItem {
                 text: "Mark as seen"
-                visible: $().jsonRPCVer > 4
+                visible: $().jsonRPCVer > 4 && !contextMenu.seen
                 onClicked: {
                     var item = movieProxyModel.properties(contextMenu.index)
-                    $().library.markMovieAsSeen(item.id)
+                    $().library.markMovieAsSeen(item.id, true)
+                }
+            }
+            MenuItem {
+                text: "Mark as not seen"
+                visible: $().jsonRPCVer > 4 && contextMenu.seen
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+                    $().library.markMovieAsSeen(item.id, false)
                 }
             }
             MenuItem {
                 text: "Remove"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
                     $().library.removeMovie(item.id)
                 }
             }
@@ -247,6 +257,7 @@ Item {
             onContext: {
                 contextMenu.index = index
                 contextMenu.component = delegate
+                contextMenu.seen = (playcount > 0)
                 contextMenu.open()
             }
         }

@@ -250,7 +250,7 @@ void VariantModel::update(const QVariantMap &vals)
 
         if (m_fields.contains(it.key()) && it.key() != getKey()) {
             m_data[row][it.key()] = it.value();
-            qDebug() << "VariantModel::update: " << m_data[row][it.key()] << " = " << it.value();
+//            qDebug() << "VariantModel::update: " << m_data[row][it.key()] << " = " << it.value();
             updated = true;
         }
     }
@@ -320,6 +320,7 @@ void VariantModel::clear()
         return;
 
     beginRemoveRows(QModelIndex(), 0, m_data.size()-1);
+    m_index.clear();
     m_data.clear();
     endRemoveRows();
 }

@@ -133,6 +133,7 @@ Library.prototype.recentMovies = function () {
 
 
     movieModel.clear();
+    movieGenreModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedMovies", "params": { "properties": '+Library.prototype.movieFields+' }, "id": 1}';
     doc.send(str);
 
@@ -196,13 +197,14 @@ Library.prototype.loadMovieSetMovies = function (setId) {
 
 
     movieModel.clear();
+    movieGenreModel.clear();
     var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieSetDetails", "params": { "setid":'+ setId +', "movies": {"sort": {"method":"year", "order":"ascending"}, "properties": '+Library.prototype.movieFields+' } }, "id": 1}';
     doc.send(str);
 
     return;
 }
 
-Library.prototype.markMovieAsSeen = function (movieId) {
+Library.prototype.markMovieAsSeen = function (movieId, seen) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -214,11 +216,12 @@ Library.prototype.markMovieAsSeen = function (movieId) {
                 errorView.addError("error", error.message, error.code);
                 return;
             }
+//            movieModel.update({"id": movieId, "playcount":seen ? 1 : 0})
         }
     }
 
 
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetMovieDetails", params: { movieid: movieId, playcount: 1}, id: 1};
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetMovieDetails", params: { movieid: movieId, playcount: seen ? 1 : 0}, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
 
@@ -409,7 +412,7 @@ Library.prototype.recentEpisodes = function () {
     return;
 }
 
-Library.prototype.markEpisodeAsSeen = function (epId) {
+Library.prototype.markEpisodeAsSeen = function (epId, seen) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -421,11 +424,13 @@ Library.prototype.markEpisodeAsSeen = function (epId) {
                 errorView.addError("error", error.message, error.code);
                 return;
             }
+
+//            episodeModel.update({"id": epId, "playcount":seen ? 1 : 0})
         }
     }
 
 
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetEpisodeDetails", params: { episodeid: epId, playcount: 1}, id: 1};
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.SetEpisodeDetails", params: { episodeid: epId, playcount: seen ? 1 : 0}, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
 

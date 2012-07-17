@@ -98,7 +98,7 @@ Page {
     Component.onCompleted: {
         movieProxyModel.filterRole = ""
         movieProxyModel.filterRegExp = ""
-        movieProxyModel.sortRole = ""
+        movieProxyModel.sortRole = "year"
         $().library.loadMovieSets();
         globals.initialMovieView = "MovieSetsView.qml"
     }
