@@ -25,7 +25,7 @@ Page {
         currentType: "Recent episodes"
     }
 
-    Menus.TvSortMenu {
+    Menus.TvEpisodeSortMenu {
         id: sortMenu
     }
 
@@ -42,12 +42,12 @@ Page {
         visible: menuLayout.filterEnabled
 
         onApply: {
-            tvshowProxyModel.filterRole = "name"
-            tvshowProxyModel.filterRegExp = searchDlg.text
+            episodeProxyModel.filterRole = "name"
+            episodeProxyModel.filterRegExp = searchDlg.text
         }
         onCancel: {
-            tvshowProxyModel.filterRole = ""
-            tvshowProxyModel.filterRegExp = ""
+            episodeProxyModel.filterRole = ""
+            episodeProxyModel.filterRegExp = ""
         }
     }
 
@@ -56,9 +56,9 @@ Page {
     }
 
     Component.onCompleted: {
-        tvshowProxyModel.filterRole = ""
-        tvshowProxyModel.filterRegExp = ""
-        tvshowProxyModel.sortRole = ""
+        episodeProxyModel.filterRole = ""
+        episodeProxyModel.filterRegExp = ""
+        episodeProxyModel.sortRole = ""
         $().library.recentEpisodes();
 
         globals.initialTvshowView = "TvShowRecentView.qml"

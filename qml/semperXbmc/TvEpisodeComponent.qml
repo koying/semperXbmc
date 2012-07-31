@@ -136,8 +136,20 @@ Item {
                 text: "Remove"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
-                    var item = episodeProxyModel.properties(contextMenu.index)
-                    $().library.removeEpisode(item.id)
+                    dialogPlaceholder.source = Qt.resolvedUrl("DeleteDialog.qml");
+                    dialogPlaceholder.item.accepted.connect(
+                                function () {
+                                    var item = episodeProxyModel.properties(contextMenu.index)
+                                    $().library.removeEpisode(item.id, true)
+                                }
+                                );
+                    dialogPlaceholder.item.rejected.connect(
+                                function () {
+                                    var item = episodeProxyModel.properties(contextMenu.index)
+                                    $().library.removeEpisode(item.id, false)
+                                }
+                                );
+                    dialogPlaceholder.item.open();
                 }
             }
         }
@@ -187,13 +199,14 @@ Item {
 
         Cp.Delegate {
             title: (model.number > 0 ? model.number + ". " : "") + model.name
+            titleR: model.firstaired
             subtitle: (seasonId >= 0) ? (model.duration > 0 ? Utils.secToMinutes(model.duration) : "") : model.showtitle
             subtitleR: (seasonId >= 0) ? Utils.sprintf("%.1f", model.rating) : "S" + model.season
             image: model.poster != "" ? model.poster : "qrc:/defaultImages/tvshow"
             watched: model.playcount > 0
 
             style: globals.styleTvShowSeasons
-            banner: globals.showBanners
+            banner: false
 
 
             onSelected: {

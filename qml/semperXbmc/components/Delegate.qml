@@ -226,7 +226,7 @@ Item {
 
                             anchors.top: parent.top
                             anchors.right: parent.right
-                            font.pixelSize: 20
+                            font.pixelSize: 15
                         }
 
                         Text {

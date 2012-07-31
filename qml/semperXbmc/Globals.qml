@@ -32,6 +32,7 @@ Item {
 
     property string initialMovieSort:  ""
     property string initialTvshowSort:  ""
+    property string initialTvEpisodeSort: ""
 
     VariantModel {
         id: settingsBackend
@@ -78,6 +79,7 @@ Item {
 
         initialMovieSort = settingsBackend.getSetting("initialMovieSort", initialMovieSort);
         initialTvshowSort = settingsBackend.getSetting("initialTvshowSort", initialTvshowSort);
+        initialTvEpisodeSort = settingsBackend.getSetting("initialTvEpisodeSort", initialTvEpisodeSort);
     }
 
     function save() {
@@ -107,6 +109,7 @@ Item {
 
         settingsBackend.setSetting("initialMovieSort", initialMovieSort);
         settingsBackend.setSetting("initialTvshowSort", initialTvshowSort);
+        settingsBackend.setSetting("initialTvEpisodeSort", initialTvEpisodeSort);
 
         settingsBackend.save();
     }

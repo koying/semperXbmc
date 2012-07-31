@@ -12,13 +12,16 @@ Library.prototype.movieFields = '["genre", "title", "runtime", "year", "playcoun
 Library.prototype.handleMovies = function (movies) {
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
+        console.log(Utils.dumpObj(movies[i], "movies[i]", "", 0));
         var thumb = "";
         if (movies[i].thumbnail && movies[i].thumbnail != "") {
             thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
         }
         var duration = 0;
-        if (movies[i].streamdetails)
+        if (movies[i].streamdetails) {
+            console.log(Utils.dumpObj(movies[i].streamdetails, "movies[i].streamdetails", "", 0));
             duration = movies[i].streamdetails.video[0].duration;
+        }
 
         var imdbnumber = movies[i].imdbnumber
         if (imdbnumber) {
@@ -228,7 +231,7 @@ Library.prototype.markMovieAsSeen = function (movieId, seen) {
     return;
 }
 
-Library.prototype.removeMovie = function (movieId) {
+Library.prototype.removeMovie = function (movieId, deletefile) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -244,7 +247,7 @@ Library.prototype.removeMovie = function (movieId) {
     }
 
 
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveMovie", params: { movieid: movieId }, id: 1};
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveMovie", params: { movieid: movieId, deletefile: deletefile }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
 
@@ -369,10 +372,12 @@ Library.prototype.handleEpisodes = function (responseText) {
         }
 
         var duration = 0;
-        if (episodes[i].streamdetails)
+        if (episodes[i].streamdetails) {
+            console.log(Utils.dumpObj(episodes[i].streamdetails, "loadepisodes error", "", 0));
             duration = episodes[i].streamdetails.video[0].duration;
+        }
 
-        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].title, "poster": thumb, "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume});
+        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].title, "poster": thumb, "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume, "firstaired":episodes[i].firstaired});
         if (episodes[i].resume && episodes[i].resume.position!=0) {
             console.debug("resume " + episodes[i].label + " @ " + episodes[i].resume.position + "/" + episodes[i].resume.total );
         }
@@ -390,7 +395,7 @@ Library.prototype.loadEpisodes = function (id) {
 
 
     episodeModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": { "tvshowid":'+ Library.prototype.tvshowId +', "season":'+ id +', "sort": {"method":"episode", "order":"ascending"}, "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume", "firstaired"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -406,7 +411,7 @@ Library.prototype.recentEpisodes = function () {
 
 
     episodeModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetRecentlyAddedEpisodes", "params": { "properties": ["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "streamdetails", "resume", "firstaired"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -437,7 +442,7 @@ Library.prototype.markEpisodeAsSeen = function (epId, seen) {
     return;
 }
 
-Library.prototype.removeEpisode = function (epId) {
+Library.prototype.removeEpisode = function (epId, deletefile) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
@@ -453,7 +458,7 @@ Library.prototype.removeEpisode = function (epId) {
     }
 
 
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveEpisode", params: { episodeid: epId }, id: 1};
+    var o = { jsonrpc: "2.0", method: "VideoLibrary.RemoveEpisode", params: { episodeid: epId, deletefile: deletefile }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
 

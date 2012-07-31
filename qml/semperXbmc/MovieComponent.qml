@@ -112,8 +112,20 @@ Item {
                 text: "Remove"
                 visible: $().jsonRPCVer > 4
                 onClicked: {
-                    var item = movieProxyModel.properties(contextMenu.index)
-                    $().library.removeMovie(item.id)
+                    dialogPlaceholder.source = Qt.resolvedUrl("DeleteDialog.qml");
+                    dialogPlaceholder.item.accepted.connect(
+                                function () {
+                                    var item = movieProxyModel.properties(contextMenu.index)
+                                    $().library.removeMovie(item.id, true)
+                                }
+                                );
+                    dialogPlaceholder.item.rejected.connect(
+                                function () {
+                                    var item = movieProxyModel.properties(contextMenu.index)
+                                    $().library.removeMovie(item.id, false)
+                                }
+                                );
+                    dialogPlaceholder.item.open();
                 }
             }
 
@@ -169,7 +181,7 @@ Item {
 
             title: model.name
             titleR: model.year ? model.year : ""
-            subtitle: (model.genre != undefined ? model.genre : "")
+            subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/movie"
@@ -177,7 +189,7 @@ Item {
             unavailable: model.id == 0
 
             style: globals.styleMovies
-            banner: globals.showBanners
+            banner: false
 
             subComponentSource: ctxHasBrowser ? Qt.resolvedUrl("WebDetails.qml") : ""
             function gotoUrl(url) {

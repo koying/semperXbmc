@@ -23,7 +23,7 @@ Page {
         event.accepted = true
     }
 
-    Menus.TvSortMenu {
+    Menus.TvEpisodeSortMenu {
         id: sortMenu
     }
 
