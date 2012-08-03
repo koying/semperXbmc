@@ -23,6 +23,7 @@ Item {
     ContextMenu {
         id: contextMenu
         property int index
+        property variant component
         property bool seen
 
         MenuLayout {
@@ -116,6 +117,22 @@ Item {
                         tvshowProxyModel.reSort();
                 }
             }
+
+            MenuItem {
+                text: "Show details"
+                onClicked: {
+                    var item = episodeProxyModel.properties(contextMenu.index)
+                    var delegate = contextMenu.component;
+                    delegate.subComponentSource = Qt.resolvedUrl("TvEpisodeDetails.qml")
+                    delegate.subComponent.loaded.connect(
+                                function() {
+                                   delegate.subComponent.item.episodeId = item.id
+                                }
+                                )
+                    delegate.style = "full"
+                }
+            }
+
             MenuItem {
                 text: "Mark as seen"
                 visible: $().jsonRPCVer > 4 && !contextMenu.seen
@@ -198,10 +215,12 @@ Item {
         id: episodeDelegate
 
         Cp.Delegate {
+            id: delegate
+
             title: (model.number > 0 ? model.number + ". " : "") + model.name
             titleR: model.firstaired
-            subtitle: (seasonId >= 0) ? (model.duration > 0 ? Utils.secToMinutes(model.duration) : "") : model.showtitle
-            subtitleR: (seasonId >= 0) ? Utils.sprintf("%.1f", model.rating) : "S" + model.season
+            subtitle: (seasonId >= 0) ?  model.duration : model.showtitle
+            subtitleR: (seasonId >= 0 && model.rating != 0) ? Utils.sprintf("%.1f", model.rating) : (model.season != 0 ? "S" + model.season : model.duration)
             image: model.poster != "" ? model.poster : "qrc:/defaultImages/tvshow"
             watched: model.playcount > 0
 
@@ -209,36 +228,18 @@ Item {
             banner: false
 
 
-            onSelected: {
-                if (model.resume && model.resume.position != 0) {
-                    dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
-//                    console.debug(model.resume.position + "/" + model.resume.total)
-                    dialogPlaceholder.item.position = model.resume.position
-                    dialogPlaceholder.item.total = model.resume.total
-                    dialogPlaceholder.item.accepted.connect(
-                                function () {
-                                    $().playlist.onPlaylistStarted =
-                                            function(id) {
-                                                playlistTab.videoPlayer().seekPercentage(model.resume.position/model.resume.total*100);
-                                                $().playlist.onPlaylistStarted = null;
-                                            }
-
-                                    playEpisode(model.id);
-                                }
-                                );
-                    dialogPlaceholder.item.rejected.connect(
-                                function () {
-                                    playEpisode(model.id);
-                                }
-                                );
-                    dialogPlaceholder.item.open();
-                } else {
-                    playEpisode(model.id);
+            onSelected:  {
+                if (style != globals.styleTvShowSeasons) {
+                    style = globals.styleTvShowSeasons
+                    return;
                 }
-            }
 
-            onContext: {
+                if (model.id == 0) {
+                    style = "full"
+                    return
+                }
                 contextMenu.index = index
+                contextMenu.component = delegate
                 contextMenu.seen = (playcount > 0)
                 contextMenu.open()
             }

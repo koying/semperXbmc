@@ -28,7 +28,7 @@ ContextMenu {
             onClicked: {
                 globals.initialTvEpisodeSort = "name"
                 episodeProxyModel.sortRole = globals.initialTvEpisodeSort
-                episodeProxyModel.sortOrder =  globals.sortAscending ? Qt.AscendingOrder : Qt.DescendingOrder
+                episodeProxyModel.sortOrder =  Qt.AscendingOrder
             }
         }
 

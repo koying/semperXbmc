@@ -494,7 +494,7 @@ Window {
     }
     VariantModel {
         id: movieModel
-        fields: [ "id", "name", "poster", "genre", "runtime", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb", "resume" ]
+        fields: [ "id", "name", "poster", "genre", "duration", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb", "resume" ]
         thumbDir: ctxFatFile
     }
 
@@ -546,7 +546,7 @@ Window {
     }
     VariantModel {
         id: episodeModel
-        fields: [ "id", "name", "poster", "tvshowId", "showtitle", "season", "number", "runtime", "rating", "playcount", "resume", "firstaired" ]
+        fields: [ "id", "name", "poster", "tvshowId", "showtitle", "season", "number", "duration", "rating", "playcount", "resume", "firstaired" ]
         thumbDir: ctxFatFile
     }
 

@@ -32,7 +32,7 @@ ContextMenu {
         }
 
         MenuItem {
-            text:  "By Default"
+            text:  "Default"
             onClicked: {
                 globals.initialMovieSort = ""
                 movieProxyModel.sortRole = globals.initialMovieSort

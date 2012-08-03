@@ -92,6 +92,67 @@ Item {
                 }
                 visible: contextMenu.component ? !contextMenu.component.unavailable : true
             }
+
+            MenuItem {
+                text: "Show details"
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+                    var delegate = contextMenu.component;
+                    delegate.subComponentSource = Qt.resolvedUrl("MovieDetails.qml")
+                    delegate.subComponent.loaded.connect(
+                                function() {
+                                   delegate.subComponent.item.movieId = item.id
+                                }
+                                )
+                    delegate.style = "full"
+                }
+            }
+
+            MenuItem {
+                text: "Show IMDB"
+                visible: ctxHasBrowser
+                onClicked: {
+                    var item = movieProxyModel.properties(contextMenu.index)
+                    var delegate = contextMenu.component;
+                    delegate.subComponentSource = Qt.resolvedUrl("WebDetails.qml")
+                    delegate.subComponent.loaded.connect(
+                                function() {
+                                    toolBar.tools = delegate.subComponent.item.tools
+                                    var url = movieSuppModel.getValue(item.id, "url", "")
+                                    if (url != "") {
+                                        delegate.subComponent.item.bookmark = url
+                                        delegate.subComponent.item.url = url
+                                    } else {
+                                        var imdb = item.imdbnumber
+                                        if (imdb != 0) {
+                                            var imdbId = "tt" + Utils.sprintf("%.7d", item.imdbnumber);
+
+                                            delegate.subComponent.item.url = "http://m.imdb.com/title/" + imdbId;
+                                        } else {
+                                            delegate.subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + item.originaltitle.replace(" ", "+");
+                                        }
+                                    }
+                                }
+                                )
+                    delegate.subComponent.destruction.connect(
+                                function() {
+                                    toolBar.tools = page.tools
+                                }
+                                )
+
+                    delegate.subComponent.item.bookmarkChanged.connect(
+                                function() {
+                                    if (delegate.subComponent.item.bookmark != "") {
+                                        movieSuppModel.setValue(item.id, "url", delegate.subComponent.item.bookmark);
+                                    } else {
+                                        movieSuppModel.removeValue(item.id, "url");
+                                    }
+                                }
+                                )
+
+                    delegate.style = "full"
+                }
+            }
             MenuItem {
                 text: "Mark as seen"
                 visible: $().jsonRPCVer > 4 && !contextMenu.seen
@@ -129,14 +190,6 @@ Item {
                 }
             }
 
-            MenuItem {
-                text: "Show IMDB"
-                visible: ctxHasBrowser
-                onClicked: {
-                    var item = movieProxyModel.properties(contextMenu.index)
-                    contextMenu.component.style = "full"
-                }
-            }
         }
     }
 
@@ -181,7 +234,7 @@ Item {
 
             title: model.name
             titleR: model.year ? model.year : ""
-            subtitle: (model.duration > 0 ? Utils.secToMinutes(model.duration) : "")
+            subtitle: model.duration
             subtitleR:  Utils.sprintf("%.1f", model.rating)
 //            subtitleR:  model.duration > 0 ? Utils.secToHours(model.duration) : (model.runtime != undefined ? model.runtime : "")
             image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/movie"
@@ -191,87 +244,22 @@ Item {
             style: globals.styleMovies
             banner: false
 
-            subComponentSource: ctxHasBrowser ? Qt.resolvedUrl("WebDetails.qml") : ""
-            function gotoUrl(url) {
-                if (url != "") {
-                    subComponent.item.bookmark = url
-                    subComponent.item.url = url
-                } else {
-                    var imdb = model.imdbnumber
-                    if (imdb != 0) {
-                        var imdbId = "tt" + Utils.sprintf("%.7d", model.imdbnumber);
-
-                        subComponent.item.url = "http://m.imdb.com/title/" + imdbId;
-                    } else {
-                        subComponent.item.url = "http://m.imdb.com/find?s=tt&q=" + model.originaltitle.replace(" ", "+");
-                    }
-                }
-
-    //            url = "http://en.m.wikipedia.org/wiki?search=film+"+ model.originaltitle.replace(" ", "+") + "&go=Go"
-            }
-
-            Connections {
-                target: subComponent
-
-                onLoaded: {
-                    toolBar.tools = subComponent.item.tools
-                    gotoUrl(movieSuppModel.getValue(model.id, "url", ""));
-                }
-                onDestruction: toolBar.tools = page.tools
-            }
-
-            Connections {
-                target:  subComponent.item
-
-                onBookmarkChanged: {
-                    if (subComponent.item.bookmark != "") {
-                        movieSuppModel.setValue(model.id, "url", subComponent.item.bookmark);
-                    } else {
-                        movieSuppModel.removeValue(model.id, "url");
-                    }
-                }
-            }
-
             onSelected:  {
-                if (style == globals.styleMovies) {
-                    if (model.id == 0) {
-                        style = "full"
-                        return
-                    }
-                    if (model.resume && model.resume.position != 0) {
-                        dialogPlaceholder.source = Qt.resolvedUrl("ResumeDialog.qml");
-                        dialogPlaceholder.item.position = model.resume.position
-                        dialogPlaceholder.item.total = model.resume.total
-                        dialogPlaceholder.item.accepted.connect(
-                                    function () {
-                                        $().playlist.onPlaylistStarted =
-                                                function(id) {
-                                                    playlistTab.videoPlayer().seekPercentage(model.resume.position/model.resume.total*100);
-                                                    $().playlist.onPlaylistStarted = null;
-                                                }
-
-                                        playMovie(model.id);
-                                    }
-                                    );
-                        dialogPlaceholder.item.rejected.connect(
-                                    function () {
-                                        playMovie(model.id);
-                                    }
-                                    );
-                        dialogPlaceholder.item.open();
-                    } else {
-                        playMovie(model.id);
-                    }
-                } else
+                if (style != globals.styleMovies) {
                     style = globals.styleMovies
-            }
+                    return;
+                }
 
-            onContext: {
+                if (model.id == 0) {
+                    style = "full"
+                    return
+                }
                 contextMenu.index = index
                 contextMenu.component = delegate
                 contextMenu.seen = (playcount > 0)
                 contextMenu.open()
             }
+
         }
     }
 }
