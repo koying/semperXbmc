@@ -271,6 +271,20 @@ Window {
                 playlistStack.currentPage.flipped = !playlistStack.currentPage.flipped
             }
 
+            function videoPage() {
+                if (playlistStack.depth == 0)
+                    return null;
+
+                return playlistStack.currentPage.back
+            }
+
+            function audioPage() {
+                if (playlistStack.depth == 0)
+                    return null;
+
+                return playlistStack.currentPage.front
+            }
+
             function videoPlayer() {
                 if (playlistStack.depth == 0)
                     return null;

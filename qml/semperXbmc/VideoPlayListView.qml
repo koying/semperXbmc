@@ -100,8 +100,10 @@ Item {
         target: xbmcTcpClient
 
         onPlaylistChanged: {
-            if (playlistId == page.playlistId)
+            if (playlistId == page.playlistId) {
+                playlistModel.clear();
                 $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
+            }
         }
     }
 
@@ -113,11 +115,13 @@ Item {
                 if (page.playlistId == -1)
                     return;
 
-                $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
-                xbmcConnection.target = xbmcTcpClient
-            } else
-                xbmcConnection.target = null
+                refresh()
+            }
         }
+    }
+
+    function refresh() {
+        $().playlist.getPlaylistItems(page.playlistId, playlistModel);
     }
 
     Component.onCompleted: {
@@ -125,8 +129,7 @@ Item {
             if (page.playlistId == -1)
                 return;
 
-            $().playlist.update(page.playlistId, playlistModel, xbmcTcpClient.getPlaylistItems(page.playlistId));
-            xbmcConnection.target = xbmcTcpClient
+            refresh()
         }
     }
 }

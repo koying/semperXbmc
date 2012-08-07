@@ -17,6 +17,10 @@ Rectangle {
         id: haptics
     }
 
+    RemoteKeyboard {
+        id: remoteKeyboard
+    }
+
     BorderImage {
         id: globalKeys
         border.left: 30; border.top: 30
@@ -193,5 +197,15 @@ Rectangle {
         id: opMenu
         tools: mainTools.layout
         anchors.bottom: parent.bottom
+    }
+
+    function keyboardRequest(title, initValue) {
+        remoteKeyboard.titleText = title
+        remoteKeyboard.value = initValue
+        remoteKeyboard.open()
+    }
+
+    function keyboardDone() {
+        remoteKeyboard.close()
     }
 }

@@ -53,8 +53,8 @@ XbmcTcpTransport::~XbmcTcpTransport()
 
 void XbmcTcpTransport::initialize(const QString &ip, const QString &port, const int version)
 {
-    m_socket->connectToHost(ip, port.toInt());
     m_version = version;
+    m_socket->connectToHost(ip, port.toInt());
 
     m_statusObject = new XbmcStatus(ip, port);
     m_statusObject->moveToThread(&m_statusThread);
@@ -98,6 +98,7 @@ void XbmcTcpTransport::on_socket_connected()
         QVariantMap notifs;
         notifs["VideoLibrary"] = true;
         notifs["AudioLibrary"] = true;
+        notifs["Player"] = true;
         QVariantMap params;
         params["notifications"] = notifs;
         req.setParams(params);
@@ -105,12 +106,31 @@ void XbmcTcpTransport::on_socket_connected()
         m_socket->write(req.serialize());
         break;
     }
+
+    case 5:
+    case 6: {
+        XbmcJsonRequest req("JSONRPC.SetConfiguration", 1);
+        QVariantMap notifs;
+        notifs["VideoLibrary"] = true;
+        notifs["AudioLibrary"] = true;
+        notifs["Player"] = true;
+        notifs["Input"] = true;
+        QVariantMap params;
+        params["notifications"] = notifs;
+        req.setParams(params);
+//        m_socket->write("{\"jsonrpc\": \"2.0\", \"method\": \"JSONRPC.SetConfiguration\", \"params\": { \"notifications\": {\"VideoLibrary\": true, \"AudioLibrary\": true } }, \"id\":1 }");
+        m_socket->write(req.serialize());
+        break;
+    }
+
+    default:
+        qDebug() << "Unknown version: " << m_version;
     }
 }
 
 void XbmcTcpTransport::on_socket_error ( QAbstractSocket::SocketError socketError)
 {
-    qDebug() << "Socket Error";
+    qDebug() << "Socket Error: " << socketError;
 }
 
 void XbmcTcpTransport::on_socket_readyRead()
@@ -352,7 +372,7 @@ void XbmcStatus::on_socket_connected()
 
 void XbmcStatus::on_socket_error ( QAbstractSocket::SocketError socketError)
 {
-    qDebug() << "Error";
+    qDebug() << "XbmcStatus Socket Error: " << socketError;
     m_socket->abort();
     m_connected = false;
 }

@@ -44,17 +44,17 @@ Item {
                                                     $().playlist.onPlaylistStarted = null;
                                                 }
 
-                                        playEpisode(item.id);
+                                        playEpisode(item);
                                     }
                                     );
                         dialogPlaceholder.item.rejected.connect(
                                     function () {
-                                        playEpisode(item.id);
+                                        playEpisode(item);
                                     }
                                     );
                         dialogPlaceholder.item.open();
                     } else {
-                        playEpisode(item.id);
+                        playEpisode(item);
                     }
                 }
             }
@@ -71,7 +71,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
 
-                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    tvshowSuppModel.keyUpdate({"showtitle":item.showtitle, "lastplayed":new Date()});
                     if (tvshowProxyModel.sortRole == "lastplayed")
                         tvshowProxyModel.reSort();
                 }
@@ -92,7 +92,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
 
-                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    tvshowSuppModel.keyUpdate({"showtitle":item.showtitle, "lastplayed":new Date()});
                     if (tvshowProxyModel.sortRole == "lastplayed")
                         tvshowProxyModel.reSort();
                 }
@@ -112,7 +112,7 @@ Item {
                     var doc = new globals.getJsonXMLHttpRequest();
                     doc.send(batch);
 
-                    tvshowSuppModel.keyUpdate({"showtitle":contextMenu.showtitle, "lastplayed":new Date()});
+                    tvshowSuppModel.keyUpdate({"showtitle":item.showtitle, "lastplayed":new Date()});
                     if (tvshowProxyModel.sortRole == "lastplayed")
                         tvshowProxyModel.reSort();
                 }
@@ -172,14 +172,14 @@ Item {
         }
     }
 
-    function playEpisode(epId) {
+    function playEpisode(item) {
         var batch = "[";
         var o = { jsonrpc: "2.0", method: "Player.Stop", params: { playerid:1 }};
         batch += JSON.stringify(o)
         o = { jsonrpc: "2.0", method: "Playlist.Clear", params: { playlistid:$().playlist.videoPlId }};
         batch += "," + JSON.stringify(o)
 
-        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: epId } }, id: 1};
+        o = { jsonrpc: "2.0", method: "Playlist.Add", params: { playlistid: $().playlist.videoPlId, item: { episodeid: item.id } }, id: 1};
         batch += "," + JSON.stringify(o)
 
         batch += "]"
@@ -198,7 +198,7 @@ Item {
 
                         $().playlist.play($().playlist.videoPlId, 0)
 
-                        tvshowSuppModel.keyUpdate({"showtitle":model.showtitle, "lastplayed":new Date()});
+                        tvshowSuppModel.keyUpdate({"showtitle":item.showtitle, "lastplayed":new Date()});
                         if (tvshowProxyModel.sortRole == "lastplayed")
                             tvshowProxyModel.reSort();
                     }

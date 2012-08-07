@@ -24,13 +24,11 @@ XbmcJsonTcpClient {
         }
 
         var data = oJSON.params.data;
-        if (!data) {
-//                console.debug("No data");
-            return;
-        }
-        var item = data.item;
-        if (item) {
-            for (var attrname in item) { data[attrname] = item[attrname]; }
+        if (data) {
+            var item = data.item;
+            if (item) {
+                for (var attrname in item) { data[attrname] = item[attrname]; }
+            }
         }
 
 //            console.debug(Utils.dumpObj(data, "data", "", 0));
@@ -66,6 +64,28 @@ XbmcJsonTcpClient {
             break;
 
         case "AudioLibrary.OnRemove":
+            break;
+
+        case "Playlist.OnAdd":
+        case "Playlist.OnRemove":
+        case "Playlist.OnClear":
+            switch (data.playlistid) {
+            case $().playlist.audioPlId:
+                playlistTab.audioPage().refresh()
+                break
+            case $().playlist.videoPlId:
+                playlistTab.videoPage().refresh()
+                break
+            }
+
+            break;
+
+        case "Input.OnInputRequested":
+            remoteTab.keyboardRequest(data.title, data.value)
+            break;
+
+        case "Input.OnInputFinished":
+            remoteTab.keyboardDone()
             break;
 
 //        case "Player.OnPlay":
