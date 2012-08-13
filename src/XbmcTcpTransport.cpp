@@ -114,6 +114,7 @@ void XbmcTcpTransport::on_socket_connected()
         notifs["VideoLibrary"] = true;
         notifs["AudioLibrary"] = true;
         notifs["Player"] = true;
+        notifs["Playlist"] = true;
         notifs["Input"] = true;
         QVariantMap params;
         params["notifications"] = notifs;
@@ -166,7 +167,7 @@ XbmcPlayer::XbmcPlayer(QObject *parent)
     : QObject(parent)
     , m_transport(NULL)
     , m_playerId(-1)
-    , m_speed(-1)
+    , m_speed(-255)
     , m_percentage(-1)
     , m_position(-1)
 {
@@ -190,11 +191,20 @@ void XbmcPlayer::playPause()
         reqSeek.setParams(params);
         requests << reqSeek.toVariant();
     }
-    XbmcJsonRequest req("Player.PlayPause");
-    QVariantMap params;
-    params["playerid"] = m_playerId;
-    req.setParams(params);
-    requests << req.toVariant();
+    if (m_speed == 0 || m_speed == 1) {
+        XbmcJsonRequest req("Player.PlayPause");
+        QVariantMap params;
+        params["playerid"] = m_playerId;
+        req.setParams(params);
+        requests << req.toVariant();
+    } else {
+        XbmcJsonRequest req("Player.SetSpeed");
+        QVariantMap params;
+        params["playerid"] = m_playerId;
+        params["speed"] = 1;
+        req.setParams(params);
+        requests << req.toVariant();
+    }
 
     m_transport->send(requests);
 }
@@ -295,20 +305,26 @@ void XbmcPlayer::settransport(QObject *val)
 
 void XbmcPlayer::setSpeed(qreal speed)
 {
-    m_speed = speed;
-    emit speedChanged();
+    if (speed != m_speed) {
+        m_speed = speed;
+        emit speedChanged();
+    }
 }
 
 void XbmcPlayer::setPercentage(qreal percentage)
 {
-    m_percentage = percentage;
-    emit percentageChanged();
+    if (percentage != m_percentage) {
+        m_percentage = percentage;
+        emit percentageChanged();
+    }
 }
 
 void XbmcPlayer::setPosition(int position)
 {
-    m_position = position;
-    emit positionChanged();
+    if (position != m_position) {
+        m_position = position;
+        emit positionChanged();
+    }
 }
 
 void XbmcPlayer::makeConnections()
@@ -411,17 +427,17 @@ void XbmcStatus::update()
     QVariantMap params;
     QVariantMap parmSort;
 
-    XbmcJsonRequest reqAudioPlayer("Player.GetProperties", 1);
-    properties << "speed" << "percentage" << "position";
-    params["playerid"] = 0;
-    params["properties"] = properties;
-    reqAudioPlayer.setParams(params);
-    requests << reqAudioPlayer.toVariant();
+//    XbmcJsonRequest reqAudioPlayer("Player.GetProperties", 1);
+//    properties << "speed" << "percentage" << "position";
+//    params["playerid"] = 0;
+//    params["properties"] = properties;
+//    reqAudioPlayer.setParams(params);
+//    requests << reqAudioPlayer.toVariant();
 
-    XbmcJsonRequest reqVideoPlayer("Player.GetProperties", 2);
-    params["playerid"] = 1;
-    reqVideoPlayer.setParams(params);
-    requests << reqVideoPlayer.toVariant();
+//    XbmcJsonRequest reqVideoPlayer("Player.GetProperties", 2);
+//    params["playerid"] = 1;
+//    reqVideoPlayer.setParams(params);
+//    requests << reqVideoPlayer.toVariant();
 
     params.clear();
     properties.clear();
@@ -460,57 +476,57 @@ void XbmcStatus::handleMsg(const QString &msg)
     int reqId = o["id"].toInt();
 
     switch (reqId) {
-    case 1: {  //Player.GetProperties Audio
-        qreal newSpeed = -1;
-        qreal newPercentage = -1;
-        int newPos = -1;
+//    case 1: {  //Player.GetProperties Audio
+//        qreal newSpeed = -1;
+//        qreal newPercentage = -1;
+//        int newPos = -1;
 
-        if (o["result"].isValid()) {
-            QVariantMap result = o["result"].toMap();
-            newSpeed = result["speed"].toReal();
-            newPercentage = result["percentage"].toReal();
-            newPos = result["position"].toInt();
-        }
-        if (m_currentAudioSpeed != newSpeed) {
-            m_currentAudioSpeed = newSpeed;
-            emit audioSpeedChanged(m_currentAudioSpeed);
-        }
-        if (m_currentAudioPercentage != newPercentage) {
-            m_currentAudioPercentage = newPercentage;
-            emit audioPercentageChanged(m_currentAudioPercentage);
-        }
-        if (m_currentAudioPosition != newPos) {
-            m_currentAudioPosition = newPos;
-            emit audioPositionChanged(m_currentAudioPosition);
-        }
-        break;
-    }
+//        if (o["result"].isValid()) {
+//            QVariantMap result = o["result"].toMap();
+//            newSpeed = result["speed"].toReal();
+//            newPercentage = result["percentage"].toReal();
+//            newPos = result["position"].toInt();
+//        }
+//        if (m_currentAudioSpeed != newSpeed) {
+//            m_currentAudioSpeed = newSpeed;
+//            emit audioSpeedChanged(m_currentAudioSpeed);
+//        }
+//        if (m_currentAudioPercentage != newPercentage) {
+//            m_currentAudioPercentage = newPercentage;
+//            emit audioPercentageChanged(m_currentAudioPercentage);
+//        }
+//        if (m_currentAudioPosition != newPos) {
+//            m_currentAudioPosition = newPos;
+//            emit audioPositionChanged(m_currentAudioPosition);
+//        }
+//        break;
+//    }
 
-    case 2: { //Player.GetProperties Video
-        qreal newSpeed = -1;
-        qreal newPercentage = -1;
-        int newPos = -1;
+//    case 2: { //Player.GetProperties Video
+//        qreal newSpeed = -1;
+//        qreal newPercentage = -1;
+//        int newPos = -1;
 
-        if (o["result"].isValid()) {
-            QVariantMap result = o["result"].toMap();
-            newSpeed = result["speed"].toReal();
-            newPercentage = result["percentage"].toReal();
-            newPos = result["position"].toInt();
-        }
-        if (m_currentVideoSpeed != newSpeed) {
-            m_currentVideoSpeed = newSpeed;
-            emit videoSpeedChanged(m_currentVideoSpeed);
-        }
-        if (m_currentVideoPercentage != newPercentage) {
-            m_currentVideoPercentage = newPercentage;
-            emit videoPercentageChanged(m_currentVideoPercentage);
-        }
-        if (m_currentVideoPosition != newPos) {
-            m_currentVideoPosition = newPos;
-            emit videoPositionChanged(m_currentVideoPosition);
-        }
-        break;
-    }
+//        if (o["result"].isValid()) {
+//            QVariantMap result = o["result"].toMap();
+//            newSpeed = result["speed"].toReal();
+//            newPercentage = result["percentage"].toReal();
+//            newPos = result["position"].toInt();
+//        }
+//        if (m_currentVideoSpeed != newSpeed) {
+//            m_currentVideoSpeed = newSpeed;
+//            emit videoSpeedChanged(m_currentVideoSpeed);
+//        }
+//        if (m_currentVideoPercentage != newPercentage) {
+//            m_currentVideoPercentage = newPercentage;
+//            emit videoPercentageChanged(m_currentVideoPercentage);
+//        }
+//        if (m_currentVideoPosition != newPos) {
+//            m_currentVideoPosition = newPos;
+//            emit videoPositionChanged(m_currentVideoPosition);
+//        }
+//        break;
+//    }
 
     case 3: //Playlist.GetItems Audio
         if (o["result"].isValid()) {

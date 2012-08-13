@@ -3,12 +3,14 @@ import QtQuick 1.1
 import com.nokia.symbian 1.1
 import com.semperpax.qmlcomponents 1.0
 
+import "js/Utils.js" as Utils
+
 Item {
     id: root
     anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
     height: tbar.height
 
-    property int playlistId: -1
+    property int playlistId: -255
     property string  playerType: ""
 
     property alias position: xbmcPlayer.position
@@ -27,6 +29,7 @@ Item {
                 }
                 ToolButton {
                     iconSource: "toolbar-mediacontrol-stop"
+                    enabled: (xbmcPlayer.speed != -255)
                     onClicked: {
                         stop()
                     }
@@ -37,7 +40,7 @@ Item {
                     onClicked:  {
                         playPause()
                     }
-                    visible: (xbmcPlayer.speed > 0)
+                    visible: (xbmcPlayer.speed == 1)
                 }
                 ToolButton {
                     id: btPlay
@@ -45,7 +48,7 @@ Item {
                     onClicked: {
                         playPause();
                     }
-                    visible: (xbmcPlayer.speed <= 0)
+                    visible: (xbmcPlayer.speed != 1)
                 }
                 ToolButton {
                     iconSource: "img/skip.svg"
@@ -82,14 +85,18 @@ Item {
         transport: xbmcTcpClient
 
         onSpeedChanged: console.debug("speed changed:"+xbmcPlayer.speed)
+        onPositionChanged: console.debug("position changed:"+xbmcPlayer.position)
     }
 
     onPlaylistIdChanged: {
         console.debug("player plylistid: " + playlistId)
+        if (!(root.playlistId < 0))
+            refresh();
     }
 
     function playPause() {
-        if (xbmcPlayer.speed < 0) {
+        console.debug("speed: " + xbmcPlayer.speed)
+        if (xbmcPlayer.speed == -255) {
             $().playlist.play(playlistId, 0)
         } else
             xbmcPlayer.playPause()
@@ -97,7 +104,7 @@ Item {
 
     function stop() {
         console.debug("stop:" + xbmcPlayer.speed);
-        if (xbmcPlayer.speed >= 0)
+        if (xbmcPlayer.speed != -255)
             xbmcPlayer.stop()
     }
 
@@ -107,6 +114,30 @@ Item {
 
     function playFile(file) {
         xbmcPlayer.playFile(file)
+    }
+
+    function refresh() {
+        var doc = new globals.getJsonXMLHttpRequest();
+        doc.onreadystatechange = function() {
+            if (doc.readyState == XMLHttpRequest.DONE) {
+                var oJSON = JSON.parse(doc.responseText);
+                var error = oJSON.error;
+                if (error) {
+                    xbmcPlayer.speed = -255
+                    xbmcPlayer.position = -1
+                    xbmcPlayer.percentage = -1
+                } else {
+                    var results = oJSON.result;
+                    xbmcPlayer.speed = results.speed
+                    xbmcPlayer.position = results.position
+                    xbmcPlayer.percentage = results.percentage
+                }
+             }
+        }
+
+        var o = { jsonrpc: "2.0", method: "Player.GetProperties", params: { playerid: root.playlistId, properties: ["speed", "percentage", "time", "totaltime", "position"] }, id: 1};
+        var str = JSON.stringify(o);
+        doc.send(str);
     }
 
     Component.onCompleted: {

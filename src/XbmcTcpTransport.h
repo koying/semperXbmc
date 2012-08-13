@@ -102,9 +102,9 @@ public:
     Q_PROPERTY(QString type READ type WRITE settype)
     Q_PROPERTY(QObject* transport READ transport WRITE settransport)
 
-    Q_PROPERTY(qreal speed READ speed NOTIFY speedChanged)
-    Q_PROPERTY(qreal percentage READ percentage NOTIFY percentageChanged)
-    Q_PROPERTY(int position READ position NOTIFY positionChanged)
+    Q_PROPERTY(qreal speed READ speed WRITE setSpeed NOTIFY speedChanged)
+    Q_PROPERTY(qreal percentage READ percentage WRITE setPercentage NOTIFY percentageChanged)
+    Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
 
 public:
     Q_INVOKABLE void stop();

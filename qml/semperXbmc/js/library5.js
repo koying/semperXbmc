@@ -37,9 +37,13 @@ Library.prototype.handleMovies = function (movies) {
         } else
             imdbnumber = 0
 
-        var genre = "";
+        var aGenre = [];
         if (movies[i].genre && movies[i].genre != "") {
-            var aGenre = movies[i].genre.split("/");
+            aGenre = movies[i].genre;
+            if (typeof aGenre === "string") {
+                aGenre = aGenre.split("/");
+            }
+
             for (var j=0; j<aGenre.length; ++j) {
                 var g = movieGenreModel.getValues(aGenre[j].trim());
                 if (!Utils.isEmpty(g)) {
@@ -52,10 +56,9 @@ Library.prototype.handleMovies = function (movies) {
                     movieGenreModel.append({"name":aGenre[j].trim(), "count":1, "unseen": movies[i].playcount ? 0 : 1, "playcount": movies[i].playcount ? 1 : 0})
                 }
             }
-            genre = aGenre.join(" / ");
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": "", "genre":  movies[i].genre, "duration": duration, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": "", "genre":  aGenre.join(" / "), "duration": duration, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
         if (movies[i].resume && movies[i].resume.position!=0) {
             console.debug("resume " + movies[i].label + " @ " + movies[i].resume.position + "/" + movies[i].resume.total );
         }
@@ -299,12 +302,17 @@ Library.prototype.loadTVShows = function () {
                 return;
             }
 
-            var aGenres = []
             var result = oJSON.result;
             var tvshows = result.tvshows;
-            for (var i = 0; i < tvshows.length; i++){
-                if (tvshows[i].genre && tvshows[i].genre != "") {
-                    var aGenre = tvshows[i].genre.split("/");
+            var aGenres = [];
+            for (var i = 0; i < tvshows.length; i++) {
+                var aGenre = [];
+                if (tvshows[i].genre && tvshows[i].genre !== "") {
+                    aGenre = tvshows[i].genre;
+                    if (typeof aGenre === "string") {
+                        aGenre = aGenre.split("/");
+                    }
+
                     for (var j=0; j<aGenre.length; ++j) {
                         if (aGenres.indexOf(aGenre[j].trim()) == -1)
                             aGenres.push(aGenre[j].trim());
@@ -314,12 +322,12 @@ Library.prototype.loadTVShows = function () {
                 if (!originaltitle || originaltitle == "")
                     originaltitle = tvshows[i].label
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": "", "genre":  tvshows[i].genre, "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": "", "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount});
             }
 
             aGenres.sort();
             for (var i = 0; i < aGenres.length; i++){
-                tvshowGenreModel.append({"name": aGenres[i]});
+                tvshowGenreModel.append({"name": aGenres[i].trim()});
             }
 
             tvshowProxyModel.reSort();
@@ -561,7 +569,7 @@ Library.prototype.loadTracks = function (idalbum) {
             var songs = result.songs;
             trackModel.clear();
             for (var i = 0; i < songs.length; i++){
-                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "artist": songs[i].artist, "number": songs[i].track, "duration": songs[i].duration, "path": songs[i].file});
+                trackModel.append({"idtrack": songs[i].songid, "name": songs[i].label, "artist": songs[i].artist.join(" / "), "number": songs[i].track, "duration": songs[i].duration, "path": songs[i].file});
             }
         }
     }
@@ -593,7 +601,7 @@ Library.prototype.handleAlbums = function (responseText) {
             thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
         }
 
-        albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist, "genre":albums[i].genre, "rating": albums[i].rating,  "cover": thumb});
+        albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist.join(" / "), "genre":albums[i].genre.join(" / "), "rating": albums[i].rating,  "cover": thumb});
     }
     albumProxyModel.reSort();
 }

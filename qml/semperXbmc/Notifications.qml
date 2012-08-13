@@ -88,51 +88,38 @@ XbmcJsonTcpClient {
             remoteTab.keyboardDone()
             break;
 
-//        case "Player.OnPlay":
-//            switch(data.type) {
-//            case "song":
-//                playlistView.front.player.playing = true
-//                playlistView.front.player.paused = false
-//                break;
-//            case "movie":
-//            case "episode":
-//                playlistView.back.player.playing = true
-//                playlistView.back.player.paused = false
-//                break;
-//            }
-//            break;
+        case "Player.OnPlay":
+        case "Player.OnPause":
+            switch(data.type) {
+            case "song":
+                playlistTab.audioPlayer().refresh()
+                break;
+            case "movie":
+            case "episode":
+                playlistTab.videoPlayer().refresh()
+                break;
+            }
+            break;
 
+        case "Player.OnStop":
+            switch(data.type) {
+            case "song": {
+                playlistTab.audioPlayer().position = -1;
+                playlistTab.audioPlayer().percentage = -1;
+                playlistTab.audioPlayer().speed = -255;
 
-//        case "Player.OnPause":
+                break;
+            }
+            case "movie":
+            case "episode": {
+                playlistTab.videoPlayer().position = -1;
+                playlistTab.videoPlayer().percentage = -1;
+                playlistTab.videoPlayer().speed = -255;
 
-//            switch(data.type) {
-//            case "song":
-//                playlistView.front.player.playing = false
-//                playlistView.front.player.paused = true
-//                break;
-//            case "movie":
-//            case "episode":
-//                playlistView.back.player.playing = false
-//                playlistView.back.player.paused = true
-//                break;
-//            }
-//            break;
-
-//        case "Player.OnStop":
-
-//            switch(data.type) {
-//            case "song":
-//                playlistView.front.player.playing = false
-//                playlistView.front.player.paused = false
-//                break;
-//            case "movie":
-//            case "episode":
-//                playlistView.back.player.playing = false
-//                playlistView.back.player.paused = false
-//                break;
-//            }
-//            break;
-
+                break;
+            }
+            }
+            break;
         }
 
     }

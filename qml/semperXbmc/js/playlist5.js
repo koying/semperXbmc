@@ -100,6 +100,7 @@ Playlist.prototype.getPlaylistItems = function(id, playlistModel) {
                 return;
             }
 
+            playlistModel.clear();
             var results = oJSON.result;
             if (!results)
                 return;
@@ -110,7 +111,6 @@ Playlist.prototype.getPlaylistItems = function(id, playlistModel) {
         }
     }
 
-    playlistModel.clear();
     var o = { jsonrpc: "2.0", method: "Playlist.GetItems", params: { playlistid: id, sort: {method: "playlist", order: "ascending"}, properties: ["title", "artist", "album", "genre", "track", "duration", "thumbnail", "showtitle", "episode", "playcount"] }, id: 1};
     var str = JSON.stringify(o);
     doc.send(str);
