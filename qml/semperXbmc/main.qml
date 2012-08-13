@@ -425,6 +425,7 @@ Window {
         id: artistModel
         fields: [ "id", "name", "poster", "selected", "posterThumb" ]
         thumbDir: ctxFatFile
+        key: "id"
     }
 
     SortFilterModel {
@@ -445,6 +446,7 @@ Window {
     VariantModel {
         id: albumModel
         fields: [ "idalbum", "name", "artist", "genre", "rating", "cover", "coverThumb" ]
+        key: "idalbum"
         thumbDir: ctxFatFile
     }
     ListModel {
@@ -496,6 +498,7 @@ Window {
         id: movieModel
         fields: [ "id", "name", "poster", "genre", "duration", "rating", "year", "playcount", "imdbnumber", "originaltitle", "posterThumb", "resume" ]
         thumbDir: ctxFatFile
+        key: "id"
     }
 
     ListModel {
@@ -547,6 +550,7 @@ Window {
     VariantModel {
         id: episodeModel
         fields: [ "id", "name", "poster", "tvshowId", "showtitle", "season", "number", "duration", "rating", "playcount", "resume", "firstaired" ]
+        key: "id"
         thumbDir: ctxFatFile
     }
 

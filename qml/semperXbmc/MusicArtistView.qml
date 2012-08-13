@@ -64,6 +64,12 @@ Page {
                     subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.name.replace(" ", "+") + "&go=Go"
             }
 
+            Component.onCompleted: {
+                if (model.poster == "") {
+                    $().library.getArtistThumbnail(model.id)
+                }
+            }
+
             Connections {
                 target: subComponent
 

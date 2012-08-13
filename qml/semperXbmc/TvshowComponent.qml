@@ -42,6 +42,13 @@ Item {
                 } else
                     subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.originaltitle.replace(" ", "+") + "&go=Go"
             }
+
+            Component.onCompleted: {
+                if (model.poster == "") {
+                    $().library.getTVShowThumbnail(model.id)
+                }
+            }
+
             Connections {
                 target: subComponent
 
