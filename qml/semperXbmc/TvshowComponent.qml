@@ -27,7 +27,7 @@ Item {
         Cp.Delegate {
             title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
-            subtitleR: tvshowProxyModel.sortRole == "lastplayed" ? (model.lastplayed ? Utils.dateToString(model.lastplayed) : "") : ""
+            subtitleR: tvshowProxyModel.sortRole == "lastplayed" ? model.lastplayed : ""
             image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/tvshow"
             watched: model.playcount>0
 
@@ -42,13 +42,6 @@ Item {
                 } else
                     subComponent.item.url = "http://en.m.wikipedia.org/wiki?search="+ model.originaltitle.replace(" ", "+") + "&go=Go"
             }
-
-            Component.onCompleted: {
-                if (model.poster == "") {
-                    $().library.getTVShowThumbnail(model.id)
-                }
-            }
-
             Connections {
                 target: subComponent
 

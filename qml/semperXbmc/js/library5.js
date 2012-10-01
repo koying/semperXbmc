@@ -7,13 +7,17 @@ function Library() {
 }
 
 Library.prototype.tvshowId = -1;
-Library.prototype.movieFields = '["genre", "title", "year", "playcount", "rating", "runtime","imdbnumber", "originaltitle"]'
-Library.prototype.episodeFields = '["title", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "runtime", "resume", "firstaired"]'
+Library.prototype.movieFields = '["genre", "title", "year", "playcount", "rating", "thumbnail", "runtime","imdbnumber", "originaltitle", "resume"]'
+Library.prototype.episodeFields = '["title", "thumbnail", "tvshowid", "showtitle", "season", "episode", "playcount", "rating", "runtime", "firstaired", "resume"]'
 
 Library.prototype.handleMovies = function (movies) {
     for (var i = 0; i < movies.length; i++){
         //console.log(movies[i].thumb)
 //        console.log(Utils.dumpObj(movies[i], "movies[i]", "", 0));
+        var thumb = "";
+        if (movies[i].thumbnail && movies[i].thumbnail != "") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
+        }
 
         var duration = "";
         if (movies[i].streamdetails && movies[i].streamdetails.video)
@@ -58,7 +62,7 @@ Library.prototype.handleMovies = function (movies) {
             }
         }
 
-        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": "", "genre":  aGenre.join(" / "), "duration": duration, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
+        movieModel.append({"id": movies[i].movieid, "name": movies[i].label, "poster": thumb, "genre":  aGenre.join(" / "), "duration": duration, "rating": movies[i].rating, "year": movies[i].year, "imdbnumber": imdbnumber, "originaltitle": movies[i].originaltitle, "playcount":movies[i].playcount, "resume":movies[i].resume});
         if (movies[i].resume && movies[i].resume.position!=0) {
             console.debug("resume " + movies[i].label + " @ " + movies[i].resume.position + "/" + movies[i].resume.total );
         }
@@ -68,30 +72,6 @@ Library.prototype.handleMovies = function (movies) {
     movieGenreProxyModel.sortRole = "name"
     movieGenreProxyModel.sortOrder = Qt.AscendingOrder
 //    movieGenreProxyModel.reSort();
-}
-
-Library.prototype.getMovieThumbnail = function (movieid) {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-
-            var result = oJSON.result
-            var details = result.moviedetails
-
-            var thumb = "";
-            if (details.thumbnail && details.thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + details.thumbnail;
-            } else
-                thumb = "qrc:/defaultImages/movie"
-            var m = {"id": movieid, "poster": thumb}
-            movieModel.keyUpdate(m);
-        }
-    }
-
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.GetMovieDetails", params: { movieid: movieid, properties: ["thumbnail"] }, id:1}
-    var cmd = JSON.stringify(o)
-    doc.send(cmd);
 }
 
 Library.prototype.loadMovies = function () {
@@ -306,6 +286,10 @@ Library.prototype.loadTVShows = function () {
             var tvshows = result.tvshows;
             var aGenres = [];
             for (var i = 0; i < tvshows.length; i++) {
+                var thumb = "";
+                if (tvshows[i].thumbnail && tvshows[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
+                }
                 var aGenre = [];
                 if (tvshows[i].genre && tvshows[i].genre !== "") {
                     aGenre = tvshows[i].genre;
@@ -322,7 +306,7 @@ Library.prototype.loadTVShows = function () {
                 if (!originaltitle || originaltitle == "")
                     originaltitle = tvshows[i].label
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": "", "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount});
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount, "lastplayed":tvshows[i].lastplayed});
             }
 
             aGenres.sort();
@@ -337,34 +321,10 @@ Library.prototype.loadTVShows = function () {
 
     tvshowModel.clear();
     tvshowGenreModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "originaltitle", "imdbnumber"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber", "lastplayed"] }, "id": 1}';
     doc.send(str);
 
     return;
-}
-
-Library.prototype.getTVShowThumbnail = function (tvshowid) {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-
-            var result = oJSON.result
-            var details = result.tvshowdetails
-
-            var thumb = "";
-            if (details.thumbnail && details.thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + details.thumbnail;
-            } else
-                thumb = "qrc:/defaultImages/tvshow"
-            var m = {"name": details.label, "poster": thumb}
-            tvshowModel.keyUpdate(m);
-        }
-    }
-
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.GetTVShowDetails", params: { tvshowid: tvshowid, properties: ["thumbnail"] }, id:1}
-    var cmd = JSON.stringify(o)
-    doc.send(cmd);
 }
 
 Library.prototype.loadSeasons = function (id) {
@@ -412,6 +372,7 @@ Library.prototype.loadSeasons = function (id) {
 }
 
 Library.prototype.handleEpisodes = function (responseText) {
+    console.debug("got episodes")
     var oJSON = JSON.parse(responseText);
 
     var error = oJSON.error;
@@ -425,6 +386,11 @@ Library.prototype.handleEpisodes = function (responseText) {
     var episodes = result.episodes;
     if (!episodes) return;
     for (var i = 0; i < episodes.length; i++){
+
+        var thumb = "";
+        if (episodes[i].thumbnail && episodes[i].thumbnail != "") {
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
+        }
 
         var duration = "";
         if (episodes[i].streamdetails && episodes[i].streamdetails.video)
@@ -440,7 +406,7 @@ Library.prototype.handleEpisodes = function (responseText) {
             }
         }
 
-        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].title, "poster": "", "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume, "firstaired":episodes[i].firstaired});
+        episodeModel.append({"id": episodes[i].episodeid, "name": episodes[i].title, "poster": thumb, "tvshowId": episodes[i].tvshowid, "showtitle": episodes[i].showtitle, "season": episodes[i].season, "number":  episodes[i].episode, "duration": duration, "rating": episodes[i].rating, "playcount":episodes[i].playcount, "resume":episodes[i].resume, "firstaired":episodes[i].firstaired});
         if (episodes[i].resume && episodes[i].resume.position!=0) {
             console.debug("resume " + episodes[i].label + " @ " + episodes[i].resume.position + "/" + episodes[i].resume.total );
         }
@@ -462,30 +428,6 @@ Library.prototype.loadEpisodes = function (id) {
     doc.send(str);
 
     return;
-}
-
-Library.prototype.getEpisodeThumbnail = function (episodeid) {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            var oJSON = JSON.parse(doc.responseText);
-
-            var result = oJSON.result
-            var details = result.episodedetails
-
-            var thumb = "";
-            if (details.thumbnail && details.thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + details.thumbnail;
-            } else
-                thumb = "qrc:/defaultImages/tvshow"
-            var m = {"id": episodeid, "poster": thumb}
-            episodeModel.keyUpdate(m);
-        }
-    }
-
-    var o = { jsonrpc: "2.0", method: "VideoLibrary.GetEpisodeDetails", params: { episodeid: episodeid, properties: ["thumbnail"] }, id:1}
-    var cmd = JSON.stringify(o)
-    doc.send(cmd);
 }
 
 Library.prototype.recentEpisodes = function () {
@@ -576,7 +518,7 @@ Library.prototype.loadTracks = function (idalbum) {
 
 
     trackModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration", "file"], "albumid" : '+idalbum+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "sort": {"method":"track", "order":"ascending"}, "properties": ["title", "artist", "genre", "track", "duration", "file"], "filter": {"albumid": '+idalbum+'} }, "id": 1}';
     doc.send(str);
 
     return;
@@ -606,32 +548,6 @@ Library.prototype.handleAlbums = function (responseText) {
     albumProxyModel.reSort();
 }
 
-Library.prototype.getAlbumThumbnail = function (albumid) {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText)
-            var oJSON = JSON.parse(doc.responseText);
-
-            var result = oJSON.result
-            var details = result.albumdetails
-
-            var thumb = "";
-            if (details.thumbnail && details.thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + details.thumbnail;
-            } else
-                thumb = "qrc:/defaultImages/album"
-            var m = {"idalbum": albumid, "cover": thumb}
-            albumModel.keyUpdate(m);
-        }
-    }
-
-    var o = { jsonrpc: "2.0", method: "AudioLibrary.GetAlbumDetails", params: { albumid: albumid, properties: ["thumbnail"] }, id:1}
-    var cmd = JSON.stringify(o)
-    console.debug(cmd)
-    doc.send(cmd);
-}
-
 Library.prototype.loadAlbums = function (idartist) {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
@@ -642,7 +558,7 @@ Library.prototype.loadAlbums = function (idartist) {
 
 
     albumModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year"], "artistid": '+idartist+' }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"], "filter":{"artistid": '+idartist+'} }, "id": 1}';
     doc.send(str);
 
     return;
@@ -658,7 +574,7 @@ Library.prototype.loadAllAlbums = function () {
 
 
     albumModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year"]}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": { "sort": {"method":"album", "order":"ascending"}, "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
 
     return;
@@ -674,7 +590,7 @@ Library.prototype.recentAlbums = function () {
 
 
     albumModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetRecentlyAddedAlbums", "params": { "properties": ["albumlabel", "artist", "genre", "rating", "year"]}, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetRecentlyAddedAlbums", "params": { "properties": ["albumlabel", "artist", "genre", "rating", "year", "thumbnail"]}, "id": 1}';
     doc.send(str);
 
     return;
@@ -696,43 +612,20 @@ Library.prototype.loadArtists = function() {
             var result = oJSON.result;
             var artists = result.artists;
             for (var i = 0; i < artists.length; i++){
-                artistModel.append({"id": artists[i].artistid, "name": artists[i].artist[0], "poster": "", "selected": false});
+                var thumb = "";
+                if (artists[i].thumbnail && artists[i].thumbnail != "") {
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + artists[i].thumbnail;
+                }
+                artistModel.append({"id": artists[i].artistid, "name": artists[i].artist, "poster": thumb, "selected": false});
             }
             artistProxyModel.reSort();
         }
     }
 
     artistModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "params": { "sort": {"method":"artist", "order":"ascending"}, "properties": [] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetArtists", "params": { "sort": {"method":"artist", "order":"ascending"}, "properties": ["thumbnail"] }, "id": 1}';
     doc.send(str);
 }
-
-Library.prototype.getArtistThumbnail = function (artistid) {
-    var doc = new globals.getJsonXMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            console.debug(doc.responseText)
-            var oJSON = JSON.parse(doc.responseText);
-
-            var result = oJSON.result
-            var details = result.artistdetails
-
-            var thumb = "";
-            if (details.thumbnail && details.thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + details.thumbnail;
-            } else
-                thumb = "qrc:/defaultImages/album"
-            var m = {"id": artistid, "poster": thumb}
-            artistModel.keyUpdate(m);
-        }
-    }
-
-    var o = { jsonrpc: "2.0", method: "AudioLibrary.GetArtistDetails", params: { artistid: artistid, properties: ["thumbnail"] }, id:1}
-    var cmd = JSON.stringify(o)
-    console.debug(cmd)
-    doc.send(cmd);
-}
-
 
 Library.prototype.loadSources = function(fileProxyModel) {
     var doc = new globals.getJsonXMLHttpRequest();

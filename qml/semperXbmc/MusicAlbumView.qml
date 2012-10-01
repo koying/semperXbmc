@@ -60,12 +60,6 @@ Page {
 
             subComponentSource: "MusicAlbumDetail.qml"
 
-            Component.onCompleted: {
-                if (model.cover == "") {
-                    $().library.getAlbumThumbnail(model.idalbum)
-                }
-            }
-
             Connections {
                 target: subComponent
                 onLoaded: {

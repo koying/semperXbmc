@@ -260,13 +260,6 @@ Item {
                 contextMenu.open()
             }
 
-
-            Component.onCompleted: {
-                if (model.poster == "") {
-                    $().library.getMovieThumbnail(model.id)
-                }
-            }
         }
-
     }
 }

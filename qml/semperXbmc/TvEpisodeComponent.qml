@@ -243,12 +243,6 @@ Item {
                 contextMenu.seen = (playcount > 0)
                 contextMenu.open()
             }
-
-            Component.onCompleted: {
-                if (model.poster == "") {
-                    $().library.getEpisodeThumbnail(model.id)
-                }
-            }
         }
 
     }
