@@ -307,6 +307,7 @@ Library.prototype.loadTVShows = function () {
                     originaltitle = tvshows[i].label
 
                 tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount, "lastplayed":tvshows[i].lastplayed});
+                console.debug(tvshows[i].label + " " + tvshows[i].lastplayed)
             }
 
             aGenres.sort();
@@ -600,6 +601,7 @@ Library.prototype.loadArtists = function() {
     var doc = new globals.getJsonXMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
+            console.debug("got response")
             var oJSON = JSON.parse(doc.responseText);
 
             var error = oJSON.error;

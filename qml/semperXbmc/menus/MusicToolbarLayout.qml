@@ -7,8 +7,8 @@ ToolBarLayout {
 
     ToolButton {
         iconSource: "toolbar-back"
-        onClicked: tvshowStack.pop()
-        visible: tvshowStack.depth > 1
+        onClicked: musicStack.pop()
+        visible: musicStack.depth > 1
     }
 
     ToolButton {

@@ -143,6 +143,7 @@ Page {
             $().library.loadAllAlbums();
         }
 
-        globals.initialMusicView = "MusicAlbumView.qml"
+        if (artistId > -1)
+            globals.initialMusicView = "MusicAlbumView.qml"
     }
 }
