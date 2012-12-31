@@ -24,6 +24,8 @@ Xbmc.prototype.init = function() {
             }
 
             Xbmc.prototype.jsonRPCVer = JSON.parse(doc.responseText).result.version;
+            if (Xbmc.prototype.jsonRPCVer.major != null)
+                Xbmc.prototype.jsonRPCVer = Xbmc.prototype.jsonRPCVer.major;
             console.debug("Connected to: " + xbmc.server+":"+xbmc.port);
             console.debug("JSON ver: " + Xbmc.prototype.jsonRPCVer);
 

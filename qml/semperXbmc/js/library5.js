@@ -16,7 +16,7 @@ Library.prototype.handleMovies = function (movies) {
 //        console.log(Utils.dumpObj(movies[i], "movies[i]", "", 0));
         var thumb = "";
         if (movies[i].thumbnail && movies[i].thumbnail != "") {
-            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + movies[i].thumbnail;
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + movies[i].thumbnail;
         }
 
         var duration = "";
@@ -178,7 +178,7 @@ Library.prototype.loadMovieSets = function () {
         for (var i = 0; i < sets.length; i++){
             var thumb = "";
             if (sets[i].thumbnail && sets[i].thumbnail != "") {
-                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + sets[i].thumbnail;
+                thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + sets[i].thumbnail;
             }
 
             movieSetsModel.append({"id": sets[i].setid, "name": sets[i].label, "poster": thumb, "playcount":sets[i].playcount});
@@ -288,8 +288,13 @@ Library.prototype.loadTVShows = function () {
             for (var i = 0; i < tvshows.length; i++) {
                 var thumb = "";
                 if (tvshows[i].thumbnail && tvshows[i].thumbnail != "") {
-                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + tvshows[i].thumbnail;
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + tvshows[i].thumbnail;
                 }
+                var banner = thumb
+                if (tvshows[i].art && tvshows[i].art.banner && tvshows[i].art.banner != "") {
+                    banner = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + tvshows[i].art.banner
+                }
+
                 var aGenre = [];
                 if (tvshows[i].genre && tvshows[i].genre !== "") {
                     aGenre = tvshows[i].genre;
@@ -306,8 +311,7 @@ Library.prototype.loadTVShows = function () {
                 if (!originaltitle || originaltitle == "")
                     originaltitle = tvshows[i].label
 
-                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount, "lastplayed":tvshows[i].lastplayed});
-                console.debug(tvshows[i].label + " " + tvshows[i].lastplayed)
+                tvshowModel.append({"id": tvshows[i].tvshowid, "name": tvshows[i].label, "poster": thumb, "banner": banner, "genre":  aGenre.join(" / "), "duration": tvshows[i].duration, "rating": tvshows[i].rating, "imdbnumber": tvshows[i].imdbnumber, "originaltitle": originaltitle, "playcount":tvshows[i].playcount, "lastplayed":tvshows[i].lastplayed});
             }
 
             aGenres.sort();
@@ -322,7 +326,7 @@ Library.prototype.loadTVShows = function () {
 
     tvshowModel.clear();
     tvshowGenreModel.clear();
-    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "originaltitle", "imdbnumber", "lastplayed"] }, "id": 1}';
+    var str = '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": { "sort": {"method":"sorttitle", "order":"ascending"}, "properties": ["genre", "plot", "episode", "year", "playcount", "rating", "thumbnail", "art", "originaltitle", "imdbnumber", "lastplayed"] }, "id": 1}';
     doc.send(str);
 
     return;
@@ -348,7 +352,7 @@ Library.prototype.loadSeasons = function (id) {
             for (var i = 0; i < seasons.length; i++){
                 var thumb = "";
                 if (seasons[i].thumbnail && seasons[i].thumbnail != "") {
-                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + seasons[i].thumbnail;
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + seasons[i].thumbnail;
                 }
                 var season = 0;
                 if (seasons[i].season) {
@@ -390,7 +394,7 @@ Library.prototype.handleEpisodes = function (responseText) {
 
         var thumb = "";
         if (episodes[i].thumbnail && episodes[i].thumbnail != "") {
-            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + episodes[i].thumbnail;
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + episodes[i].thumbnail;
         }
 
         var duration = "";
@@ -541,7 +545,7 @@ Library.prototype.handleAlbums = function (responseText) {
 
         var thumb = "";
         if (albums[i].thumbnail && albums[i].thumbnail != "") {
-            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + albums[i].thumbnail;
+            thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + albums[i].thumbnail;
         }
 
         albumModel.append({"idalbum": albums[i].albumid, "name": albums[i].label, "artist": albums[i].artist.join(" / "), "genre":albums[i].genre.join(" / "), "rating": albums[i].rating,  "cover": thumb});
@@ -616,7 +620,7 @@ Library.prototype.loadArtists = function() {
             for (var i = 0; i < artists.length; i++){
                 var thumb = "";
                 if (artists[i].thumbnail && artists[i].thumbnail != "") {
-                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + artists[i].thumbnail;
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + artists[i].thumbnail;
                 }
                 artistModel.append({"id": artists[i].artistid, "name": artists[i].artist, "poster": thumb, "selected": false});
             }
@@ -661,7 +665,7 @@ Library.prototype.loadFiles = function(fileProxyModel, directory) {
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
             var oJSON = JSON.parse(doc.responseText);
-            console.debug(doc.responseText);
+//            console.debug(doc.responseText);
 
             var error = oJSON.error;
             if (error) {
@@ -675,7 +679,7 @@ Library.prototype.loadFiles = function(fileProxyModel, directory) {
             for (var i = 0; i < files.length; i++){
                 var thumb = "";
                 if (files[i].thumbnail && files[i].thumbnail != "") {
-                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/vfs/" + files[i].thumbnail;
+                    thumb = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/image/" + files[i].thumbnail;
                 }
                 fileProxyModel.sourceModel.append({"name": files[i].label, "sortname": (files[i].filetype == "directory" ? "0" : "1")+files[i].label, "path": files[i].file, "filetype": files[i].filetype, "playcount": (files[i].playcount == null ? 0 : files[i].playcount), "poster": thumb });
             }
@@ -686,7 +690,7 @@ Library.prototype.loadFiles = function(fileProxyModel, directory) {
     fileProxyModel.sourceModel.clear();
     var o = { jsonrpc: "2.0", method: "Files.GetDirectory", params: { directory: directory, media: "video", "properties":["thumbnail","playcount"] }, id: 1};
     var str = JSON.stringify(o);
-    console.debug(str);
+//    console.debug(str);
     doc.send(str);
 }
 
@@ -712,7 +716,7 @@ Library.prototype.downloadFile = function(inputPath, outputPath, filename) {
                     o.inputPath = "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/" + details.path
                     o.outputPath = outputPath
                     o.filename = filename
-                    console.debug(details.path)
+//                    console.debug(details.path)
                     downloadsModel.append({"inputPath": "http://"+globals.getJsonAuthString()+$().server+":" + $().port + "/" + details.path, "outputPath": outputPath, "filename": filename, "downloadObject":o });
                 }
             }

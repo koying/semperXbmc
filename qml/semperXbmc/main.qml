@@ -534,7 +534,7 @@ Window {
 
     VariantModel {
         id: tvshowModel
-        fields: [ "id", "name", "poster", "genre", "rating", "playcount", "imdbnumber", "originaltitle", "posterThumb", "lastplayed" ]
+        fields: [ "id", "name", "poster", "banner", "genre", "rating", "playcount", "imdbnumber", "originaltitle", "posterThumb", "bannerThumb", "lastplayed" ]
         key: "name"
         thumbDir: ctxFatFile
     }

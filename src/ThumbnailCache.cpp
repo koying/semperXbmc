@@ -142,6 +142,9 @@ bool ThumbnailCache::saveThumb(const QUrl& url, const QImage& image)
 
         QStringList levels = fn.split("/");
         QString name = levels.takeLast();
+        // New XBMC image links end with a slash
+        if (name.isEmpty())
+            name = levels.takeLast();
         if (name.isEmpty())
             return true;
 

@@ -39,6 +39,9 @@ QImage ThumbImageProvider::requestImage(const QString &id, QSize *size, const QS
 
     QStringList levels = fn.split("/");
     QString name = levels.takeLast();
+    // New XBMC image links end with a slash
+    if (name.isEmpty())
+        name = levels.takeLast();
     if (name.isEmpty())
         return pix;
 

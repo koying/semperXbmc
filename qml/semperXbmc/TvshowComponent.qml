@@ -28,7 +28,7 @@ Item {
             title: model.name
             subtitle: (model.genre != undefined ? model.genre : "")
             subtitleR: tvshowProxyModel.sortRole == "lastplayed" ? model.lastplayed : ""
-            image: model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/tvshow"
+            image: globals.showBanners && model.banner != "" ? (globals.cacheThumbnails ? model.bannerThumb : model.banner) : (model.poster != "" ? (globals.cacheThumbnails ? model.posterThumb : model.poster) : "qrc:/defaultImages/tvshow")
             watched: model.playcount>0
 
             banner: globals.showBanners

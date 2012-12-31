@@ -56,11 +56,11 @@ void XbmcTcpTransport::initialize(const QString &ip, const QString &port, const 
     m_version = version;
     m_socket->connectToHost(ip, port.toInt());
 
-    m_statusObject = new XbmcStatus(ip, port);
-    m_statusObject->moveToThread(&m_statusThread);
-    m_statusThread.start();
+//    m_statusObject = new XbmcStatus(ip, port);
+//    m_statusObject->moveToThread(&m_statusThread);
+//    m_statusThread.start();
 
-    connect(m_statusObject, SIGNAL(playlistChanged(int,QVariantList)), this, SLOT(onPlaylistChanged(int,QVariantList)));
+//    connect(m_statusObject, SIGNAL(playlistChanged(int,QVariantList)), this, SLOT(onPlaylistChanged(int,QVariantList)));
 
     emit initialized();
 }
